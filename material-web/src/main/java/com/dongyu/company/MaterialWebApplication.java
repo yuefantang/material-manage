@@ -14,7 +14,5 @@ import java.io.File;
 public class MaterialWebApplication {
     public static void main(String[] args) {
         SpringApplication.run(MaterialWebApplication.class,args);
-
-
     }
 }
