@@ -7,6 +7,8 @@ import com.dongyu.company.mould.dto.MouldDetailDTO;
 import com.dongyu.company.mould.dto.MouldListDTO;
 import com.dongyu.company.mould.dto.MouldQueryDTO;
 
+import java.util.List;
+
 /**
  * 模具采购业务处理层
  *
@@ -21,6 +23,9 @@ public interface PurchaseMouldService {
 
     //分页查询模具采购
     PageDTO<MouldListDTO> getlist(MouldQueryDTO mouldQueryDTO);
+
+    //导出查询模具采购
+    List<MouldDetailDTO> getexportList(MouldQueryDTO mouldQueryDTO);
 
     //修改模具采购
     void edit(EditMouldDTO editMouldDTO);

@@ -15,6 +15,7 @@ import com.dongyu.company.mould.dto.MouldListDTO;
 import com.dongyu.company.mould.dto.MouldQueryDTO;
 import com.dongyu.company.mould.service.PurchaseMouldService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 模具采购业务处理实现层
@@ -65,6 +69,22 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
             return mouldListDTO;
         });
         return pageDTO;
+    }
+
+    @Override
+    public List<MouldDetailDTO> getexportList(MouldQueryDTO dto) {
+        log.info("PurchaseMouldServiceImpl getexportList method start Parm:" + JSONObject.toJSONString(dto));
+        List<PurchaseMould> purchaseMouldList = purchaseMouldDao.findAll(MouldSpecs.mouldListQuerySpec(dto));
+        if (CollectionUtils.isEmpty(purchaseMouldList)) {
+            return null;
+        }
+        List<MouldDetailDTO> detailDTOList = purchaseMouldList.stream().map(purchaseMould -> {
+            MouldDetailDTO mouldDetailDTO = new MouldDetailDTO();
+            BeanUtils.copyProperties(purchaseMould, mouldDetailDTO);
+            mouldDetailDTO.setPurchaseDate(DateUtil.parseDateToStr(purchaseMould.getPurchaseDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            return mouldDetailDTO;
+        }).collect(Collectors.toList());
+        return detailDTOList;
     }
 
     @Override

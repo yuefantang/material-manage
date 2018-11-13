@@ -101,7 +101,7 @@ public class UserController {
     }
 
     @RequiresRoles(value = {"admin"})
-    @GetMapping(value = "/editPassword")
+    @PostMapping(value = "/editPassword")
     @ApiOperation("修改密码")
     public ResponseVo get(@Valid @RequestBody EditPasswordForm editPasswordForm) {
         EditPasswordDTO editPasswordDTO = new EditPasswordDTO();

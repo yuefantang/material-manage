@@ -10,8 +10,10 @@ import com.dongyu.company.mould.dto.MouldDetailDTO;
 import com.dongyu.company.mould.dto.MouldListDTO;
 import com.dongyu.company.mould.dto.MouldQueryDTO;
 import com.dongyu.company.mould.service.PurchaseMouldService;
+import com.dongyu.company.mould.view.MouldExcelView;
 import com.dongyu.company.web.mould.form.AddMouldForm;
 import com.dongyu.company.web.mould.form.EditMouldForm;
+import com.dongyu.company.web.mould.form.ExportMouldQueryForm;
 import com.dongyu.company.web.mould.form.MouldQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,8 +28,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 模具采购相关
@@ -87,6 +95,21 @@ public class MouldController {
     public ResponseVo<MouldDetailDTO> detail(@ApiParam(name = "id", value = "模具采购id") @RequestParam("id") Long id) {
         MouldDetailDTO detail = purchaseMouldService.getDetail(id);
         return ResponseVo.successResponse(detail);
+    }
+
+    @ApiOperation("模具采购导出")
+    @GetMapping(value = "/export")
+    public ModelAndView exportExcel(@ModelAttribute ExportMouldQueryForm form) {
+        MouldQueryDTO mouldQueryDTO = new MouldQueryDTO();
+        BeanUtils.copyProperties(form, mouldQueryDTO);
+        List<MouldDetailDTO> mouldDetailDTOS = purchaseMouldService.getexportList(mouldQueryDTO);
+        String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
+        String fileName = "模具采购" + date + ".xlsx";
+        Map<String, Object> map = new HashMap<>();
+        map.put("mouldListDTO", mouldDetailDTOS);
+        map.put("fileName", fileName);
+        MouldExcelView excelView = new MouldExcelView();
+        return new ModelAndView(excelView, map);
     }
 
 }

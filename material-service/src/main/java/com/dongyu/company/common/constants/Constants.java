@@ -22,4 +22,10 @@ public class Constants {
 
     //密码规则
     public static final String PASSWORD_PATTERN = "^[0-9a-zA-Z]{6}$";
+
+    //生成xls最大允许的行数
+    public static final int MAX_XLS_TOTAL_ROW = 1000000;
+
+    //生成xls最大允许的单sheet行数
+    public static final int MAX_XLS_SHEET_ROW = 60000;
 }
