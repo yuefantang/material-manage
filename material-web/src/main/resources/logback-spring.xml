@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <jmxConfigurator/>
+    <property name="LOG_FILE" value="logs/material-web.log"/>
+    <property name="LOG_LEVEL_PATTERN" value="baas %5p"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!--<?xml version="1.0" encoding="UTF-8"?>-->
+        <!--<configuration>-->
+        <!--<property name="LOG_FILE" value="/log/material-web.log"/>-->
+        <!--<include resource="org/springframework/boot/logging/logback/defaults.xml"/>-->
+        <!--<include resource="org/springframework/boot/logging/logback/console-appender.xml"/>-->
+        <!--<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--&lt;!&ndash;当天日志&ndash;&gt;-->
+        <!--<file>${LOG_FILE}</file>-->
+        <!--&lt;!&ndash;日志输出编码格式化&ndash;&gt;-->
+        <!--<encoder>-->
+        <!--<charset>UTF-8</charset>-->
+        <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+        <!--</encoder>-->
+        <!--&lt;!&ndash;文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间&ndash;&gt;-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+        <!--<fileNamePattern>>${LOG_FILE}.%d{yyyy-MM-dd}</fileNamePattern>-->
+        <!--</rollingPolicy>-->
+        <!--&lt;!&ndash;只保留最近60天的日志&ndash;&gt;-->
+        <!--<maxHistory>60</maxHistory>-->
+        <!--</appender>-->
+        <!--&lt;!&ndash; 定义根日志级别 &ndash;&gt;-->
+        <!--<root level="INFO">-->
+        <!--<appender-ref ref="CONSOLE"/>-->
+        <!--<appender-ref ref="FILE"/>-->
+        <!--</root>-->
+
+        <!--</configuration>-->
