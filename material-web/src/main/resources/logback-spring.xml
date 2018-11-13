@@ -16,9 +16,6 @@
         </rollingPolicy>
     </appender>
 
-    <!--只保留最近60天的日志-->
-    <maxHistory>60</maxHistory>
-
     <!--定义根日志级别-->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
