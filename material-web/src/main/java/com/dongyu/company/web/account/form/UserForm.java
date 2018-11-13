@@ -20,6 +20,7 @@ import javax.validation.constraints.Pattern;
 public class UserForm {
 
     @ApiModelProperty(value = "用户姓名")
+
     @NotBlank(message = "用户名不能为空")
     private String userName;
 

@@ -1,11 +1,13 @@
 package com.dongyu.company.web.mould.form;
 
 import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.utils.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Pattern;
 
@@ -20,14 +22,12 @@ import javax.validation.constraints.Pattern;
 @ApiModel("新增模具采购form")
 public class AddMouldForm {
 
-    //DY编号
     @ApiModelProperty(value = "DY编号")
     @NotBlank(message = "DY编号不能为空")
     private String dyCode;
 
-    //产品型号
-    @ApiModelProperty(value = "DY编号")
-    @NotBlank(message = "DY编号不能为空")
+    @ApiModelProperty(value = "产品型号")
+    @NotBlank(message = "产品型号不能为空")
     private String productModel;
 
     @ApiModelProperty(value = "长（单位毫米）")
@@ -55,12 +55,12 @@ public class AddMouldForm {
     @NotBlank(message = "金额不能为空")
     private String amount;
 
-    @ApiModelProperty(value = "供应商")
+    @ApiModelProperty(value = "供应商（下拉列表）")
     @NotBlank(message = "供应商不能为空")
     private String supplier;
 
-    //采购日期
     @ApiModelProperty(value = "采购日期yyyy-MM-dd")
+    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
     @NotBlank(message = "采购日期不能为空")
     private String purchaseDate;
 
@@ -68,7 +68,7 @@ public class AddMouldForm {
     @NotBlank(message = "所属客户")
     private String affiliatedCustomer;
 
-    @ApiModelProperty(value = "模具类型")
+    @ApiModelProperty(value = "模具类型（下拉列表）")
     @NotBlank(message = "模具类型不能为空")
     private String mouldType;
 
@@ -80,7 +80,7 @@ public class AddMouldForm {
     @NotBlank(message = "采购种类不能为空")
     private String purchaseType;
 
-    @ApiModelProperty(value = "连接")
+    @ApiModelProperty(value = "连接（下拉列表）")
     @NotBlank(message = "连接不能为空")
     private String connect;
 
