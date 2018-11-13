@@ -103,7 +103,7 @@ public class UserController {
     @RequiresRoles(value = {"admin"})
     @GetMapping(value = "/editPassword")
     @ApiOperation("修改密码")
-    public ResponseVo get(@ModelAttribute EditPasswordForm editPasswordForm) {
+    public ResponseVo get(@Valid @RequestBody EditPasswordForm editPasswordForm) {
         EditPasswordDTO editPasswordDTO = new EditPasswordDTO();
         BeanUtils.copyProperties(editPasswordForm, editPasswordDTO);
         userService.editPassword(editPasswordDTO);
