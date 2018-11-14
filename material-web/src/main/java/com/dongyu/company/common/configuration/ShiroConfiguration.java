@@ -43,15 +43,14 @@ public class ShiroConfiguration {
     public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") SecurityManager manager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(manager);
-        shiroFilterFactoryBean.setLoginUrl("/index.html");
-
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         filterChainDefinitionMap.put("/logout", "logout");
         filterChainDefinitionMap.put("/web/user/login", "anon");
         filterChainDefinitionMap.put("/web/**", "authc");
         filterChainDefinitionMap.put("/web/user/**", "authc,roles[admin]");
-
         filterChainDefinitionMap.put("/**", "anon");
+        //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，重定向到自定义请求接口，后台仅返回json数据
+        shiroFilterFactoryBean.setLoginUrl("/web/user/unauth");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         shiroFilterFactoryBean.setSuccessUrl("/");
         shiroFilterFactoryBean.setUnauthorizedUrl("/403");
@@ -72,6 +71,7 @@ public class ShiroConfiguration {
         return new LifecycleBeanPostProcessor();
     }
 
+    //自动创建代理，没有这个鉴权可能会出错
     @Bean
     public DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
@@ -79,6 +79,13 @@ public class ShiroConfiguration {
         return creator;
     }
 
+    /**
+     * 开启shiro aop注解支持.
+     * 使用代理方式;所以需要开启代码支持;
+     *
+     * @param manager
+     * @return
+     */
     @Bean
     public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(@Qualifier("securityManager") SecurityManager manager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();

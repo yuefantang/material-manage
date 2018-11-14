@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -117,6 +118,14 @@ public class UserController {
         List<RoleListDTO> roleList = userService.getRoleList();
         return ResponseVo.successResponse(roleList);
     }
-
+    @RequestMapping("/unauth")
+    @ResponseBody
+    public ResponseVo unauth(){
+        ResponseVo<Object> vo = new ResponseVo<>();
+        vo.setMsg("未登录");
+        vo.setSuccess(false);
+        vo.setErrorCode("500");
+        return vo;
+    }
 
 }
