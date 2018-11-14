@@ -118,8 +118,9 @@ public class UserController {
         List<RoleListDTO> roleList = userService.getRoleList();
         return ResponseVo.successResponse(roleList);
     }
-    @RequestMapping("/unauth")
+    @GetMapping("/unauth")
     @ResponseBody
+    @ApiOperation("未登录重定向接口")
     public ResponseVo unauth(){
         ResponseVo<Object> vo = new ResponseVo<>();
         vo.setMsg("未登录");
