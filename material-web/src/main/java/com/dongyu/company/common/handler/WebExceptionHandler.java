@@ -51,10 +51,7 @@ public class WebExceptionHandler {
     public ResponseVo handleTypeMismathException(MethodArgumentNotValidException e) {
         ResponseVo<Object> vo = new ResponseVo<>();
         if (e.getBindingResult() != null) {
-            for (FieldError item : e.getBindingResult().getFieldErrors()) {
-                String itemMessage = item.getDefaultMessage();
-                vo.addFieldError(item.getField(), itemMessage);
-            }
+            vo.setMsg(e.getBindingResult().getFieldErrors().get(0).getDefaultMessage());
         }
         setVo(vo);
         return vo;
@@ -78,12 +75,13 @@ public class WebExceptionHandler {
         LOG.error(e.getMessage(), e);
         ResponseVo<Object> vo = new ResponseVo<>();
         if (e.getBindingResult() != null) {
-            for (FieldError item : e.getBindingResult().getFieldErrors()) {
-                String itemMessage = item.getDefaultMessage();
-                vo.addFieldError(item.getField(), itemMessage);
-            }
+            vo.setMsg(e.getBindingResult().getFieldErrors().get(0).getDefaultMessage());
+//            for (FieldError item : e.getBindingResult().getFieldErrors()) {
+//                String itemMessage = item.getDefaultMessage();
+//                vo.addFieldError(item.getField(), itemMessage);
+//            }
         }
-        vo.setMsg("后台校验不通过");
+
         setVo(vo);
         return vo;
     }
