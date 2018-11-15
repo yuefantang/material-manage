@@ -32,12 +32,12 @@ public class CommonFile extends BaseDomain {
 
     //文件路径
     @Length(max = 255)
-    @Column(name = "file_name", unique = true)
+    @Column(name = "file_path")
     private String filePath;
 
-    //文件后缀名
-    @Length(max = 30)
-    @Column(name = "suffix_name")
-    private String suffixName;
+    //文件名
+    @Length(max = 255)
+    @Column(name = "file_name", unique = true)
+    private String fileName;
 
 }

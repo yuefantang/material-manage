@@ -3,6 +3,8 @@ package com.dongyu.company.file.service;
 import com.dongyu.company.common.vo.ResponseVo;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 文件图片处理service
  *
@@ -16,4 +18,5 @@ public interface FileService {
     ResponseVo uploadImage(MultipartFile file);
 
     //文件下载处理
+    void download(Long id, HttpServletResponse response);
 }
