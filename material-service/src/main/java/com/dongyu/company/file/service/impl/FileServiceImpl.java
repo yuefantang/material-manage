@@ -4,8 +4,10 @@ import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
+import com.dongyu.company.file.dto.FileDTO;
 import com.dongyu.company.file.service.FileService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,7 +41,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public ResponseVo uploadImage(MultipartFile file) {
+    public ResponseVo<FileDTO> upload(MultipartFile file) {
         log.info("FileServiceImpl uploadImage method start：");
         if (file.isEmpty()) {
             throw new BizException("文件不能为空");
@@ -66,8 +68,10 @@ public class FileServiceImpl implements FileService {
             commonFile.setFilePath(filePath);
             commonFile.setFileName(fileName);
             CommonFile save = fileDao.save(commonFile);
+            FileDTO fileDTO = new FileDTO();
+            BeanUtils.copyProperties(save,fileDTO);
             log.info("FileServiceImpl uploadImage method end ");
-            return ResponseVo.successResponse(save.getId());
+            return ResponseVo.successResponse(fileDTO);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {

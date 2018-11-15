@@ -2,6 +2,7 @@ package com.dongyu.company.web.file.controller;
 
 import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.vo.ResponseVo;
+import com.dongyu.company.file.dto.FileDTO;
 import com.dongyu.company.file.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,14 +35,14 @@ public class FileController {
 
     @ApiOperation("文件图片上传")
     @PostMapping(value = "/upload")
-    public ResponseVo upload(@RequestParam("file") MultipartFile file) {
-        ResponseVo responseVo = fileService.uploadImage(file);
+    public ResponseVo<FileDTO> upload(@RequestParam("file") MultipartFile file) {
+        ResponseVo<FileDTO> responseVo = fileService.upload(file);
         return responseVo;
     }
 
     @ApiOperation("文件图片下载")
     @GetMapping(value = "/download")
-    public void download(@ApiParam(name = "id", value = "文件图片存储ID") @RequestParam(value = "id",defaultValue ="0") Long id, HttpServletResponse response) {
+    public void download(@ApiParam(name = "id", value = "文件图片存储ID") @RequestParam(value = "id", defaultValue = "0") Long id, HttpServletResponse response) {
         fileService.download(id, response);
     }
 }
