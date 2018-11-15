@@ -4,6 +4,7 @@ import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
+import com.dongyu.company.file.service.FileService;
 import com.dongyu.company.mould.dto.AddMouldDTO;
 import com.dongyu.company.mould.dto.EditMouldDTO;
 import com.dongyu.company.mould.dto.MouldDetailDTO;
@@ -28,12 +29,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,8 @@ import java.util.Map;
 @Api(tags = "MouldController", description = "模具采购相关")
 @RequestMapping(value = Constants.WEB_PREFIX + "/mould")
 public class MouldController {
-
+    @Autowired
+    private FileService fileService;
     @Autowired
     private PurchaseMouldService purchaseMouldService;
 
@@ -111,5 +113,13 @@ public class MouldController {
         MouldExcelView excelView = new MouldExcelView();
         return new ModelAndView(excelView, map);
     }
+
+    @ApiOperation("文件图片上传")
+    @PostMapping(value = "/upload")
+    public ResponseVo upload(@RequestParam("file") MultipartFile file) {
+        ResponseVo responseVo = fileService.uploadImage(file);
+        return responseVo;
+    }
+
 
 }
