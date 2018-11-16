@@ -1,6 +1,5 @@
 package com.dongyu.company.common.dto;
 
-import com.dongyu.company.mould.domain.PurchaseMould;
 import org.springframework.data.domain.Page;
 
 import java.util.Collections;
@@ -30,9 +29,6 @@ public final class PageDTO<V> {
         this.datas = datas;
         this.pageNo = pageNo;
         this.pageSize = pageSize;
-    }
-
-    public static void of(Page<PurchaseMould> page, Object o) {
     }
 
     public long getTotal() {
