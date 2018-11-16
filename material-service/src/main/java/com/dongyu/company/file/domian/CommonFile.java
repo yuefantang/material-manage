@@ -27,17 +27,13 @@ import javax.persistence.Table;
 public class CommonFile extends BaseDomain {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @Column(name = "id", columnDefinition = "bigint(20) COMMENT '主键id'")
     private Long id;
 
-    //文件路径
-    @Length(max = 255)
-    @Column(name = "file_path")
+    @Column(name = "file_path", columnDefinition = "varchar(255) COMMENT '文件路径'")
     private String filePath;
 
-    //文件名
-    @Length(max = 255)
-    @Column(name = "file_name", unique = true)
+    @Column(name = "file_name", unique = true, columnDefinition = "varchar(255) COMMENT '文件名'")
     private String fileName;
 
 }
