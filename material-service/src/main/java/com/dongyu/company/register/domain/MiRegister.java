@@ -1,5 +1,6 @@
 package com.dongyu.company.register.domain;
 
+import com.dongyu.company.common.domain.BaseDomain;
 import com.dongyu.company.file.domian.CommonFile;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -26,7 +27,7 @@ import java.util.Date;
 @Entity
 @Table(name = "t_mi_register")
 @EntityListeners({AuditingEntityListener.class})
-public class MiRegister {
+public class MiRegister extends BaseDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

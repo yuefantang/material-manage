@@ -1,22 +1,31 @@
 package com.dongyu.company.register.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
+import com.dongyu.company.mould.domain.PurchaseMould;
 import com.dongyu.company.register.dao.ProcessDao;
 import com.dongyu.company.register.dao.RegisterDao;
+import com.dongyu.company.register.dao.RegisterSpecs;
 import com.dongyu.company.register.domain.MiProcess;
 import com.dongyu.company.register.domain.MiRegister;
 import com.dongyu.company.register.dto.AddProcessDTO;
 import com.dongyu.company.register.dto.AddRegisterDTO;
 import com.dongyu.company.register.dto.EditProcessDTO;
 import com.dongyu.company.register.dto.RegisterDetailDTO;
+import com.dongyu.company.register.dto.RegisterListDTO;
+import com.dongyu.company.register.dto.RegisterQueryDTO;
 import com.dongyu.company.register.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +85,26 @@ public class RegisterServiceImpl implements RegisterService {
             return miProcess;
         }).collect(Collectors.toList());
         processDao.save(processList);
+    }
+
+    @Override
+    public PageDTO<RegisterListDTO> getlist(RegisterQueryDTO dto) {
+        log.info("RegisterServiceImpl getlist method start Parm:" + JSONObject.toJSONString(dto));
+        PageRequest pageRequest = new PageRequest(dto.getPageNo() - 1, dto.getPageSize(), Sort.Direction.DESC, Constants.CREATE_TIME);
+        Page<MiRegister> page = registerDao.findAll(RegisterSpecs.registerQuerySpec(dto), pageRequest);
+
+        PageDTO<RegisterListDTO> pageDTO = PageDTO.of(page, item -> {
+            RegisterListDTO registerListDTO = new RegisterListDTO();
+            BeanUtils.copyProperties(item, registerListDTO);
+            //开模日期
+            registerListDTO.setOpenMoldDate(DateUtil.parseDateToStr(item.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            //样板确认日期
+            registerListDTO.setConfirmDate(DateUtil.parseDateToStr(item.getConfirmDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            //建档日期
+            registerListDTO.setRecordDate(DateUtil.parseDateToStr(item.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            return registerListDTO;
+        });
+        return pageDTO;
     }
 
     @Override

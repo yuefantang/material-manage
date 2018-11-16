@@ -6,11 +6,14 @@ import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.mould.dto.MouldListDTO;
 import com.dongyu.company.register.dto.AddRegisterDTO;
 import com.dongyu.company.register.dto.RegisterDetailDTO;
+import com.dongyu.company.register.dto.RegisterListDTO;
+import com.dongyu.company.register.dto.RegisterQueryDTO;
 import com.dongyu.company.register.service.RegisterService;
 import com.dongyu.company.web.mould.form.ExportMouldQueryForm;
 import com.dongyu.company.web.mould.form.MouldQueryForm;
 import com.dongyu.company.web.register.form.AddRegisterForm;
 import com.dongyu.company.web.register.form.EditRegisterForm;
+import com.dongyu.company.web.register.form.RegisterQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -53,8 +56,11 @@ public class MiRegisterController {
 
     @ApiOperation("查询MI登记")
     @GetMapping
-    public ResponseVo<PageDTO<MouldListDTO>> get(@ModelAttribute MouldQueryForm mouldQueryForm) {
-        return ResponseVo.successResponse();
+    public ResponseVo<PageDTO<RegisterListDTO>> get(@ModelAttribute RegisterQueryForm queryForm) {
+        RegisterQueryDTO registerQueryDTO = new RegisterQueryDTO();
+        BeanUtils.copyProperties(queryForm, registerQueryDTO);
+        PageDTO<RegisterListDTO> pageDTO = registerService.getlist(registerQueryDTO);
+        return ResponseVo.successResponse(pageDTO);
     }
 
     @ApiOperation("编辑MI登记")
