@@ -7,15 +7,18 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * Mi登记新增DTO
+ * Mi登记详情返回DTO
  *
  * @author TYF
  * @date 2018/11/16
  * @since 1.0.0
  */
 @Data
-@ApiModel("Mi登记新增DTO")
-public class AddRegisterDTO {
+@ApiModel("Mi登记详情返回DTO")
+public class RegisterDetailDTO {
+
+    @ApiModelProperty(value = "Mi登记ID")
+    private Long id;
 
     @ApiModelProperty(value = "DY编号")
     private String miDyCode;
@@ -149,6 +152,6 @@ public class AddRegisterDTO {
     @ApiModelProperty(value = "文件图片表ID")
     private Long commonFileId;
 
-    @ApiModelProperty(value = "MI工序集合")
-    private List<AddProcessDTO> processDTOS;
+    @ApiModelProperty(value = "MI工序详情返回集合")
+    private List<EditProcessDTO> processDTOS;
 }

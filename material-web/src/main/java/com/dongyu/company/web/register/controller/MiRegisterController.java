@@ -3,15 +3,14 @@ package com.dongyu.company.web.register.controller;
 import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.vo.ResponseVo;
-import com.dongyu.company.mould.dto.EditMouldDTO;
-import com.dongyu.company.mould.dto.MouldDetailDTO;
 import com.dongyu.company.mould.dto.MouldListDTO;
 import com.dongyu.company.register.dto.AddRegisterDTO;
+import com.dongyu.company.register.dto.RegisterDetailDTO;
 import com.dongyu.company.register.service.RegisterService;
-import com.dongyu.company.web.mould.form.EditMouldForm;
 import com.dongyu.company.web.mould.form.ExportMouldQueryForm;
 import com.dongyu.company.web.mould.form.MouldQueryForm;
 import com.dongyu.company.web.register.form.AddRegisterForm;
+import com.dongyu.company.web.register.form.EditRegisterForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -60,8 +59,10 @@ public class MiRegisterController {
 
     @ApiOperation("编辑MI登记")
     @PostMapping(value = "/edit")
-    public ResponseVo<MouldDetailDTO> edite(@Valid @RequestBody EditMouldForm editMouldForm) {
-        EditMouldDTO editMouldDTO = new EditMouldDTO();
+    public ResponseVo edite(@Valid @RequestBody EditRegisterForm editRegisterForm) {
+        RegisterDetailDTO editRegisterDTO = new RegisterDetailDTO();
+        BeanUtils.copyProperties(editRegisterForm, editRegisterDTO);
+        registerService.edit(editRegisterDTO);
         return ResponseVo.successResponse();
     }
 
@@ -74,8 +75,8 @@ public class MiRegisterController {
 
     @ApiOperation("MI登记详情")
     @GetMapping(value = "/detail")
-    public ResponseVo<AddRegisterDTO> detail(@ApiParam(name = "id", value = "MI登记ID") @RequestParam("id") Long id) {
-        AddRegisterDTO detail = registerService.getDetail(id);
+    public ResponseVo<RegisterDetailDTO> detail(@ApiParam(name = "id", value = "MI登记ID") @RequestParam("id") Long id) {
+        RegisterDetailDTO detail = registerService.getDetail(id);
         return ResponseVo.successResponse(detail);
     }
 

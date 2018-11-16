@@ -74,7 +74,7 @@ public class MouldController {
 
     @ApiOperation("编辑模具采购")
     @PostMapping(value = "/edit")
-    public ResponseVo<MouldDetailDTO> edite(@Valid @RequestBody EditMouldForm editMouldForm) {
+    public ResponseVo edite(@Valid @RequestBody EditMouldForm editMouldForm) {
         EditMouldDTO editMouldDTO = new EditMouldDTO();
         BeanUtils.copyProperties(editMouldForm, editMouldDTO);
         editMouldDTO.setPurchaseDate(DateUtil.parseStrToDate(editMouldForm.getPurchaseDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));

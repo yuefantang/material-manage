@@ -1,6 +1,7 @@
 package com.dongyu.company.register.service;
 
 import com.dongyu.company.register.dto.AddRegisterDTO;
+import com.dongyu.company.register.dto.RegisterDetailDTO;
 
 /**
  * MI登记Service
@@ -11,7 +12,11 @@ import com.dongyu.company.register.dto.AddRegisterDTO;
  */
 public interface RegisterService {
 
-    //新增模具采购
+    /**
+     * 新增MI登记
+     *
+     * @param addRegisterDTO
+     */
     void add(AddRegisterDTO addRegisterDTO);
 
     //分页查询模具采购
@@ -20,8 +25,12 @@ public interface RegisterService {
     //导出查询模具采购
     // List<MouldDetailDTO> getexportList(MouldQueryDTO mouldQueryDTO);
 
-    //修改模具采购
-    //void edit(EditMouldDTO editMouldDTO);
+    /**
+     * 修改MI登记
+     *
+     * @param editRegisterDTO
+     */
+    void edit(RegisterDetailDTO editRegisterDTO);
 
     /**
      * 删除MI登记
@@ -36,5 +45,5 @@ public interface RegisterService {
      * @param id MI登记id
      * @return
      */
-    AddRegisterDTO getDetail(Long id);
+    RegisterDetailDTO getDetail(Long id);
 }

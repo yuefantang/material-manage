@@ -1,23 +1,32 @@
-package com.dongyu.company.register.dto;
+package com.dongyu.company.web.register.form;
 
+import com.dongyu.company.common.utils.DateUtil;
+import com.dongyu.company.register.dto.EditProcessDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Mi登记新增DTO
+ * MI登记编辑Form
  *
  * @author TYF
  * @date 2018/11/16
  * @since 1.0.0
  */
 @Data
-@ApiModel("Mi登记新增DTO")
-public class AddRegisterDTO {
+@ApiModel("MI登记编辑Form")
+public class EditRegisterForm {
+
+    @ApiModelProperty("MI登记ID")
+    private Long id;
 
     @ApiModelProperty(value = "DY编号")
+    @NotNull(message = "DY编号不能为空")
     private String miDyCode;
 
     @ApiModelProperty(value = "客户型号")
@@ -69,6 +78,8 @@ public class AddRegisterDTO {
     private String openMoldMerchant;
 
     @ApiModelProperty(value = "开模日期yyyy-MM-dd")
+    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
+    @NotBlank(message = "开模日期不能为空")
     private String openMoldDate;
 
     @ApiModelProperty(value = "菲林编号")
@@ -102,15 +113,21 @@ public class AddRegisterDTO {
     private String markPosition;
 
     @ApiModelProperty(value = "样板确认日期yyyy-MM-dd")
+    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
+    @NotBlank(message = "样板确认日期不能为空")
     private String ConfirmDate;
 
     @ApiModelProperty(value = "建档日期yyyy-MM-dd")
+    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
+    @NotBlank(message = "建档日期不能为空")
     private String recordDate;
 
     @ApiModelProperty(value = "大料尺寸")
     private String sheetSize;
 
     @ApiModelProperty(value = "更改日期yyyy-MM-dd")
+    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
+    @NotBlank(message = "更改日期不能为空")
     private String changeDate;
 
     @ApiModelProperty(value = "更改依据")
@@ -150,5 +167,5 @@ public class AddRegisterDTO {
     private Long commonFileId;
 
     @ApiModelProperty(value = "MI工序集合")
-    private List<AddProcessDTO> processDTOS;
+    private List<EditProcessDTO> processDTOS;
 }

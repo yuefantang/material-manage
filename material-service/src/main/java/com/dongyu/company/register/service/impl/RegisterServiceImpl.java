@@ -11,6 +11,8 @@ import com.dongyu.company.register.domain.MiProcess;
 import com.dongyu.company.register.domain.MiRegister;
 import com.dongyu.company.register.dto.AddProcessDTO;
 import com.dongyu.company.register.dto.AddRegisterDTO;
+import com.dongyu.company.register.dto.EditProcessDTO;
+import com.dongyu.company.register.dto.RegisterDetailDTO;
 import com.dongyu.company.register.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -78,6 +80,39 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     @Transactional
+    public void edit(RegisterDetailDTO editRegisterDTO) {
+        log.info("RegisterServiceImpl edit method start Parm:" + JSONObject.toJSONString(editRegisterDTO));
+        MiRegister miRegister = registerDao.findOne(editRegisterDTO.getId());
+        if (miRegister == null) {
+            throw new BizException("不存在该MI登记记录");
+        }
+        //修改MI登记表数据
+        BeanUtils.copyProperties(editRegisterDTO, miRegister);
+
+        //修改MI登记下的工序
+        List<EditProcessDTO> processDTOS = editRegisterDTO.getProcessDTOS();
+        List<MiProcess> miProcessList = processDao.findByMiRegister(miRegister);
+        processDTOS.stream().map(editProcessDTO -> {
+            if (editProcessDTO.getId() == null) {
+                MiProcess miProcess = new MiProcess();
+                BeanUtils.copyProperties(editProcessDTO, miProcess);
+                return miProcess;
+            }
+            for (MiProcess miProcess : miProcessList) {
+                if (editProcessDTO.getId() == miProcess.getId()) {
+                    BeanUtils.copyProperties(editProcessDTO, miProcess);
+                    return miProcess;
+                }
+            }
+            return null;
+        }).collect(Collectors.toList());
+
+        //图片修改待解决
+        //TODO
+    }
+
+    @Override
+    @Transactional
     public void deleted(Long id) {
         log.info("RegisterServiceImpl deleted method start Parm:" + id);
         MiRegister miRegister = registerDao.findOne(id);
@@ -96,39 +131,39 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public AddRegisterDTO getDetail(Long id) {
+    public RegisterDetailDTO getDetail(Long id) {
         log.info("RegisterServiceImpl getDetail method start Parm:" + id);
         MiRegister miRegister = registerDao.findOne(id);
         if (miRegister == null) {
             throw new BizException("不存在该MI登记");
         }
 
-        AddRegisterDTO addRegisterDTO = new AddRegisterDTO();
-        BeanUtils.copyProperties(miRegister, addRegisterDTO);
+        RegisterDetailDTO registerDetailDTO = new RegisterDetailDTO();
+        BeanUtils.copyProperties(miRegister, registerDetailDTO);
         //处理时间格式
         //开模日期
-        addRegisterDTO.setOpenMoldDate(DateUtil.parseDateToStr(miRegister.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        registerDetailDTO.setOpenMoldDate(DateUtil.parseDateToStr(miRegister.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //样板确认日期
-        addRegisterDTO.setConfirmDate(DateUtil.parseDateToStr(miRegister.getConfirmDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        registerDetailDTO.setConfirmDate(DateUtil.parseDateToStr(miRegister.getConfirmDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //建档日期
-        addRegisterDTO.setRecordDate(DateUtil.parseDateToStr(miRegister.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        registerDetailDTO.setRecordDate(DateUtil.parseDateToStr(miRegister.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //更改日期
-        addRegisterDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
 
         //返回图片id
         CommonFile commonFile = miRegister.getCommonFile();
         if (commonFile != null) {
-            addRegisterDTO.setCommonFileId(commonFile.getId());
+            registerDetailDTO.setCommonFileId(commonFile.getId());
         }
         //返回MI登记相关从工序
         List<MiProcess> processList = processDao.findByMiRegister(miRegister);
-        List<AddProcessDTO> processDTOS = processList.stream().map(miProcess -> {
-            AddProcessDTO processDTO = new AddProcessDTO();
+        List<EditProcessDTO> processDTOS = processList.stream().map(miProcess -> {
+            EditProcessDTO processDTO = new EditProcessDTO();
             BeanUtils.copyProperties(miProcess, processDTO);
             return processDTO;
         }).collect(Collectors.toList());
-        addRegisterDTO.setProcessDTOS(processDTOS);
-        return addRegisterDTO;
+        registerDetailDTO.setProcessDTOS(processDTOS);
+        return registerDetailDTO;
     }
 
 
