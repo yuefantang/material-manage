@@ -15,20 +15,20 @@ public interface RegisterService {
     void add(AddRegisterDTO addRegisterDTO);
 
     //分页查询模具采购
-   // PageDTO<MouldListDTO> getlist(MouldQueryDTO mouldQueryDTO);
+    // PageDTO<MouldListDTO> getlist(MouldQueryDTO mouldQueryDTO);
 
     //导出查询模具采购
-   // List<MouldDetailDTO> getexportList(MouldQueryDTO mouldQueryDTO);
+    // List<MouldDetailDTO> getexportList(MouldQueryDTO mouldQueryDTO);
 
     //修改模具采购
     //void edit(EditMouldDTO editMouldDTO);
 
     /**
-     * 删除模具采购
+     * 删除MI登记
      *
-     * @param id 模具采购id
+     * @param id MI登记id
      */
-    //void deleted(Long id);
+    void deleted(Long id);
 
     /**
      * 模具采购详情
@@ -36,5 +36,5 @@ public interface RegisterService {
      * @param id 模具采购id
      * @return
      */
-   // MouldDetailDTO getDetail(Long id);
+    // MouldDetailDTO getDetail(Long id);
 }

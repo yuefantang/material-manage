@@ -117,7 +117,7 @@ public class WebExceptionHandler {
     public ResponseVo<Object> handleFileException(FileException e) {
         return ResponseVo.error(getLocaleMessage(e.getMessage(), null));
     }
-
+   // IllegalArgumentException
 
     /**
      * 填充异常响应消息

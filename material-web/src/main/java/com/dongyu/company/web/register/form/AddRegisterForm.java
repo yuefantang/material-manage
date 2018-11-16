@@ -1,6 +1,7 @@
 package com.dongyu.company.web.register.form;
 
 import com.dongyu.company.common.utils.DateUtil;
+import com.dongyu.company.register.dto.AddProcessDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -163,5 +164,5 @@ public class AddRegisterForm {
     private Long commonFileId;
 
     @ApiModelProperty(value = "MI工序集合")
-    private List<AddProcessForm> processForms;
+    private List<AddProcessDTO> processDTOS;
 }

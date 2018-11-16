@@ -76,5 +76,24 @@ public class RegisterServiceImpl implements RegisterService {
         processDao.save(processList);
     }
 
+    @Override
+    @Transactional
+    public void deleted(Long id) {
+        log.info("RegisterServiceImpl deleted method start Parm:" + id);
+        MiRegister miRegister = registerDao.getOne(id);
+        if (miRegister == null) {
+            throw new BizException("不存在该MI登记，无法删除");
+        }
+        //删除图片
+        CommonFile commonFile = miRegister.getCommonFile();
+        if (commonFile != null) {
+            fileDao.delete(commonFile.getId());
+        }
+        //删除MI登记相关的工序
+        processDao.deletedByMiRegister(miRegister);
+        //删除MI登记
+        registerDao.delete(id);
+    }
+
 
 }

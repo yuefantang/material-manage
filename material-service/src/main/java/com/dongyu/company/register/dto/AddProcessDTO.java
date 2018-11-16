@@ -1,6 +1,10 @@
 package com.dongyu.company.register.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * MI工序新增DTO
@@ -10,14 +14,17 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
+@ApiModel("MI工序新增DTO")
 public class AddProcessDTO {
 
-    //序号
+    @ApiModelProperty(value = "序号")
+    @NotNull(message = "序号不能为空")
     private String orderNumber;
 
-    //工序
+    @ApiModelProperty(value = "工序")
+    @NotNull(message = "工序不能为空")
     private String process;
 
-    //备注
+    @ApiModelProperty(value = "备注")
     private String remark;
 }

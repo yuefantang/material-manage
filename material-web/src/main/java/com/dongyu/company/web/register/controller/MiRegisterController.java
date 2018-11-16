@@ -47,7 +47,7 @@ public class MiRegisterController {
     @PostMapping(value = "/add")
     public ResponseVo add(@Valid @RequestBody AddRegisterForm addRegisterForm) {
         AddRegisterDTO addRegisterDTO = new AddRegisterDTO();
-        BeanUtils.copyProperties(addRegisterDTO, addRegisterDTO);
+        BeanUtils.copyProperties(addRegisterForm, addRegisterDTO);
         registerService.add(addRegisterDTO);
         return ResponseVo.successResponse();
     }
@@ -68,6 +68,7 @@ public class MiRegisterController {
     @ApiOperation("删除MI登记")
     @DeleteMapping(value = "/deleted")
     public ResponseVo deleted(@ApiParam(name = "id", value = "MI登记ID") @RequestParam("id") Long id) {
+        registerService.deleted(id);
         return ResponseVo.successResponse();
     }
 
