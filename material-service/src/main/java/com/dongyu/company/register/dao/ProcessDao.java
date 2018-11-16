@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * MI登记工序数据处理s
  *
@@ -20,5 +22,7 @@ public interface ProcessDao extends JpaRepository<MiProcess, Long>, JpaSpecifica
     @Modifying
     @Query("delete from MiProcess m where m.miRegister=:miRegister")
     void deletedByMiRegister(@Param("miRegister") MiRegister miRegister);
+
+    List<MiProcess> findByMiRegister(MiRegister miRegister);
 
 }

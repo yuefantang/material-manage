@@ -80,7 +80,7 @@ public class RegisterServiceImpl implements RegisterService {
     @Transactional
     public void deleted(Long id) {
         log.info("RegisterServiceImpl deleted method start Parm:" + id);
-        MiRegister miRegister = registerDao.getOne(id);
+        MiRegister miRegister = registerDao.findOne(id);
         if (miRegister == null) {
             throw new BizException("不存在该MI登记，无法删除");
         }
@@ -93,6 +93,42 @@ public class RegisterServiceImpl implements RegisterService {
         processDao.deletedByMiRegister(miRegister);
         //删除MI登记
         registerDao.delete(id);
+    }
+
+    @Override
+    public AddRegisterDTO getDetail(Long id) {
+        log.info("RegisterServiceImpl getDetail method start Parm:" + id);
+        MiRegister miRegister = registerDao.findOne(id);
+        if (miRegister == null) {
+            throw new BizException("不存在该MI登记");
+        }
+
+        AddRegisterDTO addRegisterDTO = new AddRegisterDTO();
+        BeanUtils.copyProperties(miRegister, addRegisterDTO);
+        //处理时间格式
+        //开模日期
+        addRegisterDTO.setOpenMoldDate(DateUtil.parseDateToStr(miRegister.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //样板确认日期
+        addRegisterDTO.setConfirmDate(DateUtil.parseDateToStr(miRegister.getConfirmDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //建档日期
+        addRegisterDTO.setRecordDate(DateUtil.parseDateToStr(miRegister.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //更改日期
+        addRegisterDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+
+        //返回图片id
+        CommonFile commonFile = miRegister.getCommonFile();
+        if (commonFile != null) {
+            addRegisterDTO.setCommonFileId(commonFile.getId());
+        }
+        //返回MI登记相关从工序
+        List<MiProcess> processList = processDao.findByMiRegister(miRegister);
+        List<AddProcessDTO> processDTOS = processList.stream().map(miProcess -> {
+            AddProcessDTO processDTO = new AddProcessDTO();
+            BeanUtils.copyProperties(miProcess, processDTO);
+            return processDTO;
+        }).collect(Collectors.toList());
+        addRegisterDTO.setProcessDTOS(processDTOS);
+        return addRegisterDTO;
     }
 
 

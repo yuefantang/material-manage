@@ -31,10 +31,10 @@ public interface RegisterService {
     void deleted(Long id);
 
     /**
-     * 模具采购详情
+     * MI登记详情
      *
-     * @param id 模具采购id
+     * @param id MI登记id
      * @return
      */
-    // MouldDetailDTO getDetail(Long id);
+    AddRegisterDTO getDetail(Long id);
 }

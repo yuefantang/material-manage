@@ -74,8 +74,9 @@ public class MiRegisterController {
 
     @ApiOperation("MI登记详情")
     @GetMapping(value = "/detail")
-    public ResponseVo<MouldDetailDTO> detail(@ApiParam(name = "id", value = "MI登记ID") @RequestParam("id") Long id) {
-        return ResponseVo.successResponse();
+    public ResponseVo<AddRegisterDTO> detail(@ApiParam(name = "id", value = "MI登记ID") @RequestParam("id") Long id) {
+        AddRegisterDTO detail = registerService.getDetail(id);
+        return ResponseVo.successResponse(detail);
     }
 
     @ApiOperation("MI登记导出")
