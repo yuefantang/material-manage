@@ -84,9 +84,9 @@ public class MiRegisterController {
         return ResponseVo.successResponse(detail);
     }
 
-    @ApiOperation("MI登记导出")
-    @GetMapping(value = "/export")
-    public ModelAndView exportExcel(@ModelAttribute ExportMouldQueryForm form) {
-        return new ModelAndView();
-    }
+//    @ApiOperation("MI登记导出")
+//    @GetMapping(value = "/export")
+//    public ModelAndView exportExcel(@ModelAttribute ExportMouldQueryForm form) {
+//        return new ModelAndView();
+//    }
 }

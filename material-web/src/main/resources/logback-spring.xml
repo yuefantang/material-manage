@@ -2,6 +2,8 @@
 <configuration>
     <jmxConfigurator/>
     <property name="LOG_FILE" value="/opt/logs/material-web.log"/>
+    <!-- 日志最大的历史 30天 -->
+    <property name="MAX_HISTORY" value="3"/>
     <property name="LOG_LEVEL_PATTERN" value="baas %5p"/>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
@@ -13,7 +15,12 @@
         <file>${LOG_FILE}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}</fileNamePattern>
-        </rollingPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            </rollingPolicy>
+
+        <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+        <!--　　　　　　　　　　　　　　<maxFileSize>7MB</maxFileSize>-->
+        <!--　　　　　　　　　　　　</triggeringPolicy>-->
     </appender>
 
     <!--定义根日志级别-->
