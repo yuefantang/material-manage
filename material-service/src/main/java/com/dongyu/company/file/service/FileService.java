@@ -20,4 +20,7 @@ public interface FileService {
 
     //文件下载处理
     void download(Long id, HttpServletResponse response);
+
+    //文件删除
+    Boolean delfile(Long id);
 }

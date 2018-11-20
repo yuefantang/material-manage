@@ -8,7 +8,6 @@ import com.dongyu.company.register.dto.RegisterDetailDTO;
 import com.dongyu.company.register.dto.RegisterListDTO;
 import com.dongyu.company.register.dto.RegisterQueryDTO;
 import com.dongyu.company.register.service.RegisterService;
-import com.dongyu.company.web.mould.form.ExportMouldQueryForm;
 import com.dongyu.company.web.register.form.AddRegisterForm;
 import com.dongyu.company.web.register.form.EditRegisterForm;
 import com.dongyu.company.web.register.form.RegisterQueryForm;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 

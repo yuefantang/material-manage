@@ -7,6 +7,7 @@ import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
+import com.dongyu.company.file.service.FileService;
 import com.dongyu.company.register.dao.ProcessDao;
 import com.dongyu.company.register.dao.RegisterDao;
 import com.dongyu.company.register.dao.RegisterSpecs;
@@ -48,6 +49,8 @@ public class RegisterServiceImpl implements RegisterService {
     private ProcessDao processDao;
     @Autowired
     private FileDao fileDao;
+    @Autowired
+    private FileService fileService;
 
     @Override
     @Transactional
@@ -58,8 +61,6 @@ public class RegisterServiceImpl implements RegisterService {
         if (byMiDyCode != null) {
             throw new BizException("已存在该DY编号的MI");
         }
-        //获取上传图片
-        CommonFile commonFile = fileDao.findOne(dto.getCommonFileId());
         //存储MI登记
         MiRegister miRegister = new MiRegister();
         BeanUtils.copyProperties(dto, miRegister);
@@ -71,8 +72,12 @@ public class RegisterServiceImpl implements RegisterService {
         miRegister.setRecordDate(DateUtil.parseStrToDate(dto.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //更改日期
         miRegister.setChangeDate(DateUtil.parseStrToDate(dto.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-        //关联图片
-        miRegister.setCommonFile(commonFile);
+        //获取上传图片
+        if (dto.getCommonFileId() != null) {
+            CommonFile commonFile = fileDao.findOne(dto.getCommonFileId());
+            //关联图片
+            miRegister.setCommonFile(commonFile);
+        }
         MiRegister save = registerDao.save(miRegister);
 
         //存储MI登记的工序
@@ -137,6 +142,7 @@ public class RegisterServiceImpl implements RegisterService {
 
         //图片修改待解决
         //TODO
+
     }
 
     @Override
@@ -150,7 +156,12 @@ public class RegisterServiceImpl implements RegisterService {
         //删除图片
         CommonFile commonFile = miRegister.getCommonFile();
         if (commonFile != null) {
-            fileDao.delete(commonFile.getId());
+            if (commonFile.getId() != null) {
+                Boolean delfile = fileService.delfile(commonFile.getId());
+                if (!delfile) {
+                    throw new BizException("图片删除失败！");
+                }
+            }
         }
         //删除MI登记相关的工序
         processDao.deletedByMiRegister(miRegister);
@@ -178,9 +189,11 @@ public class RegisterServiceImpl implements RegisterService {
         //更改日期
         registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
 
-        //返回图片id
+        //返回图片信息
         CommonFile commonFile = miRegister.getCommonFile();
         if (commonFile != null) {
+            registerDetailDTO.setFilePath(commonFile.getFilePath());
+            registerDetailDTO.setFileName(commonFile.getFileName());
             registerDetailDTO.setCommonFileId(commonFile.getId());
         }
         //返回MI登记相关从工序

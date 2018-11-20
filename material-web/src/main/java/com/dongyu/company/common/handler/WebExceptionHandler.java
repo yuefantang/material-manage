@@ -1,7 +1,6 @@
 package com.dongyu.company.common.handler;
 
 import com.dongyu.company.common.exception.BizException;
-import com.dongyu.company.common.exception.FileException;
 import com.dongyu.company.common.vo.ResponseVo;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -13,7 +12,6 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -76,10 +74,6 @@ public class WebExceptionHandler {
         ResponseVo<Object> vo = new ResponseVo<>();
         if (e.getBindingResult() != null) {
             vo.setMsg(e.getBindingResult().getFieldErrors().get(0).getDefaultMessage());
-//            for (FieldError item : e.getBindingResult().getFieldErrors()) {
-//                String itemMessage = item.getDefaultMessage();
-//                vo.addFieldError(item.getField(), itemMessage);
-//            }
         }
 
         setVo(vo);
@@ -110,14 +104,15 @@ public class WebExceptionHandler {
         return vo;
     }
 
-
-    @ExceptionHandler(FileException.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public ResponseVo<Object> handleFileException(FileException e) {
-        return ResponseVo.error(getLocaleMessage(e.getMessage(), null));
-    }
-   // IllegalArgumentException
+//    @ExceptionHandler({MultipartException.class, FileUploadBase.FileSizeLimitExceededException.class, MaxUploadSizeExceededException.class,
+//            FileUploadBase.SizeLimitExceededException.class, IllegalStateException.class})
+//    public ResponseVo handleUploadrException(HttpServletRequest request, Throwable ex) {
+//        ResponseVo<Object> vo = new ResponseVo<>();
+//        vo.setMsg("上传文件过大");
+//        setVo(vo);
+//        return vo;
+//    }
+    // IllegalArgumentException
 
     /**
      * 填充异常响应消息

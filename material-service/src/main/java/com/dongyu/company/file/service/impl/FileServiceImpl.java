@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,9 +37,10 @@ import java.util.UUID;
 public class FileServiceImpl implements FileService {
     @Value("${uploadDir}")
     private String uploadDir;
-
     @Autowired
     private FileDao fileDao;
+
+    private final static List<String> fileExt = Arrays.asList("bmp", "jpg", "jpeg", "png", "gif");
 
     @Override
     @Transactional
@@ -50,6 +53,10 @@ public class FileServiceImpl implements FileService {
         String fileName = file.getOriginalFilename();
         // 获取文件的后缀名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        if (!fileExt.contains(suffixName.substring(1))) {
+            throw new BizException("上传文件格式错误！");
+        }
+
         // 文件上传后的路径
         String filePath = uploadDir;
         // 解决中文问题，liunx下中文路径，图片显示问题,重新定义文件名
@@ -69,7 +76,7 @@ public class FileServiceImpl implements FileService {
             commonFile.setFileName(fileName);
             CommonFile save = fileDao.save(commonFile);
             FileDTO fileDTO = new FileDTO();
-            BeanUtils.copyProperties(save,fileDTO);
+            BeanUtils.copyProperties(save, fileDTO);
             log.info("FileServiceImpl uploadImage method end ");
             return ResponseVo.successResponse(fileDTO);
         } catch (IllegalStateException e) {
@@ -134,5 +141,28 @@ public class FileServiceImpl implements FileService {
                 }
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public Boolean delfile(Long id) {
+        log.info("FileServiceImpl delfile method start Param:" + id);
+        CommonFile commonFile = fileDao.findOne(id);
+        if (commonFile == null) {
+            return true;
+        }
+        try {
+            fileDao.delete(id);
+            File file = new File(commonFile.getFilePath() + commonFile.getFileName());
+            if (!file.exists()){
+                return true;
+            }else if (!file.delete()) {
+                return false;
+            }
+        } catch (Exception e) {
+            log.info("Exception occured");
+            e.printStackTrace();
+        }
+        return true;
     }
 }

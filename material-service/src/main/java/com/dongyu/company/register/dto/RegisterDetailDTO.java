@@ -152,6 +152,12 @@ public class RegisterDetailDTO {
     @ApiModelProperty(value = "文件图片表ID")
     private Long commonFileId;
 
+    @ApiModelProperty(value = "文件存储路径")
+    private String filePath;
+
+    @ApiModelProperty(value = "文件名")
+    private String fileName;
+
     @ApiModelProperty(value = "MI工序详情返回集合")
     private List<EditProcessDTO> processDTOS;
 }

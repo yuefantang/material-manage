@@ -14,6 +14,10 @@ import lombok.Data;
 @Data
 @ApiModel("Mi登记分页查询返回DTO")
 public class RegisterListDTO {
+
+    @ApiModelProperty(value = "Mi登记ID")
+    private Long id;
+
     @ApiModelProperty(value = "DY编号")
     private String miDyCode;
 
