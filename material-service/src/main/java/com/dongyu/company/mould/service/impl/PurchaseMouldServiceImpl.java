@@ -91,10 +91,13 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
     public void edit(EditMouldDTO dto) {
         log.info("PurchaseMouldServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
         PurchaseMould oldPurchaseMould = purchaseMouldDao.findOneById(dto.getId());
-        //根据DY编号去重
-        PurchaseMould byDyCode = purchaseMouldDao.findByDyCode(dto.getDyCode());
-        if (byDyCode != null) {
-            throw new BizException("DY编号已存在,请重新输入");
+        //DY编号修改则根据DY编号去重
+        String oldDyCode = oldPurchaseMould.getDyCode();
+        if (!dto.getDyCode().equals(oldDyCode)){
+            PurchaseMould byDyCode = purchaseMouldDao.findByDyCode(dto.getDyCode());
+            if (byDyCode != null) {
+                throw new BizException("DY编号已存在,请重新输入");
+            }
         }
         BeanUtils.copyProperties(dto, oldPurchaseMould);
         purchaseMouldDao.save(oldPurchaseMould);

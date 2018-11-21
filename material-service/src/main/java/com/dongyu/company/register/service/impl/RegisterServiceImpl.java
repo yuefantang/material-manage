@@ -119,6 +119,14 @@ public class RegisterServiceImpl implements RegisterService {
         if (miRegister == null) {
             throw new BizException("不存在该MI登记记录");
         }
+        //判断DY编号是否修改
+       if (!miRegister.getMiDyCode().equals(editRegisterDTO.getMiDyCode())){
+           MiRegister byMiDyCode = registerDao.findByMiDyCode(editRegisterDTO.getMiDyCode());
+           //根据DY编号去重
+           if (byMiDyCode != null) {
+               throw new BizException("已存在该DY编号的MI");
+           }
+       }
         //修改MI登记表数据
         BeanUtils.copyProperties(editRegisterDTO, miRegister);
 

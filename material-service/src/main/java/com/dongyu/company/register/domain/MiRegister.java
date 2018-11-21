@@ -92,13 +92,13 @@ public class MiRegister extends BaseDomain {
     private String filmNumber;
 
     @Column(columnDefinition = "tinyint(4) COMMENT '线路'")
-    private boolean isLine = false;
+    private boolean line = false;
 
     @Column(columnDefinition = "tinyint(4) COMMENT '文字'")
-    private boolean isWords = false;
+    private boolean words = false;
 
     @Column(columnDefinition = "tinyint(4) COMMENT '其它'")
-    private boolean isOther = false;
+    private boolean other = false;
 
     @Column(columnDefinition = "tinyint(4) COMMENT '周期标记'")
     private boolean cycleMarker = false;
@@ -110,10 +110,10 @@ public class MiRegister extends BaseDomain {
     private boolean rohsMarker = false;
 
     @Column(columnDefinition = "tinyint(4) COMMENT '绿油'")
-    private boolean isGreenOil = false;
+    private boolean greenOil = false;
 
     @Column(columnDefinition = "tinyint(4) COMMENT '碳桥'")
-    private boolean isCarbonBridge = false;
+    private boolean carbonBridge = false;
 
     @Column(columnDefinition = "varchar(100) COMMENT '标记位置'")
     private String markPosition;
@@ -161,7 +161,7 @@ public class MiRegister extends BaseDomain {
     private String attention;
 
     @Column(columnDefinition = "tinyint(4) COMMENT '是否允许投产'")
-    private boolean isProduction = false;
+    private boolean production = false;
 
     @OneToOne
     @JoinColumn(name = "common_file_id", columnDefinition = "bigint(20) COMMENT '文件图片表ID'")
