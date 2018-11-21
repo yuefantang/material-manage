@@ -163,7 +163,7 @@ public class MiRegister extends BaseDomain {
     @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '是否允许投产'")
     private String production;
 
-    @OneToOne
-    @JoinColumn(name = "common_file_id", columnDefinition = "bigint(20) COMMENT '文件图片表ID'")
-    private CommonFile commonFile;
+    // @OneToOne
+    @Column(columnDefinition = "bigint(20) COMMENT '文件图片表ID'")
+    private Long commonFileId;
 }

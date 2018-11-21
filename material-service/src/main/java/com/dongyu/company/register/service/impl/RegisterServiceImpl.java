@@ -74,9 +74,8 @@ public class RegisterServiceImpl implements RegisterService {
         miRegister.setChangeDate(DateUtil.parseStrToDate(dto.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //获取上传图片
         if (dto.getCommonFileId() != null) {
-            CommonFile commonFile = fileDao.findOne(dto.getCommonFileId());
             //关联图片
-            miRegister.setCommonFile(commonFile);
+            miRegister.setCommonFileId(dto.getCommonFileId());
         }
         MiRegister save = registerDao.save(miRegister);
 
@@ -158,12 +157,14 @@ public class RegisterServiceImpl implements RegisterService {
             throw new BizException("不存在该MI登记，无法删除");
         }
         //删除图片
-        CommonFile commonFile = miRegister.getCommonFile();
-        if (commonFile != null) {
-            if (commonFile.getId() != null) {
-                Boolean delfile = fileService.delfile(commonFile.getId());
-                if (!delfile) {
-                    throw new BizException("图片删除失败！");
+        if (miRegister.getCommonFileId()!=null){
+            CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());
+            if (commonFile != null) {
+                if (commonFile.getId() != null) {
+                    Boolean delfile = fileService.delfile(commonFile.getId());
+                    if (!delfile) {
+                        throw new BizException("图片删除失败！");
+                    }
                 }
             }
         }
@@ -194,11 +195,13 @@ public class RegisterServiceImpl implements RegisterService {
         registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
 
         //返回图片信息
-        CommonFile commonFile = miRegister.getCommonFile();
-        if (commonFile != null) {
-            //registerDetailDTO.setFilePath(commonFile.getFilePath());
-            registerDetailDTO.setFileName(commonFile.getFileName());
-            registerDetailDTO.setCommonFileId(commonFile.getId());
+        if (miRegister.getCommonFileId()!=null){
+            CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());
+            if (commonFile != null) {
+                //registerDetailDTO.setFilePath(commonFile.getFilePath());
+                registerDetailDTO.setFileName(commonFile.getFileName());
+                registerDetailDTO.setCommonFileId(commonFile.getId());
+            }
         }
         //返回MI登记相关从工序
         List<MiProcess> processList = processDao.findByMiRegister(miRegister);
