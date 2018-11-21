@@ -91,29 +91,29 @@ public class MiRegister extends BaseDomain {
     @Column(columnDefinition = "varchar(100) COMMENT '菲林编号'")
     private String filmNumber;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT '线路'")
-    private boolean line = false;
+    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '线路'")
+    private String line;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT '文字'")
-    private boolean words = false;
+    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '文字'")
+    private String words;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT '其它'")
-    private boolean other = false;
+    @Column(columnDefinition = "varchar(4)NOT NULL DEFAULT '0' COMMENT '其它'")
+    private String other;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT '周期标记'")
-    private boolean cycleMarker = false;
+    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '周期标记'")
+    private String cycleMarker;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT 'UL标记'")
-    private boolean ulMarker = false;
+    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT 'UL标记'")
+    private String ulMarker;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT 'ROHS标记'")
-    private boolean rohsMarker = false;
+    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT 'ROHS标记'")
+    private String rohsMarker;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT '绿油'")
-    private boolean greenOil = false;
+    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '绿油'")
+    private String greenOil;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT '碳桥'")
-    private boolean carbonBridge = false;
+    @Column(columnDefinition = "varchar(4 )NOT NULL DEFAULT '0' COMMENT '碳桥'")
+    private String carbonBridge;
 
     @Column(columnDefinition = "varchar(100) COMMENT '标记位置'")
     private String markPosition;
@@ -160,8 +160,8 @@ public class MiRegister extends BaseDomain {
     @Column(columnDefinition = "varchar(255) COMMENT '注意事项'")
     private String attention;
 
-    @Column(columnDefinition = "tinyint(4) COMMENT '是否允许投产'")
-    private boolean production = false;
+    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '是否允许投产'")
+    private String production;
 
     @OneToOne
     @JoinColumn(name = "common_file_id", columnDefinition = "bigint(20) COMMENT '文件图片表ID'")

@@ -18,8 +18,8 @@ public class FileDTO {
     @ApiModelProperty(value = "文件图片存储ID")
     private Long id;
 
-    @ApiModelProperty(value = "文件存储路径")
-    private String filePath;
+//    @ApiModelProperty(value = "文件存储路径")
+//    private String filePath;
 
     @ApiModelProperty(value = "文件名")
     private String fileName;

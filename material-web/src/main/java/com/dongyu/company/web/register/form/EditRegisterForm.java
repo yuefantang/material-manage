@@ -86,28 +86,28 @@ public class EditRegisterForm {
     private String filmNumber;
 
     @ApiModelProperty(value = "线路")
-    private boolean isLine = false;
+    private String isLine;
 
     @ApiModelProperty(value = "文字")
-    private boolean isWords = false;
+    private String isWords;
 
     @ApiModelProperty(value = "其它")
-    private boolean isOther = false;
+    private String isOther;
 
     @ApiModelProperty(value = "周期标记")
-    private boolean cycleMarker = false;
+    private String cycleMarker;
 
     @ApiModelProperty(value = "UL标记")
-    private boolean ulMarker = false;
+    private String ulMarker;
 
     @ApiModelProperty(value = "ROHS标记")
-    private boolean rohsMarker = false;
+    private String rohsMarker;
 
     @ApiModelProperty(value = "绿油")
-    private boolean isGreenOil = false;
+    private String isGreenOil;
 
     @ApiModelProperty(value = "碳桥")
-    private boolean isCarbonBridge = false;
+    private String isCarbonBridge;
 
     @ApiModelProperty(value = "标记位置")
     private String markPosition;
@@ -161,7 +161,7 @@ public class EditRegisterForm {
     private String attention;
 
     @ApiModelProperty(value = "是否允许投产")
-    private boolean isProduction = false;
+    private String isProduction;
 
     @ApiModelProperty(value = "文件图片表ID")
     private Long commonFileId;

@@ -83,28 +83,28 @@ public class AddRegisterForm {
     private String filmNumber;
 
     @ApiModelProperty(value = "线路")
-    private boolean line = false;
+    private String line;
 
     @ApiModelProperty(value = "文字")
-    private boolean words = false;
+    private String words;
 
     @ApiModelProperty(value = "其它")
-    private boolean other = false;
+    private String other;
 
     @ApiModelProperty(value = "周期标记")
-    private boolean cycleMarker = false;
+    private String cycleMarker;
 
     @ApiModelProperty(value = "UL标记")
-    private boolean ulMarker = false;
+    private String ulMarker;
 
     @ApiModelProperty(value = "ROHS标记")
-    private boolean rohsMarker = false;
+    private String rohsMarker;
 
     @ApiModelProperty(value = "绿油")
-    private boolean greenOil = false;
+    private String greenOil;
 
     @ApiModelProperty(value = "碳桥")
-    private boolean carbonBridge = false;
+    private String carbonBridge;
 
     @ApiModelProperty(value = "标记位置")
     private String markPosition;
@@ -158,7 +158,7 @@ public class AddRegisterForm {
     private String attention;
 
     @ApiModelProperty(value = "是否允许投产")
-    private boolean production = false;
+    private String production;
 
     @ApiModelProperty(value = "文件图片表ID")
     private Long commonFileId;

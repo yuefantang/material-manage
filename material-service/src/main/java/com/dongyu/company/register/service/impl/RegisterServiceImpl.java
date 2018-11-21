@@ -120,13 +120,13 @@ public class RegisterServiceImpl implements RegisterService {
             throw new BizException("不存在该MI登记记录");
         }
         //判断DY编号是否修改
-       if (!miRegister.getMiDyCode().equals(editRegisterDTO.getMiDyCode())){
-           MiRegister byMiDyCode = registerDao.findByMiDyCode(editRegisterDTO.getMiDyCode());
-           //根据DY编号去重
-           if (byMiDyCode != null) {
-               throw new BizException("已存在该DY编号的MI");
-           }
-       }
+        if (!miRegister.getMiDyCode().equals(editRegisterDTO.getMiDyCode())) {
+            MiRegister byMiDyCode = registerDao.findByMiDyCode(editRegisterDTO.getMiDyCode());
+            //根据DY编号去重
+            if (byMiDyCode != null) {
+                throw new BizException("已存在该DY编号的MI");
+            }
+        }
         //修改MI登记表数据
         BeanUtils.copyProperties(editRegisterDTO, miRegister);
 
@@ -147,10 +147,6 @@ public class RegisterServiceImpl implements RegisterService {
             }
             return null;
         }).collect(Collectors.toList());
-
-        //图片修改待解决
-        //TODO
-
     }
 
     @Override
@@ -200,9 +196,9 @@ public class RegisterServiceImpl implements RegisterService {
         //返回图片信息
         CommonFile commonFile = miRegister.getCommonFile();
         if (commonFile != null) {
-            registerDetailDTO.setFilePath(commonFile.getFilePath());
+            //registerDetailDTO.setFilePath(commonFile.getFilePath());
             registerDetailDTO.setFileName(commonFile.getFileName());
-            registerDetailDTO.setCommonFileId(commonFile.getId());
+            //  registerDetailDTO.setCommonFileId(commonFile.getId());
         }
         //返回MI登记相关从工序
         List<MiProcess> processList = processDao.findByMiRegister(miRegister);
