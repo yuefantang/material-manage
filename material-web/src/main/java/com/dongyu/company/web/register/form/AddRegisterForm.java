@@ -83,27 +83,35 @@ public class AddRegisterForm {
     private String filmNumber;
 
     @ApiModelProperty(value = "线路")
+    @NotNull(message = "线路不能为空")
     private String line;
 
     @ApiModelProperty(value = "文字")
+    @NotNull(message = "文字不能为空")
     private String words;
 
     @ApiModelProperty(value = "其它")
+    @NotNull(message = "其它不能为空")
     private String other;
 
     @ApiModelProperty(value = "周期标记")
+    @NotNull(message = "周期标记不能为空")
     private String cycleMarker;
 
     @ApiModelProperty(value = "UL标记")
+    @NotNull(message = "UL标记不能为空")
     private String ulMarker;
 
     @ApiModelProperty(value = "ROHS标记")
+    @NotNull(message = "ROHS标记不能为空")
     private String rohsMarker;
 
     @ApiModelProperty(value = "绿油")
+    @NotNull(message = "绿油不能为空")
     private String greenOil;
 
     @ApiModelProperty(value = "碳桥")
+    @NotNull(message = "碳桥不能为空")
     private String carbonBridge;
 
     @ApiModelProperty(value = "标记位置")
@@ -158,6 +166,7 @@ public class AddRegisterForm {
     private String attention;
 
     @ApiModelProperty(value = "是否允许投产")
+    @NotNull(message = "是否允许投产不能为空")
     private String production;
 
     @ApiModelProperty(value = "文件图片表ID")

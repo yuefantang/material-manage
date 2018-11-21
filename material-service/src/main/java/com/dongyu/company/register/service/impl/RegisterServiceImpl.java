@@ -198,7 +198,7 @@ public class RegisterServiceImpl implements RegisterService {
         if (commonFile != null) {
             //registerDetailDTO.setFilePath(commonFile.getFilePath());
             registerDetailDTO.setFileName(commonFile.getFileName());
-            //  registerDetailDTO.setCommonFileId(commonFile.getId());
+            registerDetailDTO.setCommonFileId(commonFile.getId());
         }
         //返回MI登记相关从工序
         List<MiProcess> processList = processDao.findByMiRegister(miRegister);

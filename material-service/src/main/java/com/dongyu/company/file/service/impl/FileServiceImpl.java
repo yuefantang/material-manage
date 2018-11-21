@@ -154,9 +154,9 @@ public class FileServiceImpl implements FileService {
         try {
             fileDao.delete(id);
             File file = new File(commonFile.getFilePath() + commonFile.getFileName());
-            if (!file.exists()){
+            if (!file.exists()) {
                 return true;
-            }else if (!file.delete()) {
+            } else if (!file.delete()) {
                 return false;
             }
         } catch (Exception e) {
