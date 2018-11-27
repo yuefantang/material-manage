@@ -105,7 +105,7 @@ public class RegisterDetailDTO {
     private String markPosition;
 
     @ApiModelProperty(value = "样板确认日期yyyy-MM-dd")
-    private String ConfirmDate;
+    private String confirmDate;
 
     @ApiModelProperty(value = "建档日期yyyy-MM-dd")
     private String recordDate;

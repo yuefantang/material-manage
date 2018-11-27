@@ -119,7 +119,7 @@ public class MiRegister extends BaseDomain {
     private String markPosition;
 
     @Column(columnDefinition = "datetime COMMENT '样板确认日期'")
-    private Date ConfirmDate;
+    private Date confirmDate;
 
     @Column(columnDefinition = "datetime COMMENT '建档日期'")
     private Date recordDate;

@@ -120,7 +120,7 @@ public class AddRegisterForm {
     @ApiModelProperty(value = "样板确认日期yyyy-MM-dd")
     @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
     @NotBlank(message = "样板确认日期不能为空")
-    private String ConfirmDate;
+    private String confirmDate;
 
     @ApiModelProperty(value = "建档日期yyyy-MM-dd")
     @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
