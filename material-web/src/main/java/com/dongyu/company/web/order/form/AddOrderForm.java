@@ -2,6 +2,7 @@ package com.dongyu.company.web.order.form;
 
 import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.utils.DateUtil;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
@@ -17,6 +18,7 @@ import javax.validation.constraints.Pattern;
  * @since 1.0.0
  */
 @Data
+@ApiModel("新增下单Form")
 public class AddOrderForm {
 
     @ApiModelProperty(value = "DY编号")

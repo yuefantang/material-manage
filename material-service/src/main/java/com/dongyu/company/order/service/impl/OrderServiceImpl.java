@@ -9,9 +9,10 @@ import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.domain.Order;
-import com.dongyu.company.order.domain.OrderSpecs;
+import com.dongyu.company.order.dao.OrderSpecs;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
+import com.dongyu.company.order.dto.AddSurplusDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
@@ -88,8 +89,23 @@ public class OrderServiceImpl implements OrderService {
         //resultDTO.setHaredMaterialsNum();
         //返回余下张数(计算规则：)
         //resultDTO.setRemainNum();
-        log.info("OrderServiceImpl add method end：");
+        log.info("OrderServiceImpl add method end;");
         return resultDTO;
+    }
+
+    @Override
+    public void addSurplus(AddSurplusDTO dto) {
+        log.info("OrderServiceImpl addSurplus method start Parm:" + JSONObject.toJSONString(dto));
+        if (dto.getId() == null) {
+            throw new BizException("下单ID不能为空！");
+        }
+        Order order = orderDao.findOne(dto.getId());
+        if (order == null) {
+            throw new BizException("下单ID数据不存在！");
+        }
+        BeanUtils.copyProperties(dto, order);
+        orderDao.save(order);
+        log.info("OrderServiceImpl addSurplus method end;");
     }
 
     @Override
@@ -112,6 +128,7 @@ public class OrderServiceImpl implements OrderService {
             orderListDTO.setDeliveryDate(DateUtil.parseDateToStr(item.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             return orderListDTO;
         });
+        log.info("OrderServiceImpl getlist method end;");
         return pageDTO;
     }
 

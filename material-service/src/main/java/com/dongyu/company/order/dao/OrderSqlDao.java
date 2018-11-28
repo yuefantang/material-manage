@@ -1,4 +1,4 @@
-package com.dongyu.company.order.domain;
+package com.dongyu.company.order.dao;
 
 import com.dongyu.company.order.dto.OrderQueryDTO;
 import org.apache.commons.lang3.StringUtils;

@@ -62,13 +62,13 @@ public class Order extends BaseDomain {
     private String squareNum;
 
     @Column(columnDefinition = "varchar(50) COMMENT '投产数量'")
-    private String CommissioningNum;
+    private String commissioningNum;
 
     @Column(columnDefinition = "varchar(255) COMMENT '余料处理方法'")
     private String surplusTreatment;
 
     @Column(columnDefinition = "varchar(255) COMMENT '备注'")
-    private String Remarks;
+    private String remarks;
 
     @Column(columnDefinition = "varchar(50) COMMENT '余料PCS'")
     private String surplusPcs;
