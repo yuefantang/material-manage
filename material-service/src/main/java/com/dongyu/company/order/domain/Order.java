@@ -1,6 +1,7 @@
 package com.dongyu.company.order.domain;
 
 import com.dongyu.company.common.domain.BaseDomain;
+import com.dongyu.company.register.domain.MiRegister;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -10,6 +11,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -49,6 +52,31 @@ public class Order extends BaseDomain {
     @Column(columnDefinition = "datetime COMMENT '交货日期'")
     private Date deliveryDate;
 
-    @Column(columnDefinition = "varchar(50) COMMENT '备品率'")
+    @Column(columnDefinition = "varchar(50) COMMENT '备品率(单位千分之几)'")
     private String sparePartsRate;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '备品数'")
+    private String sparePartsNum;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '平方数'")
+    private String squareNum;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '投产数量'")
+    private String CommissioningNum;
+
+    @Column(columnDefinition = "varchar(255) COMMENT '余料处理方法'")
+    private String surplusTreatment;
+
+    @Column(columnDefinition = "varchar(255) COMMENT '备注'")
+    private String Remarks;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '余料PCS'")
+    private String surplusPcs;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '余料PNL'")
+    private String surplusPnl;
+
+    @ManyToOne
+    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(50) COMMENT 'MI登记ID'")
+    private MiRegister miRegister;
 }

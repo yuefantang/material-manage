@@ -1,5 +1,6 @@
 package com.dongyu.company.web.register.form;
 
+import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.register.dto.EditProcessDTO;
 import io.swagger.annotations.ApiModel;
@@ -9,6 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 /**
@@ -63,6 +65,8 @@ public class EditRegisterForm {
     private String dieSize;
 
     @ApiModelProperty(value = "一模出几")
+    @NotNull(message = "一模出几不能为空")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "一模出几格式错误，只能输入数字")
     private String miNumber;
 
     @ApiModelProperty(value = "模具编号")
@@ -86,14 +90,17 @@ public class EditRegisterForm {
     private String filmNumber;
 
     @ApiModelProperty(value = "线路")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "线路格式错误，只能输入数字")
     @NotNull(message = "线路不能为空")
     private String line;
 
     @ApiModelProperty(value = "文字")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "文字格式错误，只能输入数字")
     @NotNull(message = "文字不能为空")
     private String words;
 
     @ApiModelProperty(value = "其它")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "其它格式错误，只能输入数字")
     @NotNull(message = "其它不能为空")
     private String other;
 
@@ -110,10 +117,12 @@ public class EditRegisterForm {
     private String rohsMarker;
 
     @ApiModelProperty(value = "绿油")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "绿油格式错误，只能输入数字")
     @NotNull(message = "绿油不能为空")
     private String greenOil;
 
     @ApiModelProperty(value = "碳桥")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "碳桥格式错误，只能输入数字")
     @NotNull(message = "碳桥不能为空")
     private String carbonBridge;
 
@@ -143,9 +152,11 @@ public class EditRegisterForm {
     private String changeBasis;
 
     @ApiModelProperty(value = "大料PCS数")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "大料PCS数格式错误，只能输入数字")
     private String pcsNumber;
 
     @ApiModelProperty(value = "大料利用率")
+    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "大料利用率格式错误，只能输入正整数或小数")
     private String utilizationRatio;
 
     @ApiModelProperty(value = "A(尺寸)")
@@ -164,6 +175,7 @@ public class EditRegisterForm {
     private String punching;
 
     @ApiModelProperty(value = "大料PNL数")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "大料PNL数格式错误，只能输入数字")
     private String pnlNumber;
 
     @ApiModelProperty(value = "注意事项")

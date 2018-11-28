@@ -1,10 +1,13 @@
 package com.dongyu.company.web.order.form;
 
+import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.utils.DateUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.Pattern;
 
 /**
  * 新增下单Form
@@ -21,6 +24,7 @@ public class AddOrderForm {
     private String orderDyCode;
 
     @ApiModelProperty(value = "订单数量")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "订单数量格式错误，只能输入数字")
     @NotBlank(message = "订单数量不能为空")
     private String orderNum;
 
@@ -39,6 +43,7 @@ public class AddOrderForm {
     private String deliveryDate;
 
     @ApiModelProperty(value = "备品率")
+    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "备品率格式错误，只能输入正整数或小数")
     @NotBlank(message = "备品率")
     private String sparePartsRate;
 

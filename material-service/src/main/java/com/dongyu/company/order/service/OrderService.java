@@ -2,6 +2,7 @@ package com.dongyu.company.order.service;
 
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.order.dto.AddOrderDTO;
+import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
@@ -20,7 +21,7 @@ public interface OrderService {
      *
      * @param addOrderDTO
      */
-    void add(AddOrderDTO addOrderDTO);
+    AddOrderResultDTO add(AddOrderDTO addOrderDTO);
 
     /**
      * 下单分页查询

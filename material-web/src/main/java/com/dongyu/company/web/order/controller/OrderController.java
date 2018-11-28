@@ -4,6 +4,7 @@ import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.order.dto.AddOrderDTO;
+import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
 import com.dongyu.company.order.service.OrderService;
@@ -38,11 +39,11 @@ public class OrderController {
 
     @ApiOperation("新增下单")
     @PostMapping(value = "/add")
-    public ResponseVo add(@Valid @RequestBody AddOrderForm addOrderForm) {
+    public ResponseVo<AddOrderResultDTO> add(@Valid @RequestBody AddOrderForm addOrderForm) {
         AddOrderDTO addOrderDTO = new AddOrderDTO();
         BeanUtils.copyProperties(addOrderForm, addOrderDTO);
-        orderService.add(addOrderDTO);
-        return ResponseVo.successResponse();
+        AddOrderResultDTO resultDTO = orderService.add(addOrderDTO);
+        return ResponseVo.successResponse(resultDTO);
     }
 
 

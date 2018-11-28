@@ -17,11 +17,14 @@ public class Constants {
     //用户没删除常量
     public static final boolean USER_NOT_DELETED = false;
 
-    //数字校验规则
+    //只能输入正整数校验规则
     public static final String NUMBER_PATTERN = "^[0-9]*$";
 
+    //只能输入整数或小数的正则表达式校验规则
+    public static final String NUMBER_POINT_PATTERN = "^[0-9]+([.]{1}[0-9]+){0,1}$";
+
     //密码规则
-    public static final String PASSWORD_PATTERN = "^[0-9a-zA-Z]{6}$";
+    public static final String PASSWORD_PATTERN = "^[0-9a-zA-Z]{6,}$";
 
     //生成xls最大允许的行数
     public static final int MAX_XLS_TOTAL_ROW = 1000000;
