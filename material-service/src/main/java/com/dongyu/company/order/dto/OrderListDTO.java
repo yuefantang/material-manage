@@ -34,7 +34,7 @@ public class OrderListDTO {
     private String orderNum;
 
     @ApiModelProperty(value = "客户订单号")
-    private String ustomercOrderCode;
+    private String customerOrderCode;
 
     @ApiModelProperty(value = "下单日期yyyy-MM-dd")
     private String orderDate;

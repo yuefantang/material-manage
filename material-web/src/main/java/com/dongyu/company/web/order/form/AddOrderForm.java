@@ -32,7 +32,7 @@ public class AddOrderForm {
 
     @ApiModelProperty(value = "客户订单号")
     @NotBlank(message = "客户订单号不能为空")
-    private String ustomercOrderCode;
+    private String customerOrderCode;
 
     @ApiModelProperty(value = "下单日期yyyy-MM-dd")
     @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)

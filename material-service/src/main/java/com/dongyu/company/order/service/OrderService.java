@@ -4,6 +4,7 @@ import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.AddSurplusDTO;
+import com.dongyu.company.order.dto.EditOrderDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
@@ -54,4 +55,20 @@ public interface OrderService {
      * @return
      */
     OrderDetailDTO getDetail(Long id);
+
+    /**
+     * 打印详情
+     *
+     * @param id 下单id
+     * @return
+     */
+    OrderDetailDTO getPrintOrder(Long id);
+
+    /**
+     * 编辑下单
+     *
+     * @param editOrderDTO
+     */
+    void edit(EditOrderDTO editOrderDTO);
+
 }

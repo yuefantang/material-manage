@@ -1,5 +1,6 @@
 package com.dongyu.company.order.dao;
 
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.order.dto.OrderQueryDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,7 @@ import java.util.List;
 public class OrderSpecs {
 
     private static final String COMMISSIONING_CODE = "commissioningCode";
+    private static final String DELETED = "deleted";
 
     public static Specification<Order> orederQuerySpec(OrderQueryDTO orderQueryDTO) {
         return (root, query, builder) -> {
@@ -27,6 +29,8 @@ public class OrderSpecs {
             if (StringUtils.isNotBlank(orderQueryDTO.getCommissioningCode())) {
                 list.add(builder.like(root.get(COMMISSIONING_CODE), "%" + orderQueryDTO.getCommissioningCode() + "%"));
             }
+            //未删除订单
+            list.add(builder.equal(root.get(DELETED), DeletedEnum.UNDELETED.getValue()));
             return builder.and(list.toArray(new Predicate[list.size()]));
         };
     }

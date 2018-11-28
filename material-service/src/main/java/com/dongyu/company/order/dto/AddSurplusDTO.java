@@ -18,8 +18,8 @@ public class AddSurplusDTO {
     //余料处理方法
     private String surplusTreatment;
 
-    //备注
-    private String remarks;
+    //余料处理备注
+    private String surplusRemarks;
 
     //余料PCS
     private String surplusPcs;

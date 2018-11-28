@@ -26,8 +26,8 @@ public class AddSurplusForm {
     @NotBlank(message = "余料处理方法不能为空")
     private String surplusTreatment;
 
-    @ApiModelProperty(value = "备注")
-    private String remarks;
+    @ApiModelProperty(value = "余料处理备注")
+    private String surplusRemarks;
 
     @ApiModelProperty(value = "余料PCS")
     @Pattern(regexp = Constants.NUMBER_PATTERN, message = "余料PCS格式错误，只能输入数字")

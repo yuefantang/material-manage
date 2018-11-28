@@ -19,7 +19,7 @@ public class AddOrderDTO {
     private String orderNum;
 
     //客户订单号
-    private String ustomercOrderCode;
+    private String customerOrderCode;
 
     //下单日期yyyy-MM-dd
     private String orderDate;

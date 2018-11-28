@@ -2,23 +2,29 @@ package com.dongyu.company.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.order.dao.OrderDao;
+import com.dongyu.company.order.dao.SurplusDao;
 import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.order.dao.OrderSpecs;
+import com.dongyu.company.order.domain.Surplus;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.AddSurplusDTO;
+import com.dongyu.company.order.dto.EditOrderDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
 import com.dongyu.company.order.service.OrderService;
 import com.dongyu.company.register.dao.RegisterDao;
 import com.dongyu.company.register.domain.MiRegister;
+import com.dongyu.company.register.dto.RegisterDetailDTO;
+import com.dongyu.company.register.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +52,10 @@ public class OrderServiceImpl implements OrderService {
     private RegisterDao registerDao;
     @Autowired
     private FileDao fileDao;
+    @Autowired
+    private RegisterService registerService;
+    @Autowired
+    private SurplusDao surplusDao;
 
     @Override
     @Transactional
@@ -68,7 +78,9 @@ public class OrderServiceImpl implements OrderService {
         //备品率
         double parseDouble = Double.parseDouble(addOrderDTO.getSparePartsRate());
         //生成投产数量（规则：订单数+订单数*备品率）
-        order.setCommissioningNum(String.valueOf(orderNum + orderNum * parseDouble));
+        order.setCommissioningNum(String.valueOf(Math.ceil(orderNum + orderNum * parseDouble)));
+        //备品数
+        order.setSparePartsNum(String.valueOf(orderNum * parseDouble));
         //生成平方数(规则：模片尺寸相乘/一模出几/1000000再乘以订单数)
         //order.setSquareNum();
         Order save = orderDao.save(order);
@@ -94,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void addSurplus(AddSurplusDTO dto) {
         log.info("OrderServiceImpl addSurplus method start Parm:" + JSONObject.toJSONString(dto));
         if (dto.getId() == null) {
@@ -103,7 +116,12 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             throw new BizException("下单ID数据不存在！");
         }
-        BeanUtils.copyProperties(dto, order);
+        //存储余料处理数据
+        Surplus surplus = new Surplus();
+        BeanUtils.copyProperties(dto, surplus);
+        Surplus save = surplusDao.save(surplus);
+        //将余料处理数据与订单关联
+        order.setSurplus(save);
         orderDao.save(order);
         log.info("OrderServiceImpl addSurplus method end;");
     }
@@ -134,12 +152,82 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleted(Long id) {
+        log.info("OrderServiceImpl deleted method start Parm:" + id);
+        Order order = orderDao.findOne(id);
+        if (order == null) {
+            throw new BizException("该订单已不存在！");
+        }
+        order.setDeleted(DeletedEnum.DELETED.getValue());
+        orderDao.save(order);
+        log.info("OrderServiceImpl deleted method end;");
+    }
 
+    @Override
+    public void edit(EditOrderDTO dto) {
+        log.info("OrderServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
+
+
+        log.info("OrderServiceImpl edit method end;");
     }
 
     @Override
     public OrderDetailDTO getDetail(Long id) {
-        return null;
+        log.info("OrderServiceImpl getDetail method start Parm:" + id);
+        Order order = orderDao.findOne(id);
+        if (order == null) {
+            throw new BizException("该订单已不存在！");
+        }
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+        BeanUtils.copyProperties(order, orderDetailDTO);
+        //下单日期
+        orderDetailDTO.setOrderDate(DateUtil.parseDateToStr(order.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //交货日期
+        orderDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(order.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //线路印次
+        //orderDetailDTO.setLineImpression();
+        //定位孔数
+        // orderDetailDTO.setLocatingNum();
+        //绿油印次
+        //orderDetailDTO.setGreenOilImpression();
+        //文字印次
+        //  orderDetailDTO.setWordsImpression();
+        //碳桥印次
+        // orderDetailDTO.setCarbonBridgeImpression();
+        //其它印次
+        // orderDetailDTO.setOtherImpression();
+        //冲床冲次
+        //  orderDetailDTO.setPunch();
+
+        //余料处理数据返回
+        Surplus surplus = order.getSurplus();
+        if (surplus != null) {
+            BeanUtils.copyProperties(surplus, orderDetailDTO);
+        }
+        //MI登记详情返回数据
+        MiRegister miRegister = order.getMiRegister();
+        if (miRegister != null) {
+            RegisterDetailDTO detail = registerService.getDetail(miRegister.getId());
+            orderDetailDTO.setRegisterDetailDTO(detail);
+        }
+        log.info("OrderServiceImpl getDetail method end;");
+        return orderDetailDTO;
+    }
+
+    @Override
+    public OrderDetailDTO getPrintOrder(Long id) {
+        log.info("OrderServiceImpl getPrintOrder method start Parm:" + id);
+        Order order = orderDao.findOne(id);
+        if (order == null) {
+            throw new BizException("该订单已不存在！");
+        }
+        Surplus surplus = order.getSurplus();
+        if (surplus == null) {
+            throw new BizException("该订单余料处理未填写！");
+        }
+        OrderDetailDTO detailDTO = this.getDetail(id);
+
+        log.info("OrderServiceImpl getPrintOrder method end;");
+        return detailDTO;
     }
 
     //生成投产单号，格式为日期yyMMdd+4位自增流水号(1811270001)，流水号按天每天重新计数

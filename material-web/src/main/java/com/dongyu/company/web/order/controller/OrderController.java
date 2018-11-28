@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,31 +78,29 @@ public class OrderController {
         return ResponseVo.successResponse(detail);
     }
 
-//    @ApiOperation("下单打印")
-//    @GetMapping(value = "/print")
-//    public ResponseVo<OrderDetailDTO> print(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
-//        OrderDetailDTO detail = orderService.getDetail(id);
-//        return ResponseVo.successResponse(detail);
-//    }
+
+    @ApiOperation("删除下单")
+    @DeleteMapping(value = "/deleted")
+    public ResponseVo deleted(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
+        orderService.deleted(id);
+        return ResponseVo.successResponse();
+    }
+
+    @ApiOperation("下单打印")
+    @GetMapping(value = "/print")
+    public ResponseVo<OrderDetailDTO> print(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
+        OrderDetailDTO printOrder = orderService.getPrintOrder(id);
+        return ResponseVo.successResponse(printOrder);
+    }
 
 
-//
-//    @ApiOperation("编辑模具采购")
+//    @ApiOperation("编辑下单")
 //    @PostMapping(value = "/edit")
-//    public ResponseVo edite(@Valid @RequestBody EditMouldForm editMouldForm) {
-//        EditMouldDTO editMouldDTO = new EditMouldDTO();
-//        BeanUtils.copyProperties(editMouldForm, editMouldDTO);
-//        editMouldDTO.setPurchaseDate(DateUtil.parseStrToDate(editMouldForm.getPurchaseDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-//        purchaseMouldService.edit(editMouldDTO);
+//    public ResponseVo edite(@Valid @RequestBody EditOrderForm editOrderForm) {
+//        EditOrderDTO editOrderDTO = new EditOrderDTO();
+//        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
+//        orderService.edit(editOrderDTO);
 //        return ResponseVo.successResponse();
 //    }
-//
-//    @ApiOperation("删除模具采购")
-//    @DeleteMapping(value = "/deleted")
-//    public ResponseVo deleted(@ApiParam(name = "id", value = "模具采购id") @RequestParam("id") Long id) {
-//        purchaseMouldService.deleted(id);
-//        return ResponseVo.successResponse();
-//    }
-//
 
 }

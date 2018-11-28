@@ -1,5 +1,6 @@
 package com.dongyu.company.order.domain;
 
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.domain.BaseDomain;
 import com.dongyu.company.register.domain.MiRegister;
 import lombok.Data;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -44,7 +46,7 @@ public class Order extends BaseDomain {
     private String orderNum;
 
     @Column(columnDefinition = "varchar(50) COMMENT '客户订单号'")
-    private String ustomercOrderCode;
+    private String customerOrderCode;
 
     @Column(columnDefinition = "datetime COMMENT '下单日期'")
     private Date orderDate;
@@ -64,19 +66,14 @@ public class Order extends BaseDomain {
     @Column(columnDefinition = "varchar(50) COMMENT '投产数量'")
     private String commissioningNum;
 
-    @Column(columnDefinition = "varchar(255) COMMENT '余料处理方法'")
-    private String surplusTreatment;
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单是否删除（0：未删除，1：已删除）'")
+    private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
-    @Column(columnDefinition = "varchar(255) COMMENT '备注'")
-    private String remarks;
-
-    @Column(columnDefinition = "varchar(50) COMMENT '余料PCS'")
-    private String surplusPcs;
-
-    @Column(columnDefinition = "varchar(50) COMMENT '余料PNL'")
-    private String surplusPnl;
+    @OneToOne
+    @JoinColumn(name = "surplus_id", columnDefinition = "bigint(20) COMMENT '余料处理ID'")
+    private Surplus surplus;
 
     @ManyToOne
-    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(50) COMMENT 'MI登记ID'")
+    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记ID'")
     private MiRegister miRegister;
 }
