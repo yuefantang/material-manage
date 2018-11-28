@@ -13,4 +13,8 @@ import lombok.Data;
 @Data
 @ApiModel("下单详情返回DTO")
 public class OrderDetailDTO {
+
+
+
+
 }

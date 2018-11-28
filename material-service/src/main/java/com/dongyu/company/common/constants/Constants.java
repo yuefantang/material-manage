@@ -23,6 +23,9 @@ public class Constants {
     //只能输入整数或小数的正则表达式校验规则
     public static final String NUMBER_POINT_PATTERN = "^[0-9]+([.]{1}[0-9]+){0,1}$";
 
+    //只能输入乘法算式的正则表达式校验规则（针对尺寸）（23.34*89）
+    public static final String SIZE_PATTERN = "^[0-9]+([.]{1}[0-9]+){0,1}(\\*[0-9]+([.]{1}[0-9]+)){0,1}$";
+
     //密码规则
     public static final String PASSWORD_PATTERN = "^[0-9a-zA-Z]{6,}$";
 

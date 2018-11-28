@@ -6,6 +6,7 @@ import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.AddSurplusDTO;
+import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
 import com.dongyu.company.order.service.OrderService;
@@ -14,6 +15,7 @@ import com.dongyu.company.web.order.form.AddSurplusForm;
 import com.dongyu.company.web.order.form.OrderQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -66,6 +69,22 @@ public class OrderController {
         PageDTO<OrderListDTO> pageDTO = orderService.getlist(orderQueryDTO);
         return ResponseVo.successResponse(pageDTO);
     }
+
+    @ApiOperation("下单详情")
+    @GetMapping(value = "/detail")
+    public ResponseVo<OrderDetailDTO> detail(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
+        OrderDetailDTO detail = orderService.getDetail(id);
+        return ResponseVo.successResponse(detail);
+    }
+
+//    @ApiOperation("下单打印")
+//    @GetMapping(value = "/print")
+//    public ResponseVo<OrderDetailDTO> print(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
+//        OrderDetailDTO detail = orderService.getDetail(id);
+//        return ResponseVo.successResponse(detail);
+//    }
+
+
 //
 //    @ApiOperation("编辑模具采购")
 //    @PostMapping(value = "/edit")
@@ -84,10 +103,5 @@ public class OrderController {
 //        return ResponseVo.successResponse();
 //    }
 //
-//    @ApiOperation("模具采购详情")
-//    @GetMapping(value = "/detail")
-//    public ResponseVo<MouldDetailDTO> detail(@ApiParam(name = "id", value = "模具采购id") @RequestParam("id") Long id) {
-//        MouldDetailDTO detail = purchaseMouldService.getDetail(id);
-//        return ResponseVo.successResponse(detail);
-//    }
+
 }
