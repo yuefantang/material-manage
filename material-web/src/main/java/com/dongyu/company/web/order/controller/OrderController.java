@@ -6,12 +6,14 @@ import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.AddSurplusDTO;
+import com.dongyu.company.order.dto.EditOrderDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
 import com.dongyu.company.order.service.OrderService;
 import com.dongyu.company.web.order.form.AddOrderForm;
 import com.dongyu.company.web.order.form.AddSurplusForm;
+import com.dongyu.company.web.order.form.EditOrderForm;
 import com.dongyu.company.web.order.form.OrderQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -94,13 +96,13 @@ public class OrderController {
     }
 
 
-//    @ApiOperation("编辑下单")
-//    @PostMapping(value = "/edit")
-//    public ResponseVo edite(@Valid @RequestBody EditOrderForm editOrderForm) {
-//        EditOrderDTO editOrderDTO = new EditOrderDTO();
-//        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
-//        orderService.edit(editOrderDTO);
-//        return ResponseVo.successResponse();
-//    }
+    @ApiOperation("编辑下单")
+    @PostMapping(value = "/edit")
+    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
+        EditOrderDTO editOrderDTO = new EditOrderDTO();
+        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
+        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
+        return ResponseVo.successResponse(edit);
+    }
 
 }

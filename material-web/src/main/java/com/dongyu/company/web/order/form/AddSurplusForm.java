@@ -20,7 +20,7 @@ import javax.validation.constraints.Pattern;
 public class AddSurplusForm {
 
     @ApiModelProperty(value = "下单ID")
-    private Long id;
+    private Long orderId;
 
     @ApiModelProperty(value = "余料处理方法")
     @NotBlank(message = "余料处理方法不能为空")

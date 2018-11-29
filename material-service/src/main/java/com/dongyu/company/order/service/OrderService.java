@@ -69,6 +69,6 @@ public interface OrderService {
      *
      * @param editOrderDTO
      */
-    void edit(EditOrderDTO editOrderDTO);
+    AddOrderResultDTO edit(EditOrderDTO editOrderDTO);
 
 }

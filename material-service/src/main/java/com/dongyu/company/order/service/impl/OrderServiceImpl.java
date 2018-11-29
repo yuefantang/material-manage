@@ -76,6 +76,19 @@ public class OrderServiceImpl implements OrderService {
         order.setCommissioningCode(this.createCode());
         //关联MI登记
         order.setMiRegister(byMiDyCode);
+        log.info("OrderServiceImpl add method end;");
+        return this.addAndEdit(order, addOrderDTO);
+    }
+
+    /**
+     * 下单新增和修改公用方法
+     *
+     * @param order
+     * @return
+     */
+    public AddOrderResultDTO addAndEdit(Order order, AddOrderDTO addOrderDTO) {
+        log.info("OrderServiceImpl addAndEdit method start:");
+        MiRegister byMiDyCode = order.getMiRegister();
         //订单数
         Integer orderNum = Integer.valueOf(Optional.ofNullable(addOrderDTO.getOrderNum()).orElse("0"));
         //备品率
@@ -94,6 +107,7 @@ public class OrderServiceImpl implements OrderService {
         String squareNum = String.valueOf(v2 / miNumber / 1000000 * orderNum);
         order.setSquareNum(squareNum);
         Order save = orderDao.save(order);
+
         //新增完返回余料处理需要的数据
         AddOrderResultDTO resultDTO = new AddOrderResultDTO();
         resultDTO.setId(save.getId());
@@ -115,28 +129,61 @@ public class OrderServiceImpl implements OrderService {
         //返回余下张数(计算规则：共用料张数的小数部分)
         String remainNum = "0." + haredMaterialsNum.replaceAll("\\d+\\.", "");
         resultDTO.setRemainNum(remainNum);
-        log.info("OrderServiceImpl add method end;");
+        log.info("OrderServiceImpl addAndEdit method end;");
         return resultDTO;
+    }
+
+
+    @Override
+    public AddOrderResultDTO edit(EditOrderDTO dto) {
+        log.info("OrderServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
+        if (dto.getId() == null) {
+            throw new BizException("下单ID不能为空！");
+        }
+        Order order = orderDao.findOne(dto.getId());
+        if (order == null) {
+            throw new BizException("该订单不存在！");
+        }
+        if (!dto.getOrderDyCode().equals(order.getOrderDyCode())) {
+            //用修改的下单DY编号去查询MI登记
+            MiRegister byMiDyCode = registerDao.findByMiDyCode(dto.getOrderDyCode());
+            if (byMiDyCode == null) {
+                throw new BizException("该DY编号没有对应的MI登记，请核实!");
+            }
+            //关联MI登记
+            order.setMiRegister(byMiDyCode);
+        }
+        BeanUtils.copyProperties(dto, order);
+        order.setOrderDate(DateUtil.parseStrToDate(dto.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        order.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        log.info("OrderServiceImpl edit method end;");
+        return this.addAndEdit(order, dto);
     }
 
     @Override
     @Transactional
     public void addSurplus(AddSurplusDTO dto) {
         log.info("OrderServiceImpl addSurplus method start Parm:" + JSONObject.toJSONString(dto));
-        if (dto.getId() == null) {
+        if (dto.getOrderId() == null) {
             throw new BizException("下单ID不能为空！");
         }
-        Order order = orderDao.findOne(dto.getId());
+        Order order = orderDao.findOne(dto.getOrderId());
         if (order == null) {
             throw new BizException("下单ID数据不存在！");
         }
         //存储余料处理数据
-        Surplus surplus = new Surplus();
+        Surplus surplus = order.getSurplus();
+        //不等于空，说明是下单编辑修改
+        if (surplus == null) {
+            surplus = new Surplus();
+        }
         BeanUtils.copyProperties(dto, surplus);
         Surplus save = surplusDao.save(surplus);
         //将余料处理数据与订单关联
-        order.setSurplus(save);
-        orderDao.save(order);
+        if ( order.getSurplus() == null) {//下单新增
+            order.setSurplus(save);
+            orderDao.save(order);
+        }
         log.info("OrderServiceImpl addSurplus method end;");
     }
 
@@ -177,14 +224,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void edit(EditOrderDTO dto) {
-        log.info("OrderServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
-
-
-        log.info("OrderServiceImpl edit method end;");
-    }
-
-    @Override
     public OrderDetailDTO getDetail(Long id) {
         log.info("OrderServiceImpl getDetail method start Parm:" + id);
         Order order = orderDao.findOne(id);
@@ -197,7 +236,7 @@ public class OrderServiceImpl implements OrderService {
         orderDetailDTO.setOrderDate(DateUtil.parseDateToStr(order.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //交货日期
         orderDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(order.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-        //线路印次
+        //线路印次（计算规则：）
         //orderDetailDTO.setLineImpression();
         //定位孔数
         // orderDetailDTO.setLocatingNum();

@@ -13,7 +13,7 @@ import lombok.Data;
 public class AddSurplusDTO {
 
     //下单ID
-    private Long id;
+    private Long orderId;
 
     //余料处理方法
     private String surplusTreatment;
