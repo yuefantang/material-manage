@@ -17,14 +17,17 @@ public class Constants {
     //用户没删除常量
     public static final boolean USER_NOT_DELETED = false;
 
-    //只能输入正整数校验规则
+    //只能输入整数校验规则
     public static final String NUMBER_PATTERN = "^[0-9]*$";
+
+    //只能输入正整数校验规则
+    public static final String POSITIVE_NUMBER_PATTERN = "^[1-9]*$";
 
     //只能输入整数或小数的正则表达式校验规则
     public static final String NUMBER_POINT_PATTERN = "^[0-9]+([.]{1}[0-9]+){0,1}$";
 
     //只能输入乘法算式的正则表达式校验规则（针对尺寸）（23.34*89）
-    public static final String SIZE_PATTERN = "^[0-9]+([.]{1}[0-9]+){0,1}(\\*[0-9]+([.]{1}[0-9]+)){0,1}$";
+    public static final String SIZE_PATTERN = "^[0-9]+([.]{1}[0-9]+)?(\\*[0-9]+([.]{1}[0-9]+)?)$";
 
     //密码规则
     public static final String PASSWORD_PATTERN = "^[0-9a-zA-Z]{6,}$";

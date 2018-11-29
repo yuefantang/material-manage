@@ -61,9 +61,11 @@ public class EditRegisterForm {
     private String changeContent;
 
     @ApiModelProperty(value = "单片尺寸")
+    @Pattern(regexp = Constants.SIZE_PATTERN, message = "单片尺寸格式错误,格式为：23.34*89")
     private String singleSize;
 
     @ApiModelProperty(value = "模片尺寸")
+    @NotNull(message = "模片尺寸不能为空")
     @Pattern(regexp = Constants.SIZE_PATTERN, message = "模片尺寸格式错误,格式为：23.34*89")
     private String dieSize;
 
@@ -155,7 +157,7 @@ public class EditRegisterForm {
     private String changeBasis;
 
     @ApiModelProperty(value = "大料PCS数")
-    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "大料PCS数格式错误，只能输入数字")
+    @Pattern(regexp = Constants.POSITIVE_NUMBER_PATTERN, message = "大料PCS数格式错误，只能输入大于0的数字")
     private String pcsNumber;
 
     @ApiModelProperty(value = "大料利用率")
@@ -178,7 +180,7 @@ public class EditRegisterForm {
     private String punching;
 
     @ApiModelProperty(value = "大料PNL数")
-    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "大料PNL数格式错误，只能输入数字")
+    @Pattern(regexp = Constants.POSITIVE_NUMBER_PATTERN, message = "大料PNL数格式错误，只能输入大于0的数字")
     private String pnlNumber;
 
     @ApiModelProperty(value = "注意事项")

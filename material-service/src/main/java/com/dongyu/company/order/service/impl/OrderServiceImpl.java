@@ -34,7 +34,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 下单Service实现
@@ -72,17 +74,25 @@ public class OrderServiceImpl implements OrderService {
         order.setDeliveryDate(DateUtil.parseStrToDate(addOrderDTO.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //自动生成投产单号
         order.setCommissioningCode(this.createCode());
+        //关联MI登记
         order.setMiRegister(byMiDyCode);
         //订单数
-        Integer orderNum = Integer.valueOf(addOrderDTO.getOrderNum());
+        Integer orderNum = Integer.valueOf(Optional.ofNullable(addOrderDTO.getOrderNum()).orElse("0"));
         //备品率
-        double parseDouble = Double.parseDouble(addOrderDTO.getSparePartsRate());
+        double parseDouble = Double.parseDouble(Optional.ofNullable(addOrderDTO.getSparePartsRate()).orElse("0")) / 1000;
         //生成投产数量（规则：订单数+订单数*备品率）
-        order.setCommissioningNum(String.valueOf(Math.ceil(orderNum + orderNum * parseDouble)));
+        double commissioningNum = orderNum + orderNum * parseDouble;
+        order.setCommissioningNum(String.valueOf(Math.ceil(commissioningNum)));
         //备品数
         order.setSparePartsNum(String.valueOf(orderNum * parseDouble));
         //生成平方数(规则：模片尺寸相乘/一模出几/1000000再乘以订单数)
-        //order.setSquareNum();
+        //一模出几
+        Integer miNumber = Integer.valueOf(Optional.ofNullable(byMiDyCode.getMiNumber()).orElse("0"));
+        // 模片尺寸相乘
+        String[] strings = Optional.ofNullable(byMiDyCode.getDieSize()).orElse("0*0").split("\\*");
+        double v2 = Double.parseDouble(strings[0]) * Double.parseDouble(strings[1]);
+        String squareNum = String.valueOf(v2 / miNumber / 1000000 * orderNum);
+        order.setSquareNum(squareNum);
         Order save = orderDao.save(order);
         //新增完返回余料处理需要的数据
         AddOrderResultDTO resultDTO = new AddOrderResultDTO();
@@ -97,10 +107,14 @@ public class OrderServiceImpl implements OrderService {
         }
         //返回PCS数
         resultDTO.setPcsNumber(save.getMiRegister().getPcsNumber());
-        //返回共用料张数(计算规则：)
-        //resultDTO.setHaredMaterialsNum();
-        //返回余下张数(计算规则：)
-        //resultDTO.setRemainNum();
+        //返回共用料张数(计算规则：投产数/大料PCS数,保留三位小数)
+        //大料PCS数
+        Integer pcsNumber = Integer.valueOf(byMiDyCode.getPcsNumber());
+        String haredMaterialsNum = new DecimalFormat("#.000").format(commissioningNum / pcsNumber);
+        resultDTO.setHaredMaterialsNum(haredMaterialsNum);
+        //返回余下张数(计算规则：共用料张数的小数部分)
+        String remainNum = "0." + haredMaterialsNum.replaceAll("\\d+\\.", "");
+        resultDTO.setRemainNum(remainNum);
         log.info("OrderServiceImpl add method end;");
         return resultDTO;
     }
