@@ -7,6 +7,7 @@ import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.file.dto.FileDTO;
 import com.dongyu.company.file.service.FileService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -163,6 +164,33 @@ public class FileServiceImpl implements FileService {
             log.info("Exception occured");
             e.printStackTrace();
         }
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteFile() {
+        log.info("FileServiceImpl deleteFile method start:");
+        //查询出与MI登记没有关联的无用图片
+        List<CommonFile> discardFile = fileDao.findDiscardFile();
+        if (CollectionUtils.isEmpty(discardFile)) {
+            return true;
+        }
+        try {
+            fileDao.delete(discardFile);
+            for (CommonFile commonFile : discardFile) {
+                File file = new File(commonFile.getFilePath() + commonFile.getFileName());
+                if (!file.exists()) {
+                    return true;
+                } else if (!file.delete()) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            log.info("Exception occured");
+            e.printStackTrace();
+        }
+        log.info("FileServiceImpl deleteFile method end:");
         return true;
     }
 }

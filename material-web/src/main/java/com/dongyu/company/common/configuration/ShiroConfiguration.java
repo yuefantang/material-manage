@@ -95,6 +95,7 @@ public class ShiroConfiguration {
     public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("authRealm") ShiroRelam shiroRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(shiroRealm);
+        securityManager.setRememberMeManager(null);
         //注入记住我管理器
         //securityManager.setRememberMeManager(rememberMeManager());
         // <!-- 用户授权/认证信息Cache, 采用EhCache 缓存 -->

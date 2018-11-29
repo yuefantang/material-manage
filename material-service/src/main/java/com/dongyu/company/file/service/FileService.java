@@ -25,4 +25,7 @@ public interface FileService {
 
     //图片删除
     Boolean delfile(Long id);
+
+    //定时任务删除没用图片
+    boolean deleteFile();
 }
