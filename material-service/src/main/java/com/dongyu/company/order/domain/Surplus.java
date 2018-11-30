@@ -42,5 +42,6 @@ public class Surplus {
     @Column(columnDefinition = "varchar(50) COMMENT '余料PNL'")
     private String surplusPnl;
 
-
+    @Column(columnDefinition = "tinyint(4) COMMENT '数据操作状态（1：新增，2：修改）'")
+    private Integer operationState;
 }

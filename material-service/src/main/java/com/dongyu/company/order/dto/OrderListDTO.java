@@ -45,4 +45,7 @@ public class OrderListDTO {
     @ApiModelProperty(value = "平方数")
     private String squareNum;
 
+    @ApiModelProperty(value = "余料处理数据")
+    private AddOrderResultDTO dto;
+
 }

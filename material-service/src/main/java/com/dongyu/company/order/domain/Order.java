@@ -69,6 +69,9 @@ public class Order extends BaseDomain {
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单是否删除（0：未删除，1：已删除）'")
     private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
+    @Column(columnDefinition = "tinyint(4) COMMENT '数据操作状态（1：新增，2：修改）'")
+    private Integer operationState;
+
     @OneToOne
     @JoinColumn(name = "surplus_id", columnDefinition = "bigint(20) COMMENT '余料处理ID'")
     private Surplus surplus;
