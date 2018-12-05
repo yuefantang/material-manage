@@ -73,6 +73,10 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(addOrderDTO, order);
         order.setOrderDate(DateUtil.parseStrToDate(addOrderDTO.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         order.setDeliveryDate(DateUtil.parseStrToDate(addOrderDTO.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //新增下单已完成数量初始数据为"0"
+        order.setCompletedNum(Constants.COMPLETED_NUM);
+        //未完成数量初始数据为订单数量
+        order.setUncompletedNum(addOrderDTO.getOrderNum());
         //自动生成投产单号
         order.setCommissioningCode(this.createCode());
         //数据操作状态为新增
@@ -105,6 +109,11 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(dto, order);
         order.setOrderDate(DateUtil.parseStrToDate(dto.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         order.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //未完成数量为订单数量减去已完成数量
+        if (!dto.getOrderNum().equals(order.getOrderNum())) {
+            int uncompletedNum = Integer.valueOf(dto.getOrderNum()) - Integer.valueOf(order.getCompletedNum());
+            order.setUncompletedNum(String.valueOf(uncompletedNum));
+        }
         //数据操作状态为修改
         order.setOperationState(OperationStateEnum.ADD.getValue());
         log.info("OrderServiceImpl edit method end;");
@@ -260,11 +269,11 @@ public class OrderServiceImpl implements OrderService {
         order.setSparePartsNum(String.valueOf(orderNum * parseDouble));
         //生成平方数(规则：模片尺寸相乘/一模出几/1000000再乘以订单数)
         //一模出几
-        Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber() == "" ? "0" : byMiDyCode.getMiNumber());
+        Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber());
         // 模片尺寸相乘
-        String[] strings = Optional.ofNullable(byMiDyCode.getDieSize()).orElse("0*0").split("\\*");
+        String[] strings = byMiDyCode.getDieSize().split("\\*");
         double v2 = Double.parseDouble(strings[0]) * Double.parseDouble(strings[1]);
-        String squareNum = new DecimalFormat("#.000").format(v2 / miNumber / 1000000 * orderNum);
+        String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * orderNum);
         // String squareNum = String.valueOf(v2 / miNumber / 1000000 * orderNum);
         order.setSquareNum(squareNum);
         Order save = orderDao.save(order);

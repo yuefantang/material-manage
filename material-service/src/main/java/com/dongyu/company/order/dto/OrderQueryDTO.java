@@ -15,4 +15,7 @@ public class OrderQueryDTO extends PageQueryDTO {
 
     // 投产单号
     private String commissioningCode;
+
+    //是否完成状态（0：未完成，1：完成）
+    private Integer completeState;
 }

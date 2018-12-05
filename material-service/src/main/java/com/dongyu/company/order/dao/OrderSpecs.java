@@ -21,6 +21,8 @@ public class OrderSpecs {
 
     private static final String COMMISSIONING_CODE = "commissioningCode";
     private static final String DELETED = "deleted";
+    private static final String COMPLETE_STATE = "completeState";
+
 
     public static Specification<Order> orederQuerySpec(OrderQueryDTO orderQueryDTO) {
         return (root, query, builder) -> {
@@ -28,6 +30,10 @@ public class OrderSpecs {
             //根据投产单号模糊查询
             if (StringUtils.isNotBlank(orderQueryDTO.getCommissioningCode())) {
                 list.add(builder.like(root.get(COMMISSIONING_CODE), "%" + orderQueryDTO.getCommissioningCode() + "%"));
+            }
+            //订单是否完成
+            if (orderQueryDTO.getCompleteState() != null) {
+                list.add(builder.equal(root.get(COMPLETE_STATE), orderQueryDTO.getCompleteState()));
             }
             //未删除订单
             list.add(builder.equal(root.get(DELETED), DeletedEnum.UNDELETED.getValue()));

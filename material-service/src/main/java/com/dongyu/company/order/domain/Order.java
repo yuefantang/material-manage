@@ -1,5 +1,6 @@
 package com.dongyu.company.order.domain;
 
+import com.dongyu.company.common.constants.CompleteStateEnum;
 import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.domain.BaseDomain;
 import com.dongyu.company.register.domain.MiRegister;
@@ -71,6 +72,15 @@ public class Order extends BaseDomain {
 
     @Column(columnDefinition = "tinyint(4) COMMENT '数据操作状态（1：新增，2：修改）'")
     private Integer operationState;
+
+    @Column(columnDefinition = "varchar(50) NOT NULL DEFAULT '0' COMMENT '已完成数量'")
+    private String completedNum;
+
+    @Column(columnDefinition = "varchar(50) NOT NULL DEFAULT '0' COMMENT '未完成数量'")
+    private String uncompletedNum;
+
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '下单完成状态（0：未完成，1：完成）'")
+    private Integer completeState = CompleteStateEnum.COMPLETE.getValue();
 
     @OneToOne
     @JoinColumn(name = "surplus_id", columnDefinition = "bigint(20) COMMENT '余料处理ID'")

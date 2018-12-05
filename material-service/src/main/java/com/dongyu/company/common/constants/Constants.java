@@ -37,4 +37,7 @@ public class Constants {
 
     //生成xls最大允许的单sheet行数
     public static final int MAX_XLS_SHEET_ROW = 60000;
+
+    //新增下单已完成数量初始数据为"0"
+    public static final String COMPLETED_NUM = "0";
 }

@@ -19,4 +19,7 @@ public class OrderQueryForm extends PageForm {
     @ApiModelProperty(value = "投产单号")
     private String commissioningCode;
 
+    @ApiModelProperty(value = "是否完成状态（0：未完成，1：完成）")
+    private Integer completeState;
+
 }

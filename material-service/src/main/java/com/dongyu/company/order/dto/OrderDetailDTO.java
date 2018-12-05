@@ -40,6 +40,9 @@ public class OrderDetailDTO {
     @ApiModelProperty(value = "备品数")
     private String sparePartsNum;
 
+    @ApiModelProperty(value = "备品率")
+    private String sparePartsRate;
+
     @ApiModelProperty(value = "投产数量")
     private String commissioningNum;
 
@@ -72,4 +75,10 @@ public class OrderDetailDTO {
 
     @ApiModelProperty(value = "MI登记详情")
     private RegisterDetailDTO registerDetailDTO;
+
+    @ApiModelProperty(value = "已完成数量")
+    private String completedNum;
+
+    @ApiModelProperty(value = "未完成数量")
+    private String uncompletedNum;
 }

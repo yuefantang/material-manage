@@ -16,4 +16,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     //查找最新的一条下单记录
     Order findFirstByOrderByCreateTimeDesc();
 
+    //根据投产单号查询下单
+    Order findByCommissioningCode(String commissioningCode);
+
 }

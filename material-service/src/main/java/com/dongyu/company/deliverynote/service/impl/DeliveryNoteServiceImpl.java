@@ -1,0 +1,83 @@
+package com.dongyu.company.deliverynote.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.dongyu.company.common.constants.CompleteStateEnum;
+import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.exception.BizException;
+import com.dongyu.company.common.utils.DateUtil;
+import com.dongyu.company.deliverynote.dao.DeliveryNoteDao;
+import com.dongyu.company.deliverynote.domain.DeliveryNote;
+import com.dongyu.company.deliverynote.dto.AddDeliveryNoteDTO;
+import com.dongyu.company.deliverynote.service.DeliveryNoteService;
+import com.dongyu.company.order.dao.OrderDao;
+import com.dongyu.company.order.domain.Order;
+import com.dongyu.company.register.domain.MiRegister;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * 货款单Service实现类
+ *
+ * @author TYF
+ * @date 2018/12/4
+ * @since 1.0.0
+ */
+@Slf4j
+@Service
+public class DeliveryNoteServiceImpl implements DeliveryNoteService {
+    @Autowired
+    private DeliveryNoteDao deliveryNoteDao;
+    @Autowired
+    private OrderDao orderDao;
+
+    @Override
+    @Transactional
+    public void add(AddDeliveryNoteDTO dto) {
+        log.info("DeliveryNoteServiceImpl add method start Parm:" + JSONObject.toJSONString(dto));
+        Order order = orderDao.findByCommissioningCode(dto.getCommissioningCode());
+        if (order == null) {
+            throw new BizException("改投产单号不存在下单，请核实填写！");
+        }
+
+        //送货数量
+        Integer deliveryNum = Integer.valueOf(dto.getDeliveryNum());
+        //未完成数量
+        Integer uncompletedNum = Integer.valueOf(order.getUncompletedNum());
+        if (uncompletedNum < deliveryNum) {
+            throw new BizException("送货数量超出下单未完成数量，请核实填写！");
+        }
+        //mi登记记录
+        MiRegister miRegister = order.getMiRegister();
+
+        DeliveryNote deliveryNote = new DeliveryNote();
+        BeanUtils.copyProperties(dto, deliveryNote);
+        //赋值客户信息
+        BeanUtils.copyProperties(miRegister, deliveryNote);
+        //送货日期时间转换
+        deliveryNote.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //客户订单号
+        deliveryNote.setCustomerOrderCode(order.getCustomerOrderCode());
+        //单价（单位分）
+        //deliveryNote.setDeliveryPrice();
+        //金额(单位分)
+        // deliveryNote.setDeliveryAmount();
+        //单位
+        //deliveryNote.setDeliveryUnit();
+        //更新下单已完成数量记录
+        int completedNum = Integer.valueOf(order.getCompletedNum()) + deliveryNum;
+        order.setCompletedNum(String.valueOf(completedNum));
+        //更新下单未完成数量记录
+        uncompletedNum = uncompletedNum - deliveryNum;
+        order.setUncompletedNum(String.valueOf(uncompletedNum));
+        //下单完成更新下单是否完成状态为完成
+        if (order.getUncompletedNum().equals(Constants.COMPLETED_NUM)) {
+            order.setCompleteState(CompleteStateEnum.UNCOMPLETE.getValue());
+        }
+        orderDao.save(order);
+        deliveryNoteDao.save(deliveryNote);
+        log.info("DeliveryNoteServiceImpl add method end;");
+    }
+}
