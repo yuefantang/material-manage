@@ -15,6 +15,7 @@ import com.dongyu.company.deliverynote.dto.AddOtherDeliveryNoteDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.deliverynote.service.DeliveryNoteService;
+import com.dongyu.company.finance.domain.MiPrice;
 import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.register.domain.MiRegister;
@@ -61,7 +62,6 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         }
         //mi登记记录
         MiRegister miRegister = order.getMiRegister();
-
         DeliveryNote deliveryNote = new DeliveryNote();
         BeanUtils.copyProperties(dto, deliveryNote);
         //赋值客户信息
@@ -70,10 +70,14 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         deliveryNote.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //客户订单号
         deliveryNote.setCustomerOrderCode(order.getCustomerOrderCode());
-        //单价（单位分）
-        //deliveryNote.setDeliveryPrice();
-        //金额(单位分)
-        // deliveryNote.setDeliveryAmount();
+
+        MiPrice miPrice = miRegister.getMiPrice();
+        if (miPrice != null) {
+            //单价（单位分）
+            deliveryNote.setPrice(miPrice.getPrice());
+            //金额(单位分)
+            deliveryNote.setAmount(String.valueOf(deliveryNum * Integer.valueOf(miPrice.getPrice())));
+        }
         //单位
         //deliveryNote.setDeliveryUnit();
         //更新下单已完成数量记录

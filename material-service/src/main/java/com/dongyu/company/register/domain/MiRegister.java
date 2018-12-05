@@ -1,7 +1,7 @@
 package com.dongyu.company.register.domain;
 
 import com.dongyu.company.common.domain.BaseDomain;
-import com.dongyu.company.file.domian.CommonFile;
+import com.dongyu.company.finance.domain.MiPrice;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -163,7 +163,10 @@ public class MiRegister extends BaseDomain {
     @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '是否允许投产'")
     private String production;
 
-    // @OneToOne
+    @OneToOne
+    @JoinColumn(name = "mi_price_id", columnDefinition = "bigint(20) COMMENT '单价表ID'")
+    private MiPrice miPrice;
+
     @Column(columnDefinition = "bigint(20) COMMENT '文件图片表ID'")
     private Long commonFileId;
 }
