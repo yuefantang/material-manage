@@ -25,15 +25,22 @@ public class DeliverySpecs {
     private static final String DELETED = "deleted";
 
     public static Specification<DeliveryNote> orederQuerySpec(DeliveryQueryDTO queryDTO) {
-        log.info("DeliverySpecs orederQuerySpec method start Parm:"+ JSONObject.toJSONString(queryDTO));
+        log.info("DeliverySpecs orederQuerySpec method start Parm:" + JSONObject.toJSONString(queryDTO));
         return (root, query, builder) -> {
             List<Predicate> list = new ArrayList<>();
             //根据送货单号模糊查询
             if (StringUtils.isNotBlank(queryDTO.getDeliveryCode())) {
                 list.add(builder.like(root.get(DELIVERY_DY_CODE), "%" + queryDTO.getDeliveryCode() + "%"));
             }
-            //送货单未作废
-            list.add(builder.equal(root.get(DELETED), DeletedEnum.UNDELETED.getValue()));
+
+            //根据送货单是否作废查询
+            if (queryDTO.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
+                //未作废查询
+                list.add(builder.equal(root.get(DELETED), queryDTO.getDeleted()));
+            } else if (queryDTO.getDeleted() == DeletedEnum.DELETED.getValue()) {
+                //作废查询
+                list.add(builder.equal(root.get(DELETED), queryDTO.getDeleted()));
+            }
             log.info("DeliverySpecs orederQuerySpec method end;");
             return builder.and(list.toArray(new Predicate[list.size()]));
         };

@@ -35,8 +35,15 @@ public class OrderSpecs {
             if (orderQueryDTO.getCompleteState() != null) {
                 list.add(builder.equal(root.get(COMPLETE_STATE), orderQueryDTO.getCompleteState()));
             }
-            //未删除订单
-            list.add(builder.equal(root.get(DELETED), DeletedEnum.UNDELETED.getValue()));
+
+            //根据下单是否删除查询
+            if (orderQueryDTO.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
+                //未删除
+                list.add(builder.equal(root.get(DELETED), orderQueryDTO.getDeleted()));
+            } else if (orderQueryDTO.getDeleted() == DeletedEnum.DELETED.getValue()) {
+                //已删除
+                list.add(builder.equal(root.get(DELETED), orderQueryDTO.getDeleted()));
+            }
             return builder.and(list.toArray(new Predicate[list.size()]));
         };
     }

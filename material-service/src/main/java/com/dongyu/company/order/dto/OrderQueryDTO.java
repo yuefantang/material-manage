@@ -18,4 +18,7 @@ public class OrderQueryDTO extends PageQueryDTO {
 
     //是否完成状态（0：未完成，1：完成）
     private Integer completeState;
+
+    //订单是否删除（0：未删除，1：已删除）
+    private Integer deleted;
 }

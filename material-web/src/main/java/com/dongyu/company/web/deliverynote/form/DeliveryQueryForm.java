@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 货款单分页查询Form
  *
@@ -18,4 +20,7 @@ public class DeliveryQueryForm extends PageForm {
 
     @ApiModelProperty(value = "送货单号")
     private String deliveryCode;
+
+    @ApiModelProperty(value = "送货单是否作废(0：否，1：是)，默认0")
+    private Integer deleted;
 }

@@ -16,4 +16,6 @@ public class DeliveryQueryDTO extends PageQueryDTO {
     //送货单号
     private String deliveryCode;
 
+    //送货单是否作废(0：否，1：是)
+    private Integer deleted;
 }

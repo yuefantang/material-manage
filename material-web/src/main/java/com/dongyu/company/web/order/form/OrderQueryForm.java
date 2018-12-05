@@ -22,4 +22,6 @@ public class OrderQueryForm extends PageForm {
     @ApiModelProperty(value = "是否完成状态（0：未完成，1：完成）")
     private Integer completeState;
 
+    @ApiModelProperty(value = "订单是否删除（0：未删除，1：已删除），默认0")
+    private Integer deleted;
 }
