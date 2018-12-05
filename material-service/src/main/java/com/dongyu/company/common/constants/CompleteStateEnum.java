@@ -9,8 +9,8 @@ package com.dongyu.company.common.constants;
  */
 public enum CompleteStateEnum {
 
-    COMPLETE(0, "未完成"),
-    UNCOMPLETE(1, "完成");
+    UNCOMPLETE(0, "未完成"),
+    COMPLETE(1, "完成");
     private final int value;
     private final String desc;
 

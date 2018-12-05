@@ -3,6 +3,7 @@ package com.dongyu.company.deliverynote.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.constants.CompleteStateEnum;
 import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
@@ -18,6 +19,7 @@ import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.register.domain.MiRegister;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -75,14 +77,14 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //单位
         //deliveryNote.setDeliveryUnit();
         //更新下单已完成数量记录
-        int completedNum = Integer.valueOf(order.getCompletedNum()) + deliveryNum;
+        Integer completedNum = Integer.valueOf(order.getCompletedNum()) + deliveryNum;
         order.setCompletedNum(String.valueOf(completedNum));
         //更新下单未完成数量记录
         uncompletedNum = uncompletedNum - deliveryNum;
         order.setUncompletedNum(String.valueOf(uncompletedNum));
         //下单完成更新下单是否完成状态为完成
         if (order.getUncompletedNum().equals(Constants.COMPLETED_NUM)) {
-            order.setCompleteState(CompleteStateEnum.UNCOMPLETE.getValue());
+            order.setCompleteState(CompleteStateEnum.COMPLETE.getValue());
         }
         orderDao.save(order);
         deliveryNoteDao.save(deliveryNote);
@@ -118,5 +120,42 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         });
         log.info("DeliveryNoteServiceImpl getlist method end;");
         return pageDTO;
+    }
+
+    @Override
+    @Transactional
+    public void deleted(Long id) {
+        log.info("DeliveryNoteServiceImpl deleted method start Parm:" + id);
+        DeliveryNote deliveryNote = deliveryNoteDao.findOne(id);
+        if (deliveryNote == null) {
+            throw new BizException("该送货单已不存在！");
+        }
+        //先判断该送货单记录是货款开单还是其它收费开单，如果是货款开单，对应的下单记录完成和未完成数量需要回退，然后该送货单记录作废；
+        // 如果是其它收费开单直接将该送货单记录作废；
+        String commissioningCode = deliveryNote.getCommissioningCode();
+        if (StringUtils.isNotBlank(commissioningCode)) {
+            Order order = orderDao.findByCommissioningCode(commissioningCode);
+            if (order != null) {
+                //送货数量
+                Integer deliveryNum = Integer.valueOf(deliveryNote.getDeliveryNum());
+                //回退下单已完成数量记录
+                Integer completedNum = Integer.valueOf(order.getCompletedNum()) - deliveryNum;
+                order.setCompletedNum(String.valueOf(completedNum));
+                //回退下单未完成数量记录
+                Integer uncompletedNum = Integer.valueOf(order.getUncompletedNum()) + deliveryNum;
+                order.setUncompletedNum(String.valueOf(uncompletedNum));
+                //下单完成更新下单是否完成状态为完成
+                if (order.getUncompletedNum().equals(Constants.COMPLETED_NUM)) {
+                    order.setCompleteState(CompleteStateEnum.COMPLETE.getValue());
+                } else {
+                    order.setCompleteState(CompleteStateEnum.UNCOMPLETE.getValue());
+                }
+                orderDao.save(order);
+            }
+        }
+        //将该送货单记录设置为作废状态
+        deliveryNote.setDeleted(DeletedEnum.DELETED.getValue());
+        deliveryNoteDao.save(deliveryNote);
+        log.info("DeliveryNoteServiceImpl deleted method end;");
     }
 }

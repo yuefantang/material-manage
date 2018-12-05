@@ -13,6 +13,7 @@ import com.dongyu.company.web.deliverynote.form.AddOtherDeliveryNoteForm;
 import com.dongyu.company.web.deliverynote.form.DeliveryQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -69,12 +71,13 @@ public class DeliveryNoteController {
         return ResponseVo.successResponse(pageDTO);
     }
 
-//    @ApiOperation("送货单作废")
-//    @DeleteMapping(value = "/deleted")
-//    public ResponseVo deleted(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
-//        orderService.deleted(id);
-//        return ResponseVo.successResponse();
-//    }
+    @ApiOperation("送货单作废")
+    @RequiresRoles(value = {"admin"})
+    @GetMapping(value = "/deleted")
+    public ResponseVo deleted(@ApiParam(name = "id", value = "货款单id") @RequestParam("id") Long id) {
+        deliveryNoteService.deleted(id);
+        return ResponseVo.successResponse();
+    }
 //
 //    @ApiOperation("送货单打印")
 //    @GetMapping(value = "/print")

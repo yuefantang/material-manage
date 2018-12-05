@@ -80,7 +80,7 @@ public class Order extends BaseDomain {
     private String uncompletedNum;
 
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '下单完成状态（0：未完成，1：完成）'")
-    private Integer completeState = CompleteStateEnum.COMPLETE.getValue();
+    private Integer completeState = CompleteStateEnum.UNCOMPLETE.getValue();
 
     @OneToOne
     @JoinColumn(name = "surplus_id", columnDefinition = "bigint(20) COMMENT '余料处理ID'")

@@ -31,8 +31,16 @@ public interface DeliveryNoteService {
 
     /**
      * 查询货款单
+     *
      * @param deliveryQueryDTO
      * @return
      */
     PageDTO<DeliveryListDTO> getlist(DeliveryQueryDTO deliveryQueryDTO);
+
+    /**
+     * 送货单作废
+     *
+     * @param id
+     */
+    void deleted(Long id);
 }
