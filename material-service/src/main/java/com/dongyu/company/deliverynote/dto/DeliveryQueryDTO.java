@@ -14,6 +14,6 @@ import lombok.Data;
 public class DeliveryQueryDTO extends PageQueryDTO {
 
     //送货单号
-    private String deliveryNumber;
+    private String deliveryCode;
 
 }

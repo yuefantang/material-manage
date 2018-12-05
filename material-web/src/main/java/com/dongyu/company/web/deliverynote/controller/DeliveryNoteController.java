@@ -1,15 +1,23 @@
 package com.dongyu.company.web.deliverynote.controller;
 
 import com.dongyu.company.common.constant.Constants;
+import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.deliverynote.dto.AddDeliveryNoteDTO;
+import com.dongyu.company.deliverynote.dto.AddOtherDeliveryNoteDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.deliverynote.service.DeliveryNoteService;
 import com.dongyu.company.web.deliverynote.form.AddDeliveryNoteForm;
+import com.dongyu.company.web.deliverynote.form.AddOtherDeliveryNoteForm;
+import com.dongyu.company.web.deliverynote.form.DeliveryQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,41 +49,34 @@ public class DeliveryNoteController {
         return ResponseVo.successResponse();
     }
 
-//    @ApiOperation("新增其它收费开单")
-//    @PostMapping(value = "/add/surplus")
-//    public ResponseVo addSurplus(@Valid @RequestBody AddSurplusForm addSurplusForm) {
-//        AddSurplusDTO addSurplusDTO = new AddSurplusDTO();
-//        BeanUtils.copyProperties(addSurplusForm, addSurplusDTO);
-//        orderService.addSurplus(addSurplusDTO);
-//        return ResponseVo.successResponse();
-//    }
-//
-//
-//    @ApiOperation("查询下单")
-//    @GetMapping
-//    public ResponseVo<PageDTO<OrderListDTO>> get(@ModelAttribute OrderQueryForm orderQueryForm) {
-//        OrderQueryDTO orderQueryDTO = new OrderQueryDTO();
-//        BeanUtils.copyProperties(orderQueryForm, orderQueryDTO);
-//        PageDTO<OrderListDTO> pageDTO = orderService.getlist(orderQueryDTO);
-//        return ResponseVo.successResponse(pageDTO);
-//    }
-//
-//    @ApiOperation("下单详情")
-//    @GetMapping(value = "/detail")
-//    public ResponseVo<OrderDetailDTO> detail(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
-//        OrderDetailDTO detail = orderService.getDetail(id);
-//        return ResponseVo.successResponse(detail);
-//    }
-//
-//
-//    @ApiOperation("删除下单")
+    @ApiOperation("新增其它收费开单")
+    @RequiresRoles(value = {"admin"})
+    @PostMapping(value = "/add/otherDeliver")
+    public ResponseVo addOtherDelivery(@Valid @RequestBody AddOtherDeliveryNoteForm form) {
+        AddOtherDeliveryNoteDTO addOtherDeliveryNoteDTO = new AddOtherDeliveryNoteDTO();
+        BeanUtils.copyProperties(form, addOtherDeliveryNoteDTO);
+        deliveryNoteService.addOtherDelivery(addOtherDeliveryNoteDTO);
+        return ResponseVo.successResponse();
+    }
+
+    @ApiOperation("查询货款单")
+    @GetMapping
+    @RequiresRoles(value = {"admin"})
+    public ResponseVo<PageDTO<DeliveryListDTO>> get(@ModelAttribute DeliveryQueryForm form) {
+        DeliveryQueryDTO deliveryQueryDTO = new DeliveryQueryDTO();
+        BeanUtils.copyProperties(form, deliveryQueryDTO);
+        PageDTO<DeliveryListDTO> pageDTO = deliveryNoteService.getlist(deliveryQueryDTO);
+        return ResponseVo.successResponse(pageDTO);
+    }
+
+//    @ApiOperation("送货单作废")
 //    @DeleteMapping(value = "/deleted")
 //    public ResponseVo deleted(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
 //        orderService.deleted(id);
 //        return ResponseVo.successResponse();
 //    }
 //
-//    @ApiOperation("下单打印")
+//    @ApiOperation("送货单打印")
 //    @GetMapping(value = "/print")
 //    public ResponseVo<OrderDetailDTO> print(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
 //        OrderDetailDTO printOrder = orderService.getPrintOrder(id);
@@ -91,6 +92,11 @@ public class DeliveryNoteController {
 //        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
 //        return ResponseVo.successResponse(edit);
 //    }
-
+//    @ApiOperation("下单详情")
+//    @GetMapping(value = "/detail")
+//    public ResponseVo<OrderDetailDTO> detail(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
+//        OrderDetailDTO detail = orderService.getDetail(id);
+//        return ResponseVo.successResponse(detail);
+//    }
 
 }

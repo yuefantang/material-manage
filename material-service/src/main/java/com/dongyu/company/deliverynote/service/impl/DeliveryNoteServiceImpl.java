@@ -3,11 +3,16 @@ package com.dongyu.company.deliverynote.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.constants.CompleteStateEnum;
 import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.deliverynote.dao.DeliveryNoteDao;
+import com.dongyu.company.deliverynote.dao.DeliverySpecs;
 import com.dongyu.company.deliverynote.domain.DeliveryNote;
 import com.dongyu.company.deliverynote.dto.AddDeliveryNoteDTO;
+import com.dongyu.company.deliverynote.dto.AddOtherDeliveryNoteDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.deliverynote.service.DeliveryNoteService;
 import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.domain.Order;
@@ -15,6 +20,9 @@ import com.dongyu.company.register.domain.MiRegister;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,5 +87,36 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         orderDao.save(order);
         deliveryNoteDao.save(deliveryNote);
         log.info("DeliveryNoteServiceImpl add method end;");
+    }
+
+    @Override
+    @Transactional
+    public void addOtherDelivery(AddOtherDeliveryNoteDTO dto) {
+        log.info("DeliveryNoteServiceImpl addOtherDelivery method start Parm:" + JSONObject.toJSONString(dto));
+        DeliveryNote deliveryNote = new DeliveryNote();
+        BeanUtils.copyProperties(dto, deliveryNote);
+        //送货日期时间转换
+        deliveryNote.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        deliveryNoteDao.save(deliveryNote);
+        log.info("DeliveryNoteServiceImpl addOtherDelivery method end;");
+    }
+
+    @Override
+    public PageDTO<DeliveryListDTO> getlist(DeliveryQueryDTO dto) {
+        log.info("DeliveryNoteServiceImpl getlist method start Parm:" + JSONObject.toJSONString(dto));
+        PageRequest pageRequest = new PageRequest(dto.getPageNo() - 1, dto.getPageSize(), Sort.Direction.DESC, Constants.CREATE_TIME);
+        Page<DeliveryNote> page = deliveryNoteDao.findAll(DeliverySpecs.orederQuerySpec(dto), pageRequest);
+
+        PageDTO<DeliveryListDTO> pageDTO = PageDTO.of(page, item -> {
+            DeliveryListDTO deliveryListDTO = new DeliveryListDTO();
+            BeanUtils.copyProperties(item, deliveryListDTO);
+            //送货日期
+            if (item.getDeliveryDate() != null) {
+                deliveryListDTO.setDeliveryDate(DateUtil.parseDateToStr(item.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            }
+            return deliveryListDTO;
+        });
+        log.info("DeliveryNoteServiceImpl getlist method end;");
+        return pageDTO;
     }
 }

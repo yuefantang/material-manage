@@ -17,5 +17,5 @@ import lombok.Data;
 public class DeliveryQueryForm extends PageForm {
 
     @ApiModelProperty(value = "送货单号")
-    private String deliveryNumber;
+    private String deliveryCode;
 }

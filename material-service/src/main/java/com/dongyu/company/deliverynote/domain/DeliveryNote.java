@@ -1,5 +1,6 @@
 package com.dongyu.company.deliverynote.domain;
 
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.domain.BaseDomain;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -66,5 +67,8 @@ public class DeliveryNote extends BaseDomain {
 
     @Column(columnDefinition = "varchar(20) COMMENT '单位'")
     private String deliveryUnit;
+
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '送货单是否作废（0：否，1：是）'")
+    private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
 }

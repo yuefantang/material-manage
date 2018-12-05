@@ -8,8 +8,8 @@ package com.dongyu.company.common.constants;
  * @since 1.0.0
  */
 public enum DeletedEnum {
-    UNDELETED(0, "未删除"),
-    DELETED(1, "删除");
+    UNDELETED(0, "否"),
+    DELETED(1, "是");
     private final int value;
     private final String desc;
 

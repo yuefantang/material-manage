@@ -46,12 +46,12 @@ public class AddMouldForm {
     private String purchaseQuantity;
 
     @ApiModelProperty(value = "单价（单位分）")
-    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "格式错误，只能输入数字")
+    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
     @NotBlank(message = "单价不能为空")
     private String price;
 
     @ApiModelProperty(value = "金额(单位分)")
-    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "格式错误，只能输入数字")
+    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
     @NotBlank(message = "金额不能为空")
     private String amount;
 
