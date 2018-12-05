@@ -47,25 +47,4 @@ public class MiPrice extends BaseDomain {
     @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记表ID'")
     private MiRegister miRegister;
 
-//    @Column(columnDefinition = "varchar(50) COMMENT '客户型号'")
-//    private String customerModel;
-//
-//    @Column(columnDefinition = "varchar(100) COMMENT '客户名称'")
-//    private String customerName;
-//
-//    @Column(columnDefinition = "varchar(50) COMMENT '客户料号'")
-//    private String customerMaterialNum;
-//
-//    @Column(columnDefinition = "varchar(100) COMMENT '板材类型'")
-//    private String plateType;
-//
-//    @Column(columnDefinition = "varchar(20) COMMENT '板厚'")
-//    private String plateThick;
-//
-//    @Column(columnDefinition = "varchar(100) COMMENT '板材商'")
-//    private String plateMerchant;
-//
-//    @Column(columnDefinition = "varchar(100) COMMENT '工艺'")
-//    private String technology;
-
 }
