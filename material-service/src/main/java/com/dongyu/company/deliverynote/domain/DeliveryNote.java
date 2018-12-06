@@ -71,4 +71,7 @@ public class DeliveryNote extends BaseDomain {
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '送货单是否作废（0：否，1：是）'")
     private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '开单类型（1：货款开单，2：其它收费开单）'")
+    private Integer billingType;
+
 }

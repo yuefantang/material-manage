@@ -115,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
             order.setUncompletedNum(String.valueOf(uncompletedNum));
         }
         //数据操作状态为修改
-        order.setOperationState(OperationStateEnum.ADD.getValue());
+        order.setOperationState(OperationStateEnum.UPDATE.getValue());
         log.info("OrderServiceImpl edit method end;");
         return this.addAndEdit(order, dto);
     }

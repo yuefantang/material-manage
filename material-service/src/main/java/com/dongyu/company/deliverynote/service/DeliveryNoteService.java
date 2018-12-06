@@ -3,8 +3,10 @@ package com.dongyu.company.deliverynote.service;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.deliverynote.dto.AddDeliveryNoteDTO;
 import com.dongyu.company.deliverynote.dto.AddOtherDeliveryNoteDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryDetailDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
+import com.dongyu.company.deliverynote.dto.EditDeliveryDTO;
 
 /**
  * 货款单Service
@@ -43,4 +45,19 @@ public interface DeliveryNoteService {
      * @param id
      */
     void deleted(Long id);
+
+    /**
+     * 货款单返回详情
+     *
+     * @param id
+     * @return
+     */
+    DeliveryDetailDTO getDetail(Long id);
+
+    /**
+     * 货款单编辑
+     *
+     * @param dto
+     */
+    void edit(EditDeliveryDTO dto);
 }

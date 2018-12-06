@@ -5,12 +5,15 @@ import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.deliverynote.dto.AddDeliveryNoteDTO;
 import com.dongyu.company.deliverynote.dto.AddOtherDeliveryNoteDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryDetailDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
+import com.dongyu.company.deliverynote.dto.EditDeliveryDTO;
 import com.dongyu.company.deliverynote.service.DeliveryNoteService;
 import com.dongyu.company.web.deliverynote.form.AddDeliveryNoteForm;
 import com.dongyu.company.web.deliverynote.form.AddOtherDeliveryNoteForm;
 import com.dongyu.company.web.deliverynote.form.DeliveryQueryForm;
+import com.dongyu.company.web.deliverynote.form.EditDeliveryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -78,28 +81,34 @@ public class DeliveryNoteController {
         deliveryNoteService.deleted(id);
         return ResponseVo.successResponse();
     }
+
+    @ApiOperation("货款详情")
+    @RequiresRoles(value = {"admin"})
+    @GetMapping(value = "/detail")
+    public ResponseVo<DeliveryDetailDTO> detail(@ApiParam(name = "id", value = "货款单id") @RequestParam("id") Long id) {
+        DeliveryDetailDTO detail = deliveryNoteService.getDetail(id);
+        return ResponseVo.successResponse(detail);
+    }
+
+    @ApiOperation("编辑货款单")
+    @RequiresRoles(value = {"admin"})
+    @PostMapping(value = "/edit")
+    public ResponseVo edite(@Valid @RequestBody EditDeliveryForm form) {
+        EditDeliveryDTO editDeliveryDTO = new EditDeliveryDTO();
+        BeanUtils.copyProperties(form, editDeliveryDTO);
+        deliveryNoteService.edit(editDeliveryDTO);
+        return ResponseVo.successResponse();
+    }
+
+
 //
 //    @ApiOperation("送货单打印")
+    //    @RequiresRoles(value = {"admin"})
 //    @GetMapping(value = "/print")
 //    public ResponseVo<OrderDetailDTO> print(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
 //        OrderDetailDTO printOrder = orderService.getPrintOrder(id);
 //        return ResponseVo.successResponse(printOrder);
 //    }
 //
-//
-//    @ApiOperation("编辑下单")
-//    @PostMapping(value = "/edit")
-//    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
-//        EditOrderDTO editOrderDTO = new EditOrderDTO();
-//        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
-//        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
-//        return ResponseVo.successResponse(edit);
-//    }
-//    @ApiOperation("下单详情")
-//    @GetMapping(value = "/detail")
-//    public ResponseVo<OrderDetailDTO> detail(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
-//        OrderDetailDTO detail = orderService.getDetail(id);
-//        return ResponseVo.successResponse(detail);
-//    }
 
 }

@@ -4,13 +4,17 @@ import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.finance.dto.AddMiPriceDTO;
+import com.dongyu.company.finance.dto.EditMiPriceDTO;
+import com.dongyu.company.finance.dto.MiPriceDetailDTO;
 import com.dongyu.company.finance.dto.MiPriceListDTO;
 import com.dongyu.company.finance.dto.MiPriceQueryDTO;
 import com.dongyu.company.finance.service.FinanceService;
 import com.dongyu.company.web.finance.form.AddMiPriceForm;
+import com.dongyu.company.web.finance.form.EditMiPriceForm;
 import com.dongyu.company.web.finance.form.MiPriceQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -58,5 +63,31 @@ public class FinanceController {
         return ResponseVo.successResponse(pageDTO);
     }
 
+    @ApiOperation("MI登记价格删除")
+    @RequiresRoles(value = {"admin"})
+    @GetMapping(value = "/deleted")
+    public ResponseVo deleted(@ApiParam(name = "id", value = "MI登记价格id") @RequestParam("id") Long id) {
+        financeService.deleted(id);
+        return ResponseVo.successResponse();
+    }
+
+
+    @ApiOperation("编辑MI登记价格")
+    @RequiresRoles(value = {"admin"})
+    @PostMapping(value = "/edit")
+    public ResponseVo edite(@Valid @RequestBody EditMiPriceForm form) {
+        EditMiPriceDTO editMiPriceDTO = new EditMiPriceDTO();
+        BeanUtils.copyProperties(form, editMiPriceDTO);
+        financeService.edit(editMiPriceDTO);
+        return ResponseVo.successResponse();
+    }
+
+    @ApiOperation("MI登记价格详情")
+    @RequiresRoles(value = {"admin"})
+    @GetMapping(value = "/detail")
+    public ResponseVo<MiPriceDetailDTO> detail(@ApiParam(name = "id", value = "MI登记价格id") @RequestParam("id") Long id) {
+        MiPriceDetailDTO detail = financeService.getDetail(id);
+        return ResponseVo.successResponse(detail);
+    }
 
 }
