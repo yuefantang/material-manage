@@ -3,6 +3,7 @@ package com.dongyu.company.web.mould.form;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 模具采购导出查询Form
@@ -24,9 +25,11 @@ public class ExportMouldQueryForm {
     private String supplier;
 
     @ApiModelProperty("采购日期开始(yyyy-MM-dd)")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String purchaseDateStart;
 
     @ApiModelProperty("采购日期结束(yyyy-MM-dd)")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String purchaseDateEnd;
 
     @ApiModelProperty("所属客户(支持模糊查询)")

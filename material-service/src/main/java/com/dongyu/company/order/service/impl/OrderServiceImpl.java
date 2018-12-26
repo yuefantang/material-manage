@@ -10,9 +10,9 @@ import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.order.dao.OrderDao;
+import com.dongyu.company.order.dao.OrderSpecs;
 import com.dongyu.company.order.dao.SurplusDao;
 import com.dongyu.company.order.domain.Order;
-import com.dongyu.company.order.dao.OrderSpecs;
 import com.dongyu.company.order.domain.Surplus;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
@@ -27,6 +27,7 @@ import com.dongyu.company.register.domain.MiRegister;
 import com.dongyu.company.register.dto.RegisterDetailDTO;
 import com.dongyu.company.register.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.Optional;
 
 /**
  * 下单Service实现
@@ -200,21 +200,6 @@ public class OrderServiceImpl implements OrderService {
         orderDetailDTO.setOrderDate(DateUtil.parseDateToStr(order.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //交货日期
         orderDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(order.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-        //线路印次（计算规则：）
-        //orderDetailDTO.setLineImpression();
-        //定位孔数
-        // orderDetailDTO.setLocatingNum();
-        //绿油印次
-        //orderDetailDTO.setGreenOilImpression();
-        //文字印次
-        //  orderDetailDTO.setWordsImpression();
-        //碳桥印次
-        // orderDetailDTO.setCarbonBridgeImpression();
-        //其它印次
-        // orderDetailDTO.setOtherImpression();
-        //冲床冲次
-        //  orderDetailDTO.setPunch();
-
         //余料处理数据返回
         Surplus surplus = order.getSurplus();
         if (surplus != null) {
@@ -225,7 +210,34 @@ public class OrderServiceImpl implements OrderService {
         if (miRegister != null) {
             RegisterDetailDTO detail = registerService.getDetail(miRegister.getId());
             orderDetailDTO.setRegisterDetailDTO(detail);
+            //返回共用料张数(计算规则：投产数/大料PCS数,保留三位小数)
+            //大料PCS数
+            Integer pcsNumber = Integer.valueOf(order.getMiRegister().getPcsNumber());
+            String haredMaterialsNum = new DecimalFormat("#.000").format(Double.parseDouble(order.getCommissioningNum()) / pcsNumber);
+            orderDetailDTO.setHaredMaterialsNum(haredMaterialsNum);
         }
+        //线路印次（计算规则：PNL数乘线路，以下类似）
+        if (StringUtils.isNotBlank(miRegister.getPnlNumber())) {
+            Integer pnlNumber = Integer.valueOf(miRegister.getPnlNumber());//PNL数
+            orderDetailDTO.setLineImpression(String.valueOf(Integer.valueOf(miRegister.getLine()) * pnlNumber));
+            //绿油印次
+            orderDetailDTO.setGreenOilImpression(String.valueOf(Integer.valueOf(miRegister.getGreenOil()) * pnlNumber));
+            //文字印次
+            orderDetailDTO.setWordsImpression(String.valueOf(Integer.valueOf(miRegister.getWords()) * pnlNumber));
+            //碳桥印次
+            orderDetailDTO.setCarbonBridgeImpression(String.valueOf(Integer.valueOf(miRegister.getCarbonBridge()) * pnlNumber));
+            //其它印次
+            orderDetailDTO.setOtherImpression(String.valueOf(Integer.valueOf(miRegister.getOther()) * pnlNumber));
+        }
+        //冲床冲次（计算规则：投产数除以一模出几）
+        double punch = Double.valueOf(orderDetailDTO.getCommissioningNum()) / Integer.valueOf(miRegister.getMiNumber());
+        orderDetailDTO.setPunch(String.valueOf((int) Math.ceil(punch)));
+        //定位孔数（计算规则：冲床冲次乘2）
+        double locatingNum = punch * 2;
+        orderDetailDTO.setLocatingNum(String.valueOf((int) Math.ceil(locatingNum)));
+        //报废数（计算规则：订单数的千分之五）
+        double scrapNum = Integer.valueOf(orderDetailDTO.getOrderNum()) / 1000 * 5;
+        orderDetailDTO.setScrapNum(String.valueOf((int) Math.ceil(scrapNum)));
         log.info("OrderServiceImpl getDetail method end;");
         return orderDetailDTO;
     }
@@ -264,7 +276,7 @@ public class OrderServiceImpl implements OrderService {
         double parseDouble = Double.parseDouble(addOrderDTO.getSparePartsRate()) / 1000;
         //生成投产数量（规则：订单数+订单数*备品率）
         double commissioningNum = orderNum + orderNum * parseDouble;
-        order.setCommissioningNum(String.valueOf(Math.ceil(commissioningNum)));
+        order.setCommissioningNum(String.valueOf((int) Math.ceil(commissioningNum)));
         //备品数
         order.setSparePartsNum(String.valueOf(orderNum * parseDouble));
         //生成平方数(规则：模片尺寸相乘/一模出几/1000000再乘以订单数)
@@ -274,30 +286,8 @@ public class OrderServiceImpl implements OrderService {
         String[] strings = byMiDyCode.getDieSize().split("\\*");
         double v2 = Double.parseDouble(strings[0]) * Double.parseDouble(strings[1]);
         String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * orderNum);
-        // String squareNum = String.valueOf(v2 / miNumber / 1000000 * orderNum);
         order.setSquareNum(squareNum);
         Order save = orderDao.save(order);
-        //新增完返回余料处理需要的数据
-//        AddOrderResultDTO resultDTO = new AddOrderResultDTO();
-//        resultDTO.setId(save.getId());
-//        //返回图片信息
-//        if (save.getMiRegister().getCommonFileId() != null) {
-//            CommonFile commonFile = fileDao.findOne(save.getMiRegister().getCommonFileId());
-//            if (commonFile != null) {
-//                resultDTO.setFileName(commonFile.getFileName());
-//                resultDTO.setCommonFileId(commonFile.getId());
-//            }
-//        }
-//        //返回PCS数
-//        resultDTO.setPcsNumber(save.getMiRegister().getPcsNumber());
-//        //返回共用料张数(计算规则：投产数/大料PCS数,保留三位小数)
-//        //大料PCS数
-//        Integer pcsNumber = Integer.valueOf(save.getMiRegister().getPcsNumber());
-//        String haredMaterialsNum = new DecimalFormat("#.000").format(commissioningNum / pcsNumber);
-//        resultDTO.setHaredMaterialsNum(haredMaterialsNum);
-//        //返回余下张数(计算规则：共用料张数的小数部分)
-//        String remainNum = "0." + haredMaterialsNum.replaceAll("\\d+\\.", "");
-//        resultDTO.setRemainNum(remainNum);
         log.info("OrderServiceImpl addAndEdit method end;");
         return this.getSurplusResult(save);
     }

@@ -81,4 +81,10 @@ public class OrderDetailDTO {
 
     @ApiModelProperty(value = "未完成数量")
     private String uncompletedNum;
+
+    @ApiModelProperty(value = "下料总数")
+    private String haredMaterialsNum;
+
+    @ApiModelProperty(value = "报废数")
+    private String scrapNum;
 }

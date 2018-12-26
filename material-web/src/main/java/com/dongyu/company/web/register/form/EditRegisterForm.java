@@ -71,7 +71,7 @@ public class EditRegisterForm {
 
     @ApiModelProperty(value = "一模出几")
     @NotNull(message = "一模出几不能为空")
-    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "一模出几格式错误，只能输入数字")
+    @Pattern(regexp = Constants.POSITIVE_NUMBER_PATTERN, message = "一模出几格式错误，只能输入正整数")
     private String miNumber;
 
     @ApiModelProperty(value = "模具编号")
@@ -157,6 +157,7 @@ public class EditRegisterForm {
     private String changeBasis;
 
     @ApiModelProperty(value = "大料PCS数")
+    @NotBlank(message = "大料PCS数不能为空")
     @Pattern(regexp = Constants.POSITIVE_NUMBER_PATTERN, message = "大料PCS数格式错误，只能输入大于0的数字")
     private String pcsNumber;
 
@@ -180,6 +181,7 @@ public class EditRegisterForm {
     private String punching;
 
     @ApiModelProperty(value = "大料PNL数")
+    @NotBlank(message = "大料PNL数不能为空")
     @Pattern(regexp = Constants.POSITIVE_NUMBER_PATTERN, message = "大料PNL数格式错误，只能输入大于0的数字")
     private String pnlNumber;
 
