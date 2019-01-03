@@ -39,5 +39,7 @@ public class MouldListDTO {
     @ApiModelProperty(value = "模具类型")
     private String mouldType;
 
+    @ApiModelProperty(value = "模具是否删除（0：未删除，1：已删除）")
+    private Integer deleted;
 
 }

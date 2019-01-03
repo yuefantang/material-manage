@@ -29,11 +29,17 @@ public class AddMouldDTO {
     //采购数量
     private String purchaseQuantity;
 
-    //单价（单位分）
-    private String price;
+    //测试架单价（单位元）
+    private String rackPrice;
 
-    //金额(单位分)
-    private String amount;
+    //模具单价（单位元）
+    private String mouldPrice;
+
+    //测试架金额(单位分)
+    private String rackAmount;
+
+    //模具金额(单位分)
+    private String mouldAmount;
 
     //供应商
     private String supplier;
@@ -51,7 +57,7 @@ public class AddMouldDTO {
     private String number;
 
     //采购种类
-    private String purchaseType;
+    private Integer purchaseType;
 
     //连接
     private String connect;
@@ -59,4 +65,6 @@ public class AddMouldDTO {
     //备注
     private String remark;
 
+    //是否收费不能为空
+    private Integer charge;
 }

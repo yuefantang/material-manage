@@ -38,6 +38,13 @@ public interface PurchaseMouldService {
     void deleted(Long id);
 
     /**
+     * 恢复删除模具采购
+     *
+     * @param id 模具采购id
+     */
+    void recovery(Long id);
+
+    /**
      * 模具采购详情
      *
      * @param id 模具采购id

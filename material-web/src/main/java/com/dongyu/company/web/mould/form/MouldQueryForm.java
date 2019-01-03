@@ -33,4 +33,14 @@ public class MouldQueryForm extends PageForm {
 
     @ApiModelProperty("所属客户(支持模糊查询)")
     private String affiliatedCustomer;
+
+    @ApiModelProperty(value = "模具采购是否删除（0：未删除，1：已删除），默认0")
+    private Integer deleted;
+
+    @ApiModelProperty("是否收费（0：不收费，1：收费），默认0")
+    private Integer charge;
+
+    @ApiModelProperty("收费开单（0：未收费开单，1：已收费开单）默认0")
+    private Integer chargeOpening;
+
 }

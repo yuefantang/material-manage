@@ -1,5 +1,7 @@
 package com.dongyu.company.mould.dao;
 
+import com.dongyu.company.common.constants.CurrencyEunm;
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.mould.domain.PurchaseMould;
 import com.dongyu.company.mould.dto.MouldQueryDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,9 @@ public class MouldSpecs {
     private static final String SUPPLIER = "supplier";
     private static final String AFFILIATED_CUSTOMER = "affiliatedCustomer";
     private static final String PURCHASE_DATE = "purchaseDate";
+    private static final String DELETED = "deleted";
+    private static final String CHARGE = "charge";
+    private static final String CHARGE_OPENING = "chargeOpening";
 
     public static Specification<PurchaseMould> mouldListQuerySpec(MouldQueryDTO mouldQueryDTO) {
         return (root, query, builder) -> {
@@ -53,6 +58,39 @@ public class MouldSpecs {
             if (StringUtils.isNotBlank(mouldQueryDTO.getPurchaseDateEnd())) {
                 //小于等于传入时间
                 list.add(builder.lessThanOrEqualTo(root.get(PURCHASE_DATE).as(String.class), mouldQueryDTO.getPurchaseDateEnd()));
+            }
+
+            //是否删除查询
+            if (mouldQueryDTO.getDeleted() != null) {
+                if (mouldQueryDTO.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
+                    //未删除
+                    list.add(builder.equal(root.get(DELETED), mouldQueryDTO.getDeleted()));
+                } else if (mouldQueryDTO.getDeleted() == DeletedEnum.DELETED.getValue()) {
+                    //已删除
+                    list.add(builder.equal(root.get(DELETED), mouldQueryDTO.getDeleted()));
+                }
+            }
+
+            //是否收费
+            if (mouldQueryDTO.getCharge() != null) {
+                if (mouldQueryDTO.getCharge() == CurrencyEunm.NO.getValue()) {
+                    //未收费
+                    list.add(builder.equal(root.get(CHARGE), mouldQueryDTO.getCharge()));
+                } else if (mouldQueryDTO.getCharge() == CurrencyEunm.YES.getValue()) {
+                    //收费
+                    list.add(builder.equal(root.get(CHARGE), mouldQueryDTO.getCharge()));
+                }
+            }
+
+            //收费开单
+            if (mouldQueryDTO.getChargeOpening() != null) {
+                if (mouldQueryDTO.getChargeOpening() == CurrencyEunm.NO.getValue()) {
+                    //未开单
+                    list.add(builder.equal(root.get(CHARGE_OPENING), mouldQueryDTO.getChargeOpening()));
+                } else if (mouldQueryDTO.getChargeOpening() == CurrencyEunm.NO.getValue()) {
+                    //已开单
+                    list.add(builder.equal(root.get(CHARGE_OPENING), mouldQueryDTO.getChargeOpening()));
+                }
             }
             return builder.and(list.toArray(new Predicate[list.size()]));
         };

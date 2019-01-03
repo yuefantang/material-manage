@@ -89,6 +89,13 @@ public class MouldController {
         return ResponseVo.successResponse();
     }
 
+    @ApiOperation("恢复删除模具采购")
+    @GetMapping(value = "/recovery")
+    public ResponseVo recovery(@ApiParam(name = "id", value = "模具采购id") @RequestParam("id") Long id) {
+        purchaseMouldService.recovery(id);
+        return ResponseVo.successResponse();
+    }
+
     @ApiOperation("模具采购详情")
     @GetMapping(value = "/detail")
     public ResponseVo<MouldDetailDTO> detail(@ApiParam(name = "id", value = "模具采购id") @RequestParam("id") Long id) {

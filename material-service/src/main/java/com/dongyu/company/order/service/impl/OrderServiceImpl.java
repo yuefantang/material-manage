@@ -216,7 +216,7 @@ public class OrderServiceImpl implements OrderService {
             String haredMaterialsNum = new DecimalFormat("#.000").format(Double.parseDouble(order.getCommissioningNum()) / pcsNumber);
             orderDetailDTO.setHaredMaterialsNum(haredMaterialsNum);
         }
-        //线路印次（计算规则：PNL数乘线路，以下类似）
+        //线路印次（计算规则：PNL数乘线路乘以大料数，以下类似）
         if (StringUtils.isNotBlank(miRegister.getPnlNumber())) {
             Integer pnlNumber = Integer.valueOf(miRegister.getPnlNumber());//PNL数
             orderDetailDTO.setLineImpression(String.valueOf(Integer.valueOf(miRegister.getLine()) * pnlNumber));

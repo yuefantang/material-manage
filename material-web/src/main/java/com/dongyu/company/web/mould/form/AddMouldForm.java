@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -45,15 +46,21 @@ public class AddMouldForm {
     @NotBlank(message = "采购数量不能为空")
     private String purchaseQuantity;
 
-    @ApiModelProperty(value = "单价（单位分）")
+    @ApiModelProperty(value = "测试架单价（单位元）")
     @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
-    @NotBlank(message = "单价不能为空")
-    private String price;
+    private String rackPrice;
 
-    @ApiModelProperty(value = "金额(单位分)")
+//    @ApiModelProperty(value = "测试架金额(单位元)")
+//    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
+//    private String rackAmount;
+
+    @ApiModelProperty(value = "模具单价（单位元）")
     @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
-    @NotBlank(message = "金额不能为空")
-    private String amount;
+    private String mouldPrice;
+
+//    @ApiModelProperty(value = "模具金额(单位元)")
+//    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
+//    private String mouldAmount;
 
     @ApiModelProperty(value = "供应商（下拉列表）")
     @NotBlank(message = "供应商不能为空")
@@ -69,16 +76,16 @@ public class AddMouldForm {
     private String affiliatedCustomer;
 
     @ApiModelProperty(value = "模具类型（下拉列表）")
-    @NotBlank(message = "模具类型不能为空")
     private String mouldType;
 
     @ApiModelProperty(value = "一模出几")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "格式错误，只能输入数字")
     @NotBlank(message = "一模出几不能为空")
     private String number;
 
-    @ApiModelProperty(value = "采购种类")
-    @NotBlank(message = "采购种类不能为空")
-    private String purchaseType;
+    @ApiModelProperty(value = "采购种类(1:模具,2:测试架,3:模具-测试架)")
+    @NotNull(message = "采购种类不能为空")
+    private Integer purchaseType;
 
     @ApiModelProperty(value = "连接（下拉列表）")
     @NotBlank(message = "连接不能为空")
@@ -86,4 +93,9 @@ public class AddMouldForm {
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    @ApiModelProperty(value ="是否收费（0：不收费，1：收费）")
+    @NotNull(message = "是否收费不能为空")
+    private Integer charge;
+
 }

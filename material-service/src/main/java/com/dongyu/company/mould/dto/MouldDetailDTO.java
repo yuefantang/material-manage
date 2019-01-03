@@ -43,17 +43,23 @@ public class MouldDetailDTO {
     @ApiModelProperty(value = "宽（单位毫米）")
     private String wide;
 
-    @ApiModelProperty(value = "单价（单位分）")
-    private String price;
+    @ApiModelProperty(value = "测试架单价（单位元）")
+    private String rackPrice;
 
-    @ApiModelProperty(value = "金额(单位分)")
-    private String amount;
+    @ApiModelProperty(value = "测试架金额(单位元)")
+    private String rackAmount;
+
+    @ApiModelProperty(value = "模具单价（单位元）")
+    private String mouldPrice;
+
+    @ApiModelProperty(value = "模具金额(单位元)")
+    private String mouldAmount;
 
     @ApiModelProperty(value = "一模出几")
     private String number;
 
     @ApiModelProperty(value = "采购种类")
-    private String purchaseType;
+    private Integer purchaseType;
 
     @ApiModelProperty(value = "连接")
     private String connect;
@@ -61,4 +67,6 @@ public class MouldDetailDTO {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "是否收费（0：不收费，1：收费）")
+    private Integer charge;
 }

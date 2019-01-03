@@ -63,7 +63,7 @@ public class MouldExcelView extends ExcelView {
                     //设置标题行
                     List<String> headers = new LinkedList<>();
                     headers.addAll(Arrays.asList("DY编号", "产品型号", "长（单位毫米）", "宽（单位毫米）",
-                            "采购数量", "单价（单位分）", "金额(单位分)", "供应商", "采购日期", "所属客户",
+                            "采购数量", "模具单价（单位元）", "模具金额(单位元)", "测试架单价（单位元）", "测试架金额(单位元)", "供应商", "采购日期", "所属客户",
                             "模具类型", "一模出几", "采购种类", "连接", "备注"));
                     for (int i = 0; i < headers.size(); i++) {
                         Cell cell = headerRow.createCell(i);
@@ -104,55 +104,65 @@ public class MouldExcelView extends ExcelView {
                 cell5.setCellStyle(cellStyle);
                 cell5.setCellValue(Optional.ofNullable(data.getPurchaseQuantity()).orElse(""));
 
-                //单价（单位分）
+                //模具单价（单位元）
                 Cell cell6 = dataRow.createCell(creditNum++);
                 cell6.setCellStyle(cellStyle);
-                cell6.setCellValue(Optional.ofNullable(data.getPrice()).orElse(""));
+                cell6.setCellValue(Optional.ofNullable(data.getMouldPrice()).orElse(""));
 
-                //金额(单位分)
+                //模具金额(单位元)
                 Cell cell7 = dataRow.createCell(creditNum++);
                 cell7.setCellStyle(cellStyle);
-                cell7.setCellValue(Optional.ofNullable(data.getAmount()).orElse(""));
+                cell7.setCellValue(Optional.ofNullable(data.getMouldAmount()).orElse(""));
 
-                //供应商
+                //测试架单价（单位元）
                 Cell cell8 = dataRow.createCell(creditNum++);
                 cell8.setCellStyle(cellStyle);
-                cell8.setCellValue(Optional.ofNullable(data.getSupplier()).orElse(""));
+                cell8.setCellValue(Optional.ofNullable(data.getRackPrice()).orElse(""));
 
-                //采购日期
+                //测试架金额(单位元)
                 Cell cell9 = dataRow.createCell(creditNum++);
                 cell9.setCellStyle(cellStyle);
-                cell9.setCellValue(Optional.ofNullable(data.getPurchaseDate()).orElse(""));
+                cell9.setCellValue(Optional.ofNullable(data.getRackAmount()).orElse(""));
 
-                //所属客户
+                //供应商
                 Cell cell10 = dataRow.createCell(creditNum++);
                 cell10.setCellStyle(cellStyle);
-                cell10.setCellValue(Optional.ofNullable(data.getAffiliatedCustomer()).orElse(""));
+                cell10.setCellValue(Optional.ofNullable(data.getSupplier()).orElse(""));
 
-                //模具类型
+                //采购日期
                 Cell cell11 = dataRow.createCell(creditNum++);
                 cell11.setCellStyle(cellStyle);
-                cell11.setCellValue(Optional.ofNullable(data.getMouldType()).orElse(""));
+                cell11.setCellValue(Optional.ofNullable(data.getPurchaseDate()).orElse(""));
 
-                //一模出几
+                //所属客户
                 Cell cell12 = dataRow.createCell(creditNum++);
                 cell12.setCellStyle(cellStyle);
-                cell12.setCellValue(Optional.ofNullable(data.getNumber()).orElse(""));
+                cell12.setCellValue(Optional.ofNullable(data.getAffiliatedCustomer()).orElse(""));
 
-                //采购种类
+                //模具类型
                 Cell cell13 = dataRow.createCell(creditNum++);
                 cell13.setCellStyle(cellStyle);
-                cell13.setCellValue(Optional.ofNullable(data.getPurchaseType()).orElse(""));
+                cell13.setCellValue(Optional.ofNullable(data.getMouldType()).orElse(""));
 
-                //连接
+                //一模出几
                 Cell cell14 = dataRow.createCell(creditNum++);
                 cell14.setCellStyle(cellStyle);
-                cell14.setCellValue(Optional.ofNullable(data.getConnect()).orElse(""));
+                cell14.setCellValue(Optional.ofNullable(data.getNumber()).orElse(""));
 
-                //备注
+                //采购种类
                 Cell cell15 = dataRow.createCell(creditNum++);
                 cell15.setCellStyle(cellStyle);
-                cell15.setCellValue(Optional.ofNullable(data.getRemark()).orElse(""));
+                cell15.setCellValue(Optional.ofNullable(data.getPurchaseType()).orElse(null));
+
+                //连接
+                Cell cell16 = dataRow.createCell(creditNum++);
+                cell16.setCellStyle(cellStyle);
+                cell16.setCellValue(Optional.ofNullable(data.getConnect()).orElse(""));
+
+                //备注
+                Cell cell17 = dataRow.createCell(creditNum++);
+                cell17.setCellStyle(cellStyle);
+                cell17.setCellValue(Optional.ofNullable(data.getRemark()).orElse(""));
 
                 rowCount++;
                 totalCount++;
