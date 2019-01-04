@@ -46,7 +46,7 @@ public class DictServiceImpl implements DictService {
             dictDTO.setValue(usageStateEnum.getDesc());
             UsageStateList.add(dictDTO);
         }
-        dictResultDTO.setProcurementTypeEnum(UsageStateList);
+        dictResultDTO.setUsageStateEnum(UsageStateList);
         log.info("DictServiceImpl getDictList methond end");
         return dictResultDTO;
     }

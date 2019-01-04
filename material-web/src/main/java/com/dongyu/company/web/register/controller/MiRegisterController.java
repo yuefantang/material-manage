@@ -2,14 +2,17 @@ package com.dongyu.company.web.register.controller;
 
 import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
+import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.register.dto.AddRegisterDTO;
 import com.dongyu.company.register.dto.RegisterDetailDTO;
 import com.dongyu.company.register.dto.RegisterListDTO;
 import com.dongyu.company.register.dto.RegisterQueryDTO;
 import com.dongyu.company.register.service.RegisterService;
+import com.dongyu.company.register.view.RegisterExcelView;
 import com.dongyu.company.web.register.form.AddRegisterForm;
 import com.dongyu.company.web.register.form.EditRegisterForm;
+import com.dongyu.company.web.register.form.ExportRegisterQueryForm;
 import com.dongyu.company.web.register.form.RegisterQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,8 +27,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * MI登记相关
@@ -82,9 +90,18 @@ public class MiRegisterController {
         return ResponseVo.successResponse(detail);
     }
 
-//    @ApiOperation("MI登记导出")
-//    @GetMapping(value = "/export")
-//    public ModelAndView exportExcel(@ModelAttribute ExportMouldQueryForm form) {
-//        return new ModelAndView();
-//    }
+    @ApiOperation("MI登记导出")
+    @GetMapping(value = "/export")
+    public ModelAndView exportExcel(@ModelAttribute ExportRegisterQueryForm form) {
+        RegisterQueryDTO registerQueryDTO = new RegisterQueryDTO();
+        BeanUtils.copyProperties(form, registerQueryDTO);
+        List<RegisterDetailDTO> registerDetailDTOS = registerService.getExportList(registerQueryDTO);
+        String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
+        String fileName = "MI登记" + date + ".xlsx";
+        Map<String, Object> map = new HashMap<>();
+        map.put("registerListDTO", registerDetailDTOS);
+        map.put("fileName", fileName);
+        RegisterExcelView excelView = new RegisterExcelView();
+        return new ModelAndView(excelView, map);
+    }
 }

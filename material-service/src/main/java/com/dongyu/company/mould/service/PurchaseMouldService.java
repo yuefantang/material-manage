@@ -25,7 +25,7 @@ public interface PurchaseMouldService {
     PageDTO<MouldListDTO> getlist(MouldQueryDTO mouldQueryDTO);
 
     //导出查询模具采购
-    List<MouldDetailDTO> getexportList(MouldQueryDTO mouldQueryDTO);
+    List<MouldDetailDTO> getExportList(MouldQueryDTO mouldQueryDTO);
 
     //修改模具采购
     void edit(EditMouldDTO editMouldDTO);

@@ -76,8 +76,8 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
     }
 
     @Override
-    public List<MouldDetailDTO> getexportList(MouldQueryDTO dto) {
-        log.info("PurchaseMouldServiceImpl getexportList method start Parm:" + JSONObject.toJSONString(dto));
+    public List<MouldDetailDTO> getExportList(MouldQueryDTO dto) {
+        log.info("PurchaseMouldServiceImpl getExportList method start Parm:" + JSONObject.toJSONString(dto));
         List<PurchaseMould> purchaseMouldList = purchaseMouldDao.findAll(MouldSpecs.mouldListQuerySpec(dto));
         if (CollectionUtils.isEmpty(purchaseMouldList)) {
             return null;

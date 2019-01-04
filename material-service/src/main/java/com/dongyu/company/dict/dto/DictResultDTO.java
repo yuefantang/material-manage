@@ -1,5 +1,7 @@
 package com.dongyu.company.dict.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,11 +14,12 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
+@ApiModel("下拉列表字典值返回集合DTO")
 public class DictResultDTO {
 
-    //采购种类
+    @ApiModelProperty(value = "采购种类")
     private List<DictDTO> procurementTypeEnum;
 
-    //模具使用状态
+    @ApiModelProperty(value = "模具使用状态")
     private List<DictDTO> usageStateEnum;
 }

@@ -65,7 +65,6 @@ public class AttributeOpAspect {
         if (entity != null) {//不为空代表数据库已经存在该数据，查找出数据库原数据
             entityId = Long.valueOf(entity.toString());
             oldObject = this.getObjectById(joinPoint.getTarget(), entityId);
-            //  BeanUtils.copyProperties(oldTempObj, oldObject);
         }
         newObject = joinPoint.proceed(joinPoint.getArgs());//环绕通知执行proceed方法的作用是让目标方法执行
         if (entityId == null) {//为新增操作

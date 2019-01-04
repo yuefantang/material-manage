@@ -1,5 +1,7 @@
 package com.dongyu.company.register.domain;
 
+import com.dongyu.company.common.annotation.AttributeOpName;
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.domain.BaseDomain;
 import com.dongyu.company.finance.domain.MiPrice;
 import lombok.Data;
@@ -160,8 +162,12 @@ public class MiRegister extends BaseDomain {
     @Column(columnDefinition = "varchar(255) COMMENT '注意事项'")
     private String attention;
 
-    @Column(columnDefinition = "varchar(4) NOT NULL DEFAULT '0' COMMENT '是否允许投产'")
-    private String production;
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否允许投产（0：否，1：是）'")
+    private Integer production;
+
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '模具是否删除（0：未删除，1：已删除）'")
+    @AttributeOpName("删除")
+    private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
     @OneToOne
     @JoinColumn(name = "mi_price_id", columnDefinition = "bigint(20) COMMENT '单价表ID'")

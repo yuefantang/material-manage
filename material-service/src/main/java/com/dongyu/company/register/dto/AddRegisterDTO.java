@@ -144,7 +144,7 @@ public class AddRegisterDTO {
     private String attention;
 
     @ApiModelProperty(value = "是否允许投产")
-    private String production;
+    private Integer production;
 
     @ApiModelProperty(value = "文件图片表ID")
     private Long commonFileId;

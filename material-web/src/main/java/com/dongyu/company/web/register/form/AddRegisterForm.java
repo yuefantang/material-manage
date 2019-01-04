@@ -146,7 +146,6 @@ public class AddRegisterForm {
 
     @ApiModelProperty(value = "更改日期yyyy-MM-dd")
     @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
-    @NotBlank(message = "更改日期不能为空")
     private String changeDate;
 
     @ApiModelProperty(value = "更改依据")
@@ -184,9 +183,9 @@ public class AddRegisterForm {
     @ApiModelProperty(value = "注意事项")
     private String attention;
 
-    @ApiModelProperty(value = "是否允许投产")
+    @ApiModelProperty(value = "是否允许投产（0：否，1：是）")
     @NotNull(message = "是否允许投产不能为空")
-    private String production;
+    private Integer production;
 
     @ApiModelProperty(value = "文件图片表ID")
     private Long commonFileId;

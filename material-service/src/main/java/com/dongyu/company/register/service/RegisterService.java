@@ -6,6 +6,8 @@ import com.dongyu.company.register.dto.RegisterDetailDTO;
 import com.dongyu.company.register.dto.RegisterListDTO;
 import com.dongyu.company.register.dto.RegisterQueryDTO;
 
+import java.util.List;
+
 /**
  * MI登记Service
  *
@@ -24,13 +26,20 @@ public interface RegisterService {
 
     /**
      * MI登记分页查询
+     *
      * @param registerQueryDTO
      * @return
      */
-     PageDTO<RegisterListDTO> getlist(RegisterQueryDTO registerQueryDTO);
+    PageDTO<RegisterListDTO> getlist(RegisterQueryDTO registerQueryDTO);
 
-    //导出查询模具采购
-    // List<MouldDetailDTO> getexportList(MouldQueryDTO mouldQueryDTO);
+
+    /**
+     * 导出MI登记
+     *
+     * @param registerQueryDTO
+     * @return
+     */
+    List<RegisterDetailDTO> getExportList(RegisterQueryDTO registerQueryDTO);
 
     /**
      * 修改MI登记

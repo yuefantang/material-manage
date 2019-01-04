@@ -108,7 +108,7 @@ public class MouldController {
     public ModelAndView exportExcel(@ModelAttribute ExportMouldQueryForm form) {
         MouldQueryDTO mouldQueryDTO = new MouldQueryDTO();
         BeanUtils.copyProperties(form, mouldQueryDTO);
-        List<MouldDetailDTO> mouldDetailDTOS = purchaseMouldService.getexportList(mouldQueryDTO);
+        List<MouldDetailDTO> mouldDetailDTOS = purchaseMouldService.getExportList(mouldQueryDTO);
         String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
         String fileName = "模具采购" + date + ".xlsx";
         Map<String, Object> map = new HashMap<>();

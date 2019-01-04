@@ -21,6 +21,7 @@ import com.dongyu.company.register.dto.RegisterListDTO;
 import com.dongyu.company.register.dto.RegisterQueryDTO;
 import com.dongyu.company.register.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -111,6 +112,27 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
+    public List<RegisterDetailDTO> getExportList(RegisterQueryDTO registerQueryDTO) {
+        log.info("RegisterServiceImpl getExportList method start Parm:" + JSONObject.toJSONString(registerQueryDTO));
+        List<MiRegister> miRegisterList = registerDao.findAll(RegisterSpecs.registerQuerySpec(registerQueryDTO));
+        if (CollectionUtils.isEmpty(miRegisterList)) {
+            return null;
+        }
+        List<RegisterDetailDTO> detailDTOList = miRegisterList.stream().map(miRegister -> {
+            RegisterDetailDTO registerDetailDTO = new RegisterDetailDTO();
+            BeanUtils.copyProperties(miRegister, registerDetailDTO);
+            //开模日期
+            registerDetailDTO.setOpenMoldDate(DateUtil.parseDateToStr(miRegister.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            //样板确认日期
+            registerDetailDTO.setConfirmDate(DateUtil.parseDateToStr(miRegister.getConfirmDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            //建档日期
+            registerDetailDTO.setRecordDate(DateUtil.parseDateToStr(miRegister.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            return registerDetailDTO;
+        }).collect(Collectors.toList());
+        return detailDTOList;
+    }
+
+    @Override
     @Transactional
     public void edit(RegisterDetailDTO editRegisterDTO) {
         log.info("RegisterServiceImpl edit method start Parm:" + JSONObject.toJSONString(editRegisterDTO));
@@ -157,7 +179,7 @@ public class RegisterServiceImpl implements RegisterService {
             throw new BizException("不存在该MI登记，无法删除");
         }
         //删除图片
-        if (miRegister.getCommonFileId()!=null){
+        if (miRegister.getCommonFileId() != null) {
             CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());
             if (commonFile != null) {
                 if (commonFile.getId() != null) {
@@ -195,7 +217,7 @@ public class RegisterServiceImpl implements RegisterService {
         registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
 
         //返回图片信息
-        if (miRegister.getCommonFileId()!=null){
+        if (miRegister.getCommonFileId() != null) {
             CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());
             if (commonFile != null) {
                 //registerDetailDTO.setFilePath(commonFile.getFilePath());
