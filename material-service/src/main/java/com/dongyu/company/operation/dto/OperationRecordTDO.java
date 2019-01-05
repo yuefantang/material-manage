@@ -29,4 +29,7 @@ public class OperationRecordTDO {
 
     @ApiModelProperty(value = "操作人名称")
     private String operationName;
+
+    @ApiModelProperty(value = "操作时间yyyy-MM-dd HH:mm:ss")
+    private String updateTime;
 }

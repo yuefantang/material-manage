@@ -2,6 +2,7 @@ package com.dongyu.company.register.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
@@ -82,6 +83,9 @@ public class RegisterServiceImpl implements RegisterService {
 
         //存储MI登记的工序
         List<AddProcessDTO> processDTOS = dto.getProcessDTOS();
+        if (CollectionUtils.isEmpty(processDTOS)) {
+            throw new BizException("工序不能为空");
+        }
         List<MiProcess> processList = processDTOS.stream().map(addProcessDTO -> {
             MiProcess miProcess = new MiProcess();
             BeanUtils.copyProperties(addProcessDTO, miProcess);
@@ -133,10 +137,10 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    @Transactional
+    @Transactional//当加入事务的时候，日志记录获取原数据有问题
     public void edit(RegisterDetailDTO editRegisterDTO) {
         log.info("RegisterServiceImpl edit method start Parm:" + JSONObject.toJSONString(editRegisterDTO));
-        MiRegister miRegister = registerDao.findOne(editRegisterDTO.getId());
+        MiRegister miRegister = registerDao.findById(editRegisterDTO.getId());
         if (miRegister == null) {
             throw new BizException("不存在该MI登记记录");
         }
@@ -150,28 +154,36 @@ public class RegisterServiceImpl implements RegisterService {
         }
         //修改MI登记表数据
         BeanUtils.copyProperties(editRegisterDTO, miRegister);
+        registerDao.save(miRegister);
 
         //修改MI登记下的工序
         List<EditProcessDTO> processDTOS = editRegisterDTO.getProcessDTOS();
+        if (CollectionUtils.isEmpty(processDTOS)) {
+            throw new BizException("工序不能为空");
+        }
+        processDao.deletedByMiRegister(miRegister);
         List<MiProcess> miProcessList = processDao.findByMiRegister(miRegister);
-        processDTOS.stream().map(editProcessDTO -> {
-            if (editProcessDTO.getId() == null) {
-                MiProcess miProcess = new MiProcess();
-                BeanUtils.copyProperties(editProcessDTO, miProcess);
-                return miProcess;
-            }
-            for (MiProcess miProcess : miProcessList) {
-                if (editProcessDTO.getId() == miProcess.getId()) {
-                    BeanUtils.copyProperties(editProcessDTO, miProcess);
-                    return miProcess;
-                }
-            }
-            return null;
+
+        List<MiProcess> processList = processDTOS.stream().map(editProcessDTO -> {
+            MiProcess miProcess = new MiProcess();
+            miProcess.setMiRegister(miRegister);
+            miProcess.setProcess(editProcessDTO.getProcess());
+            miProcess.setRemark(editProcessDTO.getRemark());
+            miProcess.setOrderNumber(editProcessDTO.getOrderNumber());
+            return miProcess;
+//            for (MiProcess miProcess : miProcessList) {
+//                if (editProcessDTO.getId() == miProcess.getId()) {
+//                    BeanUtils.copyProperties(editProcessDTO, miProcess);
+//                    return miProcess;
+//                }
+//            }
+//            return null;
         }).collect(Collectors.toList());
+        processDao.save(processList);
+
     }
 
     @Override
-    @Transactional
     public void deleted(Long id) {
         log.info("RegisterServiceImpl deleted method start Parm:" + id);
         MiRegister miRegister = registerDao.findOne(id);
@@ -179,21 +191,36 @@ public class RegisterServiceImpl implements RegisterService {
             throw new BizException("不存在该MI登记，无法删除");
         }
         //删除图片
-        if (miRegister.getCommonFileId() != null) {
-            CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());
-            if (commonFile != null) {
-                if (commonFile.getId() != null) {
-                    Boolean delfile = fileService.delfile(commonFile.getId());
-                    if (!delfile) {
-                        throw new BizException("图片删除失败！");
-                    }
-                }
-            }
-        }
+//        if (miRegister.getCommonFileId() != null) {
+//            CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());
+//            if (commonFile != null) {
+//                if (commonFile.getId() != null) {
+//                    Boolean delfile = fileService.delfile(commonFile.getId());
+//                    if (!delfile) {
+//                        throw new BizException("图片删除失败！");
+//                    }
+//                }
+//            }
+//        }
         //删除MI登记相关的工序
-        processDao.deletedByMiRegister(miRegister);
+//        processDao.deletedByMiRegister(miRegister);
+
         //删除MI登记
-        registerDao.delete(id);
+        miRegister.setDeleted(DeletedEnum.DELETED.getValue());
+        registerDao.save(miRegister);
+        log.info("RegisterServiceImpl deleted method end;");
+    }
+
+    @Override
+    public void recovery(Long id) {
+        log.info("RegisterServiceImpl recovery method start Parm:" + id);
+        MiRegister miRegister = registerDao.findOne(id);
+        if (miRegister == null) {
+            throw new BizException("不存在该MI登记，无法恢复");
+        }
+        miRegister.setDeleted(DeletedEnum.UNDELETED.getValue());
+        registerDao.save(miRegister);
+        log.info("RegisterServiceImpl recovery method end;");
     }
 
     @Override

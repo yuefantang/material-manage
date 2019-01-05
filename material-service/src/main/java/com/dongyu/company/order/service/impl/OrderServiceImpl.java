@@ -283,9 +283,10 @@ public class OrderServiceImpl implements OrderService {
         //一模出几
         Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber());
         // 模片尺寸相乘
-        String[] strings = byMiDyCode.getDieSize().split("\\*");
-        double v2 = Double.parseDouble(strings[0]) * Double.parseDouble(strings[1]);
-        String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * orderNum);
+//        String[] strings = byMiDyCode.getDieSize().split("\\*");
+//        double v2 = Double.parseDouble(strings[0]) * Double.parseDouble(strings[1]);
+        double v2 =  byMiDyCode.getDieSizeLength()*byMiDyCode.getDieSizeWide();
+                String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * orderNum);
         order.setSquareNum(squareNum);
         Order save = orderDao.save(order);
         log.info("OrderServiceImpl addAndEdit method end;");

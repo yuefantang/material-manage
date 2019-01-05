@@ -16,6 +16,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import javax.persistence.EntityManager;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -38,6 +39,8 @@ import java.util.Optional;
 public class AttributeOpAspect {
 
     @Autowired
+    private EntityManager entityManager;
+    @Autowired
     private OperationRecordDao operationRecordDao;
 
     /**
@@ -50,6 +53,9 @@ public class AttributeOpAspect {
     @Around("insertCell()")
     public Object addOperationRecordLog(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("AttributeOpAspect addOperationRecordLog method start:");
+        if (joinPoint.getArgs().length > 1) {
+            return null;
+        }
         Object updateEntity = joinPoint.getArgs()[0];
         Class<?> updateEntityClass = updateEntity.getClass();
         AttributeOpRecord annotation = updateEntity.getClass().getAnnotation(AttributeOpRecord.class);
@@ -112,9 +118,11 @@ public class AttributeOpAspect {
      * @return
      * @throws Exception
      */
-    private Object getObjectById(Object target, Serializable id) throws Exception {
+    public Object getObjectById(Object target, Serializable id) throws Exception {
         log.info("AttributeOpAspect getObjectById method start:");
-        Method findOne = target.getClass().getDeclaredMethod("findOne", Serializable.class);
+        entityManager.getEntityManagerFactory().getCache().evictAll();
+        Class<?> targetClass = target.getClass();
+        Method findOne = target.getClass().getDeclaredMethod("getOne", Serializable.class);
         Object result = findOne.invoke(target, id);
         if (result instanceof Optional) {
             return ((Optional) result).get();

@@ -28,7 +28,7 @@ public class AddRegisterForm {
     @NotNull(message = "DY编号不能为空")
     private String miDyCode;
 
-    @ApiModelProperty(value = "客户型号")
+    @ApiModelProperty(value = "产品型号")
     private String customerModel;
 
     @ApiModelProperty(value = "客户名称")
@@ -57,14 +57,21 @@ public class AddRegisterForm {
     @ApiModelProperty(value = "工程更改内容")
     private String changeContent;
 
-    @ApiModelProperty(value = "单片尺寸")
-    @Pattern(regexp = Constants.SIZE_PATTERN, message = "单片尺寸格式错误,格式为：23.34*89")
-    private String singleSize;
+    @ApiModelProperty(value = "单片尺寸长")
+    @NotNull(message = "单片尺寸长不能为空")
+    private Double singleSizeLength;
 
-    @ApiModelProperty(value = "模片尺寸")
-    @NotNull(message = "模片尺寸不能为空")
-    @Pattern(regexp = Constants.SIZE_PATTERN, message = "模片尺寸格式错误,格式为：23.34*89")
-    private String dieSize;
+    @ApiModelProperty(value = "单片尺寸宽")
+    @NotNull(message = "单片尺寸宽不能为空")
+    private Double singleSizeWide;
+
+    @ApiModelProperty(value = "模片尺寸长")
+    @NotNull(message = "模片尺寸长不能为空")
+    private Double dieSizeLength;
+
+    @ApiModelProperty(value = "模片尺寸宽")
+    @NotNull(message = "模片尺寸宽不能为空")
+    private Double dieSizeWide;
 
     @ApiModelProperty(value = "一模出几")
     @NotNull(message = "一模出几不能为空")
@@ -183,7 +190,7 @@ public class AddRegisterForm {
     @ApiModelProperty(value = "注意事项")
     private String attention;
 
-    @ApiModelProperty(value = "是否允许投产（0：否，1：是）")
+    @ApiModelProperty(value = "是否允许投产（0：否，1：是）默认为1")
     @NotNull(message = "是否允许投产不能为空")
     private Integer production;
 

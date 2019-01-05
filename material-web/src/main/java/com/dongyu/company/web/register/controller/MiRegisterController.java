@@ -83,6 +83,13 @@ public class MiRegisterController {
         return ResponseVo.successResponse();
     }
 
+    @ApiOperation("恢复MI登记")
+    @GetMapping(value = "/recovery")
+    public ResponseVo recovery(@ApiParam(name = "id", value = "MI登记ID") @RequestParam("id") Long id) {
+        registerService.recovery(id);
+        return ResponseVo.successResponse();
+    }
+
     @ApiOperation("MI登记详情")
     @GetMapping(value = "/detail")
     public ResponseVo<RegisterDetailDTO> detail(@ApiParam(name = "id", value = "MI登记ID") @RequestParam("id") Long id) {

@@ -50,11 +50,17 @@ public class RegisterDetailDTO {
     @ApiModelProperty(value = "工程更改内容")
     private String changeContent;
 
-    @ApiModelProperty(value = "单片尺寸")
-    private String singleSize;
+    @ApiModelProperty(value = "单片尺寸长")
+    private Double singleSizeLength;
 
-    @ApiModelProperty(value = "模片尺寸")
-    private String dieSize;
+    @ApiModelProperty(value = "单片尺寸宽")
+    private Double singleSizeWide;
+
+    @ApiModelProperty(value = "模片尺寸长")
+    private Double dieSizeLength;
+
+    @ApiModelProperty(value = "模片尺寸宽")
+    private Double dieSizeWide;
 
     @ApiModelProperty(value = "一模出几")
     private String miNumber;

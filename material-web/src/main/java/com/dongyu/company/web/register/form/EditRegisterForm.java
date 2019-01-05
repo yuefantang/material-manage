@@ -60,14 +60,21 @@ public class EditRegisterForm {
     @ApiModelProperty(value = "工程更改内容")
     private String changeContent;
 
-    @ApiModelProperty(value = "单片尺寸")
-    @Pattern(regexp = Constants.SIZE_PATTERN, message = "单片尺寸格式错误,格式为：23.34*89")
-    private String singleSize;
+    @ApiModelProperty(value = "单片尺寸长")
+    @NotNull(message = "单片尺寸长不能为空")
+    private Double singleSizeLength;
 
-    @ApiModelProperty(value = "模片尺寸")
-    @NotNull(message = "模片尺寸不能为空")
-    @Pattern(regexp = Constants.SIZE_PATTERN, message = "模片尺寸格式错误,格式为：23.34*89")
-    private String dieSize;
+    @ApiModelProperty(value = "单片尺寸宽")
+    @NotNull(message = "单片尺寸宽不能为空")
+    private Double singleSizeWide;
+
+    @ApiModelProperty(value = "模片尺寸长")
+    @NotNull(message = "模片尺寸长不能为空")
+    private Double dieSizeLength;
+
+    @ApiModelProperty(value = "模片尺寸宽")
+    @NotNull(message = "模片尺寸宽不能为空")
+    private Double dieSizeWide;
 
     @ApiModelProperty(value = "一模出几")
     @NotNull(message = "一模出几不能为空")

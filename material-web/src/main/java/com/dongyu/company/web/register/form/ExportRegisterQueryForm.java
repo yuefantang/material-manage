@@ -17,4 +17,7 @@ public class ExportRegisterQueryForm {
 
     @ApiModelProperty(value = "DY编号")
     private String miDyCode;
+
+    @ApiModelProperty(value = "Mi登记是否删除（0：未删除，1：已删除），默认0")
+    private Integer deleted;
 }

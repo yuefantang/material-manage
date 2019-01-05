@@ -56,6 +56,13 @@ public interface RegisterService {
     void deleted(Long id);
 
     /**
+     * 恢复删除MI登记
+     *
+     * @param id MI登记id
+     */
+    void recovery(Long id);
+
+    /**
      * MI登记详情
      *
      * @param id MI登记id
