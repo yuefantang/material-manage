@@ -1,6 +1,7 @@
 package com.dongyu.company.quality.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * 详情返回DTO
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2019/1/5
  * @since 1.0.0
  */
+@Data
 public class QualityDetailDTO {
 
     @ApiModelProperty(value = "DY编号")

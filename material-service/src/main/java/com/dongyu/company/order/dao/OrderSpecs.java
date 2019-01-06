@@ -22,6 +22,7 @@ public class OrderSpecs {
     private static final String COMMISSIONING_CODE = "commissioningCode";
     private static final String DELETED = "deleted";
     private static final String COMPLETE_STATE = "completeState";
+    private static final String ORDER_DY_CODE = "orderDyCode";
 
 
     public static Specification<Order> orederQuerySpec(OrderQueryDTO orderQueryDTO) {
@@ -31,6 +32,12 @@ public class OrderSpecs {
             if (StringUtils.isNotBlank(orderQueryDTO.getCommissioningCode())) {
                 list.add(builder.like(root.get(COMMISSIONING_CODE), "%" + orderQueryDTO.getCommissioningCode() + "%"));
             }
+
+            //根据DY编号模糊查询
+            if (StringUtils.isNotBlank(orderQueryDTO.getOrderDyCode())) {
+                list.add(builder.like(root.get(ORDER_DY_CODE), "%" + orderQueryDTO.getOrderDyCode() + "%"));
+            }
+
             //订单是否完成
             if (orderQueryDTO.getCompleteState() != null) {
                 list.add(builder.equal(root.get(COMPLETE_STATE), orderQueryDTO.getCompleteState()));

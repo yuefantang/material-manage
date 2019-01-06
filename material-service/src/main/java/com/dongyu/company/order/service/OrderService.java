@@ -9,6 +9,8 @@ import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
 
+import java.util.List;
+
 /**
  * 下单Service
  *
@@ -71,4 +73,18 @@ public interface OrderService {
      */
     AddOrderResultDTO edit(EditOrderDTO editOrderDTO);
 
+    /**
+     * 恢复删除下单
+     *
+     * @param id 下单id
+     */
+    void recovery(Long id);
+
+    /**
+     * 导出下单
+     *
+     * @param orderQueryDTO
+     * @return
+     */
+    List<OrderDetailDTO> getExportList(OrderQueryDTO orderQueryDTO);
 }

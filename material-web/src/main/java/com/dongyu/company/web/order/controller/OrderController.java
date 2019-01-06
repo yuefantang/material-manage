@@ -2,6 +2,7 @@ package com.dongyu.company.web.order.controller;
 
 import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
+import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
@@ -11,9 +12,11 @@ import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
 import com.dongyu.company.order.service.OrderService;
+import com.dongyu.company.order.view.OrderExcelView;
 import com.dongyu.company.web.order.form.AddOrderForm;
 import com.dongyu.company.web.order.form.AddSurplusForm;
 import com.dongyu.company.web.order.form.EditOrderForm;
+import com.dongyu.company.web.order.form.ExportOrderQueryForm;
 import com.dongyu.company.web.order.form.OrderQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,8 +31,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 下单管理相关
@@ -103,8 +111,26 @@ public class OrderController {
         return ResponseVo.successResponse(edit);
     }
 
-    //导出
-    //恢复
+    @ApiOperation("下单导出")
+    @GetMapping(value = "/export")
+    public ModelAndView exportExcel(@ModelAttribute ExportOrderQueryForm form) {
+        OrderQueryDTO orderQueryDTO = new OrderQueryDTO();
+        BeanUtils.copyProperties(form, orderQueryDTO);
+        List<OrderDetailDTO> orderDetailDTOS = orderService.getExportList(orderQueryDTO);
+        String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
+        String fileName = "MI登记" + date + ".xlsx";
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderDetailDtoS", orderDetailDTOS);
+        map.put("fileName", fileName);
+        OrderExcelView excelView = new OrderExcelView();
+        return new ModelAndView(excelView, map);
+    }
 
+    @ApiOperation("恢复下单")
+    @GetMapping(value = "/recovery")
+    public ResponseVo recovery(@ApiParam(name = "id", value = "下单ID") @RequestParam("id") Long id) {
+        orderService.recovery(id);
+        return ResponseVo.successResponse();
+    }
 
 }

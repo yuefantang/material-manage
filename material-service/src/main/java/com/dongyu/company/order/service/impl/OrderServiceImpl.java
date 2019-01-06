@@ -28,6 +28,7 @@ import com.dongyu.company.register.domain.MiRegister;
 import com.dongyu.company.register.dto.RegisterDetailDTO;
 import com.dongyu.company.register.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 下单Service实现
@@ -127,6 +130,41 @@ public class OrderServiceImpl implements OrderService {
         order.setOperationState(OperationStateEnum.UPDATE.getValue());
         log.info("OrderServiceImpl edit method end;");
         return this.addAndEdit(order, dto);
+    }
+
+    @Override
+    public void recovery(Long id) {
+        log.info("OrderServiceImpl recovery method start Parm:" + id);
+        Order order = orderDao.findOne(id);
+        if (order == null) {
+            throw new BizException("不存在该下单id");
+        }
+        order.setDeleted(DeletedEnum.UNDELETED.getValue());
+        orderDao.save(order);
+        log.info("OrderServiceImpl recovery method end;");
+    }
+
+    @Override
+    public List<OrderDetailDTO> getExportList(OrderQueryDTO orderQueryDTO) {
+        log.info("OrderServiceImpl getExportList method start Parm:" + JSONObject.toJSONString(orderQueryDTO));
+        List<Order> orderList = orderDao.findAll(OrderSpecs.orederQuerySpec(orderQueryDTO));
+        if (CollectionUtils.isEmpty(orderList)) {
+            return null;
+        }
+        List<OrderDetailDTO> detailDTOList = orderList.stream().map(order -> {
+            OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+            BeanUtils.copyProperties(order, orderDetailDTO);
+            MiRegister miRegister = order.getMiRegister();
+            RegisterDetailDTO detail = registerService.getDetail(miRegister.getId());
+            orderDetailDTO.setRegisterDetailDTO(detail);
+            //下单日期
+            orderDetailDTO.setOrderDate(DateUtil.parseDateToStr(order.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            //交货日期
+            orderDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(order.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            return orderDetailDTO;
+        }).collect(Collectors.toList());
+        log.info("OrderServiceImpl getExportList method end;");
+        return detailDTOList;
     }
 
     @Override

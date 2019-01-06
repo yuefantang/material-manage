@@ -2,6 +2,7 @@ package com.dongyu.company.quality.service;
 
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.quality.dto.AddQualityDTO;
+import com.dongyu.company.quality.dto.EditQualityDTO;
 import com.dongyu.company.quality.dto.QualityDetailDTO;
 import com.dongyu.company.quality.dto.QualityListDTO;
 import com.dongyu.company.quality.dto.QualityQueryDTO;
@@ -33,9 +34,9 @@ public interface QualityService {
     /**
      * 品质问题修改
      *
-     * @param qualityDetailDTO
+     * @param editQualityDTO
      */
-    void edit(QualityDetailDTO qualityDetailDTO);
+    void edit(EditQualityDTO editQualityDTO);
 
     /**
      * 品质问题删除
