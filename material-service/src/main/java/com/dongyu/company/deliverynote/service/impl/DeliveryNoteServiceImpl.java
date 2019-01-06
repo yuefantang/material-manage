@@ -18,6 +18,7 @@ import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.deliverynote.dto.EditDeliveryDTO;
 import com.dongyu.company.deliverynote.service.DeliveryNoteService;
+import com.dongyu.company.finance.dao.MiPriceDao;
 import com.dongyu.company.finance.domain.MiPrice;
 import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.domain.Order;
@@ -50,6 +51,8 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
     private DeliveryNoteDao deliveryNoteDao;
     @Autowired
     private OrderDao orderDao;
+    @Autowired
+    private MiPriceDao miPriceDao;
 
     @Override
     @Transactional
@@ -262,7 +265,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         BeanUtils.copyProperties(miRegister, deliveryNote);
         //客户订单号
         deliveryNote.setCustomerOrderCode(order.getCustomerOrderCode());
-        MiPrice miPrice = miRegister.getMiPrice();
+        MiPrice miPrice = miPriceDao.findOne(miRegister.getMiPriceId());
         if (miPrice != null) {
             //单价（单位分）
             deliveryNote.setPrice(miPrice.getPrice());

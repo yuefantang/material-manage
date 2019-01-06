@@ -15,7 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface RegisterDao extends JpaRepository<MiRegister, Long>, JpaSpecificationExecutor<MiRegister> {
 
+    //MI登记时去重
     MiRegister findByMiDyCode(String miDyCode);
+
+    //下单时需要判断是否存在没删除
+    MiRegister findByMiDyCodeAndDeleted(String miDyCode, Integer deleted);
 
     MiRegister findById(Long id);
 }

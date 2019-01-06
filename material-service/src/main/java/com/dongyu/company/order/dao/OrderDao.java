@@ -13,6 +13,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
+    //查询未删除的下单
+    Order findByIdAndDeleted(Long id, Integer deleted);
+
     //查找最新的一条下单记录
     Order findFirstByOrderByCreateTimeDesc();
 

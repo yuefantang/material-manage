@@ -67,4 +67,7 @@ public class AddMouldDTO {
 
     //是否收费不能为空
     private Integer charge;
+
+    //模具使用状态
+    private Integer usageState;
 }

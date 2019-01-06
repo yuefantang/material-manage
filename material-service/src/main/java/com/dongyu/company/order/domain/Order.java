@@ -89,4 +89,9 @@ public class Order extends BaseDomain {
     @ManyToOne
     @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记ID'")
     private MiRegister miRegister;
+
+    @Column(columnDefinition = "varchar(50) NOT NULL DEFAULT '0' COMMENT '共用料张数'")
+    private String haredMaterialsNum;
+
+
 }

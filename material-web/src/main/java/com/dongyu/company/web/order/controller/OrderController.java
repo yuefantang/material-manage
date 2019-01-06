@@ -80,7 +80,6 @@ public class OrderController {
         return ResponseVo.successResponse(detail);
     }
 
-
     @ApiOperation("删除下单")
     @DeleteMapping(value = "/deleted")
     public ResponseVo deleted(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
@@ -95,7 +94,6 @@ public class OrderController {
         return ResponseVo.successResponse(printOrder);
     }
 
-
     @ApiOperation("编辑下单")
     @PostMapping(value = "/edit")
     public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
@@ -104,5 +102,9 @@ public class OrderController {
         AddOrderResultDTO edit = orderService.edit(editOrderDTO);
         return ResponseVo.successResponse(edit);
     }
+
+    //导出
+    //恢复
+
 
 }

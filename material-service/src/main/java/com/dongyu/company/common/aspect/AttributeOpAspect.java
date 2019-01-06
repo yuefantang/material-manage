@@ -122,7 +122,7 @@ public class AttributeOpAspect {
         log.info("AttributeOpAspect getObjectById method start:");
         entityManager.getEntityManagerFactory().getCache().evictAll();
         Class<?> targetClass = target.getClass();
-        Method findOne = target.getClass().getDeclaredMethod("getOne", Serializable.class);
+        Method findOne = target.getClass().getDeclaredMethod("findOne", Serializable.class);
         Object result = findOne.invoke(target, id);
         if (result instanceof Optional) {
             return ((Optional) result).get();

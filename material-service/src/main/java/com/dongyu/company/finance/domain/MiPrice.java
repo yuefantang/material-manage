@@ -43,8 +43,11 @@ public class MiPrice extends BaseDomain {
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT 'MI对应价格是否删除（0：未删除，1：已删除）'")
     private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
-    @OneToOne
-    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记表ID'")
-    private MiRegister miRegister;
+    @Column(columnDefinition = "bigint(20) COMMENT 'MI登记表ID'")
+    private Long miRegisterId;
+
+    //@OneToOne
+    //  @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记表ID'")
+  //  private MiRegister miRegister;
 
 }

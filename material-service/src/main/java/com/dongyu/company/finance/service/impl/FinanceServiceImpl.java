@@ -56,10 +56,10 @@ public class FinanceServiceImpl implements FinanceService {
         miPrice = new MiPrice();
         BeanUtils.copyProperties(addMiPriceDTO, miPrice);
         //价格表关联MI登记表
-        miPrice.setMiRegister(miRegister);
+        miPrice.setMiRegisterId(miRegister.getId());
         MiPrice save = miPriceDao.save(miPrice);
         //MI登记表关联价格表
-        miRegister.setMiPrice(save);
+        miRegister.setMiPriceId(save.getId());
         registerDao.save(miRegister);
         log.info("FinanceServiceImpl add method end;");
     }
@@ -74,7 +74,7 @@ public class FinanceServiceImpl implements FinanceService {
             MiPriceListDTO miPriceListDTO = new MiPriceListDTO();
             BeanUtils.copyProperties(item, miPriceListDTO);
             miPriceListDTO.setMiPriceId(item.getId());
-            MiRegister miRegister = item.getMiRegister();
+            MiRegister miRegister = registerDao.findOne(item.getMiRegisterId());
             if (miRegister != null) {
                 BeanUtils.copyProperties(miRegister, miPriceListDTO);
             }
@@ -105,9 +105,9 @@ public class FinanceServiceImpl implements FinanceService {
             throw new BizException("该MI登记价格已不存在！");
         }
         if (!dto.getMiDyCode().equals(oldMiPrice.getMiDyCode())) {
-            MiRegister miRegister = registerDao.findByMiDyCode(dto.getMiDyCode());
+            MiRegister miRegister = registerDao.findByMiDyCodeAndDeleted(dto.getMiDyCode(), DeletedEnum.DELETED.getValue());
             if (miRegister == null) {
-                throw new BizException("该DY编号没有对应的MI登记，请核实填写!");
+                throw new BizException("该DY编号没有对应的MI登记或已删除，请核实填写!");
             }
             MiPrice miPrice = miPriceDao.findByMiDyCode(dto.getMiDyCode());
             //根据DY编号去重
@@ -117,10 +117,10 @@ public class FinanceServiceImpl implements FinanceService {
             miPrice = oldMiPrice;
             BeanUtils.copyProperties(dto, miPrice);
             //价格表关联MI登记表
-            miPrice.setMiRegister(miRegister);
+            miPrice.setMiRegisterId(miRegister.getId());
             MiPrice save = miPriceDao.save(miPrice);
             //MI登记表关联价格表
-            miRegister.setMiPrice(save);
+            miRegister.setMiPriceId(save.getId());
             registerDao.save(miRegister);
         } else {
             BeanUtils.copyProperties(dto, oldMiPrice);

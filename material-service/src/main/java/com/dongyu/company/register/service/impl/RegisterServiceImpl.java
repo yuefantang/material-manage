@@ -242,7 +242,10 @@ public class RegisterServiceImpl implements RegisterService {
         registerDetailDTO.setRecordDate(DateUtil.parseDateToStr(miRegister.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //更改日期
         registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-
+        //单片尺寸
+        registerDetailDTO.setSingleSize(String.valueOf(miRegister.getSingleSizeLength()) + "*" + String.valueOf(miRegister.getSingleSizeWide()));
+        //模片尺寸
+        registerDetailDTO.setDieSize(String.valueOf(miRegister.getDieSizeLength()) + "*" + String.valueOf(miRegister.getDieSizeWide()));
         //返回图片信息
         if (miRegister.getCommonFileId() != null) {
             CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());

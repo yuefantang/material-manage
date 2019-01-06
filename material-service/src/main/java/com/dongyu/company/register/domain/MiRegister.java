@@ -8,9 +8,11 @@ import com.dongyu.company.finance.domain.MiPrice;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -222,9 +224,13 @@ public class MiRegister extends BaseDomain {
     @AttributeOpName("删除")
     private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
-    @OneToOne
-    @JoinColumn(name = "mi_price_id", columnDefinition = "bigint(20) COMMENT '单价表ID'")
-    private MiPrice miPrice;
+    // @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @JoinColumn(name = "mi_price_id", columnDefinition = "bigint(20) COMMENT '单价表ID'")
+   // private MiPrice miPrice;
+
+    @Column(columnDefinition = "bigint(20) COMMENT '单价表ID'")
+    private Long miPriceId;
+
 
     @Column(columnDefinition = "bigint(20) COMMENT '文件图片表ID'")
     @AttributeOpName("图片修改")

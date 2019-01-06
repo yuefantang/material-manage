@@ -115,4 +115,9 @@ public class PurchaseMould extends BaseDomain {
     @Column(columnDefinition = "tinyint(4) COMMENT '收费开单状态（0：未收费开单，1：已收费开单）'")
     @AttributeOpName("收费开单状态")
     private Integer chargeOpening = CurrencyEunm.NO.getValue();
+
+    @Column(columnDefinition = "tinyint(4) COMMENT '模具使用状态（1, 订购，2：使用,3:修模,4:报废,5：退回客户）'")
+    @AttributeOpName("模具使用状态")
+    private Integer usageState;
+
 }

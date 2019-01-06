@@ -94,8 +94,12 @@ public class AddMouldForm {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value ="是否收费（0：不收费，1：收费）")
+    @ApiModelProperty(value = "是否收费（0：不收费，1：收费）")
     @NotNull(message = "是否收费不能为空")
     private Integer charge;
+
+    @ApiModelProperty(value = "模具使用状态（1, 订购，2：使用,3:修模,4:报废,5：退回客户）")
+    @NotNull(message = "模具使用状态")
+    private Integer usageState;
 
 }
