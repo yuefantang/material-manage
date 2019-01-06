@@ -27,4 +27,7 @@ public class OrderQueryForm extends PageForm {
 
     @ApiModelProperty(value = "订单是否删除（0：未删除，1：已删除），默认0")
     private Integer deleted;
+
+    @ApiModelProperty("收费开单（0：未收费开单，1：已收费开单）默认0")
+    private Integer chargeOpening;
 }

@@ -24,4 +24,7 @@ public class OrderQueryDTO extends PageQueryDTO {
 
     //订单是否删除（0：未删除，1：已删除）
     private Integer deleted;
+
+    //收费开单（0：未收费开单，1：已收费开单）默认0
+    private Integer chargeOpening;
 }

@@ -4,7 +4,6 @@ import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
-import com.dongyu.company.mould.dto.MouldDetailDTO;
 import com.dongyu.company.quality.dto.AddQualityDTO;
 import com.dongyu.company.quality.dto.EditQualityDTO;
 import com.dongyu.company.quality.dto.QualityDetailDTO;

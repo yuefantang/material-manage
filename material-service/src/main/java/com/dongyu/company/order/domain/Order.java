@@ -1,6 +1,8 @@
 package com.dongyu.company.order.domain;
 
+import com.dongyu.company.common.annotation.AttributeOpName;
 import com.dongyu.company.common.constants.CompleteStateEnum;
+import com.dongyu.company.common.constants.CurrencyEunm;
 import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.domain.BaseDomain;
 import com.dongyu.company.register.domain.MiRegister;
@@ -93,5 +95,7 @@ public class Order extends BaseDomain {
     @Column(columnDefinition = "varchar(50) NOT NULL DEFAULT '0' COMMENT '共用料张数'")
     private String haredMaterialsNum;
 
-
+    @Column(columnDefinition = "tinyint(4) COMMENT '收费开单状态（0：未收费开单，1：已收费开单）'")
+    @AttributeOpName("收费开单状态")
+    private Integer chargeOpening = CurrencyEunm.NO.getValue();
 }
