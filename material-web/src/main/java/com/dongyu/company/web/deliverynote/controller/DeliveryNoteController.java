@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 货款单相关管理
@@ -47,11 +49,15 @@ public class DeliveryNoteController {
     @ApiOperation("新增货款开单")
     @RequiresRoles(value = {"admin"})
     @PostMapping(value = "/add")
-    public ResponseVo add(@Valid @RequestBody AddDeliveryNoteForm addDeliveryNoteForm) {
-        AddDeliveryNoteDTO addDeliveryNoteDTO = new AddDeliveryNoteDTO();
-        BeanUtils.copyProperties(addDeliveryNoteForm, addDeliveryNoteDTO);
-        deliveryNoteService.add(addDeliveryNoteDTO);
-        return ResponseVo.successResponse();
+    public ResponseVo<List<DeliveryListDTO>> add(@Valid @RequestBody List<AddDeliveryNoteForm> addDeliveryNoteForm) {
+        List<DeliveryListDTO> list = new ArrayList();
+        for (AddDeliveryNoteForm form : addDeliveryNoteForm) {
+            AddDeliveryNoteDTO addDeliveryNoteDTO = new AddDeliveryNoteDTO();
+            BeanUtils.copyProperties(addDeliveryNoteForm, addDeliveryNoteDTO);
+            DeliveryListDTO dto = deliveryNoteService.add(addDeliveryNoteDTO);
+            list.add(dto);
+        }
+        return ResponseVo.successResponse(list);
     }
 
     @ApiOperation("新增其它收费开单")

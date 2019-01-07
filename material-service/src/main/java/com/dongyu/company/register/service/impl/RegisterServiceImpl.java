@@ -157,7 +157,7 @@ public class RegisterServiceImpl implements RegisterService {
         }
         //修改MI登记表数据
         BeanUtils.copyProperties(editRegisterDTO, miRegister);
-        entityManager.detach(miRegister);//清除jpa中缓存
+        entityManager.detach(miRegister);//从持久性上下文中移除给定的实体，导致托管实体分离
         registerDao.save(miRegister);
 
         //修改MI登记下的工序

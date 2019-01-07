@@ -347,9 +347,9 @@ public class OrderServiceImpl implements OrderService {
         Integer pcsNumber = Integer.valueOf(order.getMiRegister().getPcsNumber());
         String haredMaterialsNum = new DecimalFormat("#.000").format(commissioningNum / pcsNumber);
         order.setHaredMaterialsNum(haredMaterialsNum);
-        Order save = orderDao.save(order);
+         orderDao.save(order);
         log.info("OrderServiceImpl addAndEdit method end;");
-        return this.getSurplusResult(save);
+        return this.getSurplusResult(order);
     }
 
     /**

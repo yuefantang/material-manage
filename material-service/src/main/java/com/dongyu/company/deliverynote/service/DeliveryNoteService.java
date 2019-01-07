@@ -22,7 +22,7 @@ public interface DeliveryNoteService {
      *
      * @param dto
      */
-    void add(AddDeliveryNoteDTO dto);
+    DeliveryListDTO add(AddDeliveryNoteDTO dto);
 
     /**
      * 新增其它收费开单

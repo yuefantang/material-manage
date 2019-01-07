@@ -17,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
-import javax.persistence.EntityManager;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -39,8 +38,6 @@ import java.util.Optional;
 @Slf4j
 public class AttributeOpAspect {
 
-    @Autowired
-    private EntityManager entityManager;
     @Autowired
     private OperationRecordDao operationRecordDao;
 
@@ -121,7 +118,6 @@ public class AttributeOpAspect {
      */
     public Object getObjectById(Object target, Serializable id) throws Exception {
         log.info("AttributeOpAspect getObjectById method start:");
-        entityManager.getEntityManagerFactory().getCache().evictAll();
         Class<?> targetClass = target.getClass();
         Method findOne = target.getClass().getDeclaredMethod("findOne", Serializable.class);
         Object result = findOne.invoke(target, id);

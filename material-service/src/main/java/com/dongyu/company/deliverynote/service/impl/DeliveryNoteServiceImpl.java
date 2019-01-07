@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.constants.BillingTypeEnum;
 import com.dongyu.company.common.constants.CompleteStateEnum;
 import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.constants.CurrencyEunm;
 import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
@@ -56,7 +57,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
 
     @Override
     @Transactional
-    public void add(AddDeliveryNoteDTO dto) {
+    public DeliveryListDTO add(AddDeliveryNoteDTO dto) {
         log.info("DeliveryNoteServiceImpl add method start Parm:" + JSONObject.toJSONString(dto));
         Order order = orderDao.findByCommissioningCode(dto.getCommissioningCode());
         if (order == null) {
@@ -73,8 +74,16 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //将mi信息赋值给货款单
         deliveryNote = this.copy(order, deliveryNote, deliveryNum);
         orderDao.save(order);
-        deliveryNoteDao.save(deliveryNote);
+        DeliveryNote save = deliveryNoteDao.save(deliveryNote);
+
+        DeliveryListDTO deliveryListDTO = new DeliveryListDTO();
+        BeanUtils.copyProperties(save, deliveryListDTO);
+        //送货日期
+        if (save.getDeliveryDate() != null) {
+            deliveryListDTO.setDeliveryDate(DateUtil.parseDateToStr(save.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        }
         log.info("DeliveryNoteServiceImpl add method end;");
+        return deliveryListDTO;
     }
 
     @Override
@@ -252,6 +261,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         if (order.getUncompletedNum().equals(Constants.COMPLETED_NUM)) {
             order.setCompleteState(CompleteStateEnum.COMPLETE.getValue());
         }
+        order.setChargeOpening(CurrencyEunm.YES.getValue());
         log.info("DeliveryNoteServiceImpl updateOrder method end :");
         return order;
     }
