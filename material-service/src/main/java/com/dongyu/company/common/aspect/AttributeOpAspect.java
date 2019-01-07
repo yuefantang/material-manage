@@ -13,6 +13,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -64,13 +65,13 @@ public class AttributeOpAspect {
         }
 
         Long entityId = null;//要保存的表数据id
-        Object oldObject = null;
+        Object oldObject = updateEntityClass.newInstance();
         Object newObject;
-
         Object entity = PropertyUtils.getProperty(updateEntity, Constants.ID);
         if (entity != null) {//不为空代表数据库已经存在该数据，查找出数据库原数据
             entityId = Long.valueOf(entity.toString());
-            oldObject = this.getObjectById(joinPoint.getTarget(), entityId);
+            Object oldTempObject = this.getObjectById(joinPoint.getTarget(), entityId);
+            BeanUtils.copyProperties(oldTempObject, oldObject);
         }
         newObject = joinPoint.proceed(joinPoint.getArgs());//环绕通知执行proceed方法的作用是让目标方法执行
         if (entityId == null) {//为新增操作

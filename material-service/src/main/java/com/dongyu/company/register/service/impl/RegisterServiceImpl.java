@@ -31,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,8 @@ public class RegisterServiceImpl implements RegisterService {
     private FileDao fileDao;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -154,6 +157,7 @@ public class RegisterServiceImpl implements RegisterService {
         }
         //修改MI登记表数据
         BeanUtils.copyProperties(editRegisterDTO, miRegister);
+        entityManager.detach(miRegister);//清除jpa中缓存
         registerDao.save(miRegister);
 
         //修改MI登记下的工序
