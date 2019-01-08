@@ -18,4 +18,17 @@ public class DeliveryQueryDTO extends PageQueryDTO {
 
     //送货单是否作废(0：否，1：是)
     private Integer deleted;
+
+    //DY编号
+    private String miDyCode;
+
+    //送货日期开始时间
+    private String deliveryDateStart;
+
+    //送货日期结束时间
+    private String deliveryDateEnd;
+
+    //客户名称
+    private String customerName;
+
 }

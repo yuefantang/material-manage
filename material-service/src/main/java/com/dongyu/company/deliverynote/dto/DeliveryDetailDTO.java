@@ -7,14 +7,14 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 货款单编辑返回DTO
+ * 货款单详情返回DTO
  *
  * @author TYF
  * @date 2018/12/6
  * @since 1.0.0
  */
 @Data
-@ApiModel("货款单编辑返回DTO")
+@ApiModel("货款单详情返回DTO")
 public class DeliveryDetailDTO {
 
     @ApiModelProperty(value = "货款单ID")
@@ -47,10 +47,10 @@ public class DeliveryDetailDTO {
     @ApiModelProperty(value = "送货单号")
     private String deliveryCode;
 
-    @ApiModelProperty(value = "单价（单位分）")
+    @ApiModelProperty(value = "单价（单位元）")
     private String price;
 
-    @ApiModelProperty(value = "金额(单位分)")
+    @ApiModelProperty(value = "金额(单位元)")
     private String amount;
 
     @ApiModelProperty(value = "单位")

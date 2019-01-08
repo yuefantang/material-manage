@@ -23,6 +23,9 @@ import java.util.List;
 public class DeliverySpecs {
     private static final String DELIVERY_DY_CODE = "deliveryCode";
     private static final String DELETED = "deleted";
+    private static final String MI_DY_CODE = "miDyCode";
+    private static final String DELIVERY_DATE = "deliveryDate";
+    private static final String CUSTOMER_NAME = "customerName";
 
     public static Specification<DeliveryNote> orederQuerySpec(DeliveryQueryDTO queryDTO) {
         log.info("DeliverySpecs orederQuerySpec method start Parm:" + JSONObject.toJSONString(queryDTO));
@@ -31,6 +34,27 @@ public class DeliverySpecs {
             //根据送货单号模糊查询
             if (StringUtils.isNotBlank(queryDTO.getDeliveryCode())) {
                 list.add(builder.like(root.get(DELIVERY_DY_CODE), "%" + queryDTO.getDeliveryCode() + "%"));
+            }
+
+            //根据DY编号模糊查询
+            if (StringUtils.isNotBlank(queryDTO.getMiDyCode())) {
+                list.add(builder.like(root.get(MI_DY_CODE), "%" + queryDTO.getMiDyCode() + "%"));
+            }
+
+            //根据客户名称模糊查询
+            if (StringUtils.isNotBlank(queryDTO.getCustomerName())) {
+                list.add(builder.like(root.get(CUSTOMER_NAME), "%" + queryDTO.getCustomerName() + "%"));
+            }
+
+            //根据送货日期开始查询
+            if (StringUtils.isNotBlank(queryDTO.getDeliveryDateStart())) {
+                //大于或等于传入时间
+                list.add(builder.greaterThanOrEqualTo(root.get(DELIVERY_DATE).as(String.class), queryDTO.getDeliveryDateStart()));
+            }
+            //根据送货日期结束查询
+            if (StringUtils.isNotBlank(queryDTO.getDeliveryDateEnd())) {
+                //小于等于传入时间
+                list.add(builder.lessThanOrEqualTo(root.get(DELIVERY_DATE).as(String.class), queryDTO.getDeliveryDateEnd()));
             }
 
             //根据送货单是否作废查询

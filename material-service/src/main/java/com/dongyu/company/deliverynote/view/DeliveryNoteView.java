@@ -4,7 +4,7 @@ import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.ExcelUtil;
 import com.dongyu.company.common.view.ExcelView;
-import com.dongyu.company.mould.dto.MouldDetailDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryDetailDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -32,10 +32,10 @@ public class DeliveryNoteView extends ExcelView {
 
     @Override
     protected void setRow(Workbook workbook, Map<String, Object> map) {
-        log.info("MouldExcelView setRow method start:");
+        log.info("DeliveryNoteView setRow method start:");
 
         //需要导出的数据源
-        List<MouldDetailDTO> listDTO = (List<MouldDetailDTO>) map.get("mouldListDTO");
+        List<DeliveryDetailDTO> listDTO = (List<DeliveryDetailDTO>) map.get("deliveryDTOList");
 
         //导出总的行数
         int totalCount = 0;
@@ -49,7 +49,7 @@ public class DeliveryNoteView extends ExcelView {
         Sheet sheet = null;
         while (true) {
             //填充数据
-            for (MouldDetailDTO data : listDTO) {
+            for (DeliveryDetailDTO data : listDTO) {
                 //导出数量超出excel存储的量抛异常
                 if (totalCount > Constants.MAX_XLS_TOTAL_ROW) {
                     throw new BizException("导出内容超出1000000");
@@ -62,9 +62,8 @@ public class DeliveryNoteView extends ExcelView {
                     Row headerRow = sheet.createRow(0);
                     //设置标题行
                     List<String> headers = new LinkedList<>();
-                    headers.addAll(Arrays.asList("DY编号", "产品型号", "长（单位毫米）", "宽（单位毫米）",
-                            "采购数量", "模具单价（单位元）", "模具金额(单位元)", "测试架单价（单位元）", "测试架金额(单位元)", "供应商", "采购日期", "所属客户",
-                            "模具类型", "一模出几", "采购种类", "连接", "备注"));
+                    headers.addAll(Arrays.asList("DY编号", "客户名称", "客户型号", "客户订单号",
+                            "送货单号", "送货数量", "单价(单位元)", "金额（单位元）", "投产单号", "送货日期", "货款开单备注"));
                     for (int i = 0; i < headers.size(); i++) {
                         Cell cell = headerRow.createCell(i);
                         cell.setCellValue(headers.get(i));
@@ -82,87 +81,57 @@ public class DeliveryNoteView extends ExcelView {
                 //DY编号
                 Cell cell1 = dataRow.createCell(creditNum++);
                 cell1.setCellStyle(cellStyle);
-                cell1.setCellValue(Optional.ofNullable(data.getDyCode()).orElse(""));
+                cell1.setCellValue(Optional.ofNullable(data.getMiDyCode()).orElse(""));
 
-                //产品型号
+                //客户名称
                 Cell cell2 = dataRow.createCell(creditNum++);
                 cell2.setCellStyle(cellStyle);
-                cell2.setCellValue(Optional.ofNullable(data.getProductModel()).orElse(""));
+                cell2.setCellValue(Optional.ofNullable(data.getCustomerName()).orElse(""));
 
-                //长（单位毫米）
+                //客户型号
                 Cell cell3 = dataRow.createCell(creditNum++);
                 cell3.setCellStyle(cellStyle);
-                cell3.setCellValue(Optional.ofNullable(data.getLength()).orElse(""));
+                cell3.setCellValue(Optional.ofNullable(data.getCustomerModel()).orElse(""));
 
-                //宽（单位毫米）
+                //客户订单号
                 Cell cell4 = dataRow.createCell(creditNum++);
                 cell4.setCellStyle(cellStyle);
-                cell4.setCellValue(Optional.ofNullable(data.getWide()).orElse(""));
+                cell4.setCellValue(Optional.ofNullable(data.getCustomerOrderCode()).orElse(""));
 
-                //采购数量
+                //送货单号
                 Cell cell5 = dataRow.createCell(creditNum++);
                 cell5.setCellStyle(cellStyle);
-                cell5.setCellValue(Optional.ofNullable(data.getPurchaseQuantity()).orElse(""));
+                cell5.setCellValue(Optional.ofNullable(data.getDeliveryCode()).orElse(""));
 
-                //模具单价（单位元）
+                //送货数量
                 Cell cell6 = dataRow.createCell(creditNum++);
                 cell6.setCellStyle(cellStyle);
-                cell6.setCellValue(Optional.ofNullable(data.getMouldPrice()).orElse(""));
+                cell6.setCellValue(Optional.ofNullable(data.getDeliveryNum()).orElse(""));
 
-                //模具金额(单位元)
+                //单价(单位元)
                 Cell cell7 = dataRow.createCell(creditNum++);
                 cell7.setCellStyle(cellStyle);
-                cell7.setCellValue(Optional.ofNullable(data.getMouldAmount()).orElse(""));
+                cell7.setCellValue(Optional.ofNullable(data.getPrice()).orElse(""));
 
-                //测试架单价（单位元）
+                //金额（单位元）
                 Cell cell8 = dataRow.createCell(creditNum++);
                 cell8.setCellStyle(cellStyle);
-                cell8.setCellValue(Optional.ofNullable(data.getRackPrice()).orElse(""));
+                cell8.setCellValue(Optional.ofNullable(data.getAmount()).orElse(""));
 
-                //测试架金额(单位元)
+                //投产单号
                 Cell cell9 = dataRow.createCell(creditNum++);
                 cell9.setCellStyle(cellStyle);
-                cell9.setCellValue(Optional.ofNullable(data.getRackAmount()).orElse(""));
+                cell9.setCellValue(Optional.ofNullable(data.getCommissioningCode()).orElse(""));
 
-                //供应商
-                Cell cell10 = dataRow.createCell(creditNum++);
-                cell10.setCellStyle(cellStyle);
-                cell10.setCellValue(Optional.ofNullable(data.getSupplier()).orElse(""));
-
-                //采购日期
+                //送货日期
                 Cell cell11 = dataRow.createCell(creditNum++);
                 cell11.setCellStyle(cellStyle);
-                cell11.setCellValue(Optional.ofNullable(data.getPurchaseDate()).orElse(""));
+                cell11.setCellValue(Optional.ofNullable(data.getDeliveryDate()).orElse(""));
 
-                //所属客户
+                //货款开单备注
                 Cell cell12 = dataRow.createCell(creditNum++);
                 cell12.setCellStyle(cellStyle);
-                cell12.setCellValue(Optional.ofNullable(data.getAffiliatedCustomer()).orElse(""));
-
-                //模具类型
-                Cell cell13 = dataRow.createCell(creditNum++);
-                cell13.setCellStyle(cellStyle);
-                cell13.setCellValue(Optional.ofNullable(data.getMouldType()).orElse(""));
-
-                //一模出几
-                Cell cell14 = dataRow.createCell(creditNum++);
-                cell14.setCellStyle(cellStyle);
-                cell14.setCellValue(Optional.ofNullable(data.getNumber()).orElse(""));
-
-                //采购种类
-                Cell cell15 = dataRow.createCell(creditNum++);
-                cell15.setCellStyle(cellStyle);
-                cell15.setCellValue(Optional.ofNullable(data.getPurchaseType()).orElse(null));
-
-                //连接
-                Cell cell16 = dataRow.createCell(creditNum++);
-                cell16.setCellStyle(cellStyle);
-                cell16.setCellValue(Optional.ofNullable(data.getConnect()).orElse(""));
-
-                //备注
-                Cell cell17 = dataRow.createCell(creditNum++);
-                cell17.setCellStyle(cellStyle);
-                cell17.setCellValue(Optional.ofNullable(data.getRemark()).orElse(""));
+                cell12.setCellValue(Optional.ofNullable(data.getDeliveryRemarks()).orElse(""));
 
                 rowCount++;
                 totalCount++;

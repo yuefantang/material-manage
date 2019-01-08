@@ -1,22 +1,19 @@
 package com.dongyu.company.web.deliverynote.form;
 
-import com.dongyu.company.common.form.PageForm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * 货款单分页查询Form
+ * 货款单导出查询Form
  *
  * @author TYF
- * @date 2018/12/4
+ * @date 2019/1/7
  * @since 1.0.0
  */
 @Data
-@ApiModel("货款单分页查询Form")
-public class DeliveryQueryForm extends PageForm {
+@ApiModel("货款单导出查询Form")
+public class ExportDeliveryQueryForm {
 
     @ApiModelProperty(value = "送货单号")
     private String deliveryCode;

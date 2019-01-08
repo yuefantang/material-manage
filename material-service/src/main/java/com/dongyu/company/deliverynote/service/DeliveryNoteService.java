@@ -8,6 +8,8 @@ import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.deliverynote.dto.EditDeliveryDTO;
 
+import java.util.List;
+
 /**
  * 货款单Service
  *
@@ -60,4 +62,12 @@ public interface DeliveryNoteService {
      * @param dto
      */
     void edit(EditDeliveryDTO dto);
+
+    /**
+     * 导出下单
+     *
+     * @param deliveryQueryDTO
+     * @return
+     */
+    List<DeliveryDetailDTO> getExportList(DeliveryQueryDTO deliveryQueryDTO);
 }

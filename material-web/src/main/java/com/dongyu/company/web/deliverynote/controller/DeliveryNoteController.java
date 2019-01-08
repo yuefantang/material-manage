@@ -2,6 +2,7 @@ package com.dongyu.company.web.deliverynote.controller;
 
 import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
+import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.deliverynote.dto.AddDeliveryNoteDTO;
 import com.dongyu.company.deliverynote.dto.AddOtherDeliveryNoteDTO;
@@ -10,10 +11,12 @@ import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.deliverynote.dto.EditDeliveryDTO;
 import com.dongyu.company.deliverynote.service.DeliveryNoteService;
+import com.dongyu.company.deliverynote.view.DeliveryNoteView;
 import com.dongyu.company.web.deliverynote.form.AddDeliveryNoteForm;
 import com.dongyu.company.web.deliverynote.form.AddOtherDeliveryNoteForm;
 import com.dongyu.company.web.deliverynote.form.DeliveryQueryForm;
 import com.dongyu.company.web.deliverynote.form.EditDeliveryForm;
+import com.dongyu.company.web.deliverynote.form.ExportDeliveryQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,10 +30,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 货款单相关管理
@@ -104,6 +111,21 @@ public class DeliveryNoteController {
         BeanUtils.copyProperties(form, editDeliveryDTO);
         deliveryNoteService.edit(editDeliveryDTO);
         return ResponseVo.successResponse();
+    }
+
+    @ApiOperation("货款单导出")
+    @GetMapping(value = "/export")
+    public ModelAndView exportExcel(@ModelAttribute ExportDeliveryQueryForm form) {
+        DeliveryQueryDTO deliveryQueryDTO = new DeliveryQueryDTO();
+        BeanUtils.copyProperties(form, deliveryQueryDTO);
+        List<DeliveryDetailDTO> deliveryDTOList = deliveryNoteService.getExportList(deliveryQueryDTO);
+        String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
+        String fileName = "货款单" + date + ".xlsx";
+        Map<String, Object> map = new HashMap<>();
+        map.put("deliveryDTOList", deliveryDTOList);
+        map.put("fileName", fileName);
+        DeliveryNoteView excelView = new DeliveryNoteView();
+        return new ModelAndView(excelView, map);
     }
 
 

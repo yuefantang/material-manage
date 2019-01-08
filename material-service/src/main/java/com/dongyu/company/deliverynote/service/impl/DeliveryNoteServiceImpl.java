@@ -25,6 +25,7 @@ import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.register.domain.MiRegister;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 货款单Service实现类
@@ -140,6 +142,24 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         deliveryNote.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         deliveryNoteDao.save(deliveryNote);
         log.info("DeliveryNoteServiceImpl edit method end;");
+    }
+
+    @Override
+    public List<DeliveryDetailDTO> getExportList(DeliveryQueryDTO deliveryQueryDTO) {
+        log.info("DeliveryNoteServiceImpl getExportList method start Parm:" + JSONObject.toJSONString(deliveryQueryDTO));
+        List<DeliveryNote> deliveryNotes = deliveryNoteDao.findAll(DeliverySpecs.orederQuerySpec(deliveryQueryDTO));
+        if (CollectionUtils.isEmpty(deliveryNotes)) {
+            return null;
+        }
+        List<DeliveryDetailDTO> detailDTOList = deliveryNotes.stream().map(deliveryNote -> {
+            DeliveryDetailDTO deliveryDetailDTO = new DeliveryDetailDTO();
+            BeanUtils.copyProperties(deliveryNote, deliveryDetailDTO);
+            //送货日期
+            deliveryDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            return deliveryDetailDTO;
+        }).collect(Collectors.toList());
+        log.info("DeliveryNoteServiceImpl getExportList method end;");
+        return detailDTOList;
     }
 
     @Override

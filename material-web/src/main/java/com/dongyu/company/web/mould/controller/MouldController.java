@@ -64,8 +64,8 @@ public class MouldController {
     }
 
     @ApiOperation("查询模具采购")
-    @GetMapping
-    public ResponseVo<PageDTO<MouldListDTO>> get(@ModelAttribute MouldQueryForm mouldQueryForm) {
+    @PostMapping
+    public ResponseVo<PageDTO<MouldListDTO>> get(@RequestBody MouldQueryForm mouldQueryForm) {
         MouldQueryDTO mouldQueryDTO = new MouldQueryDTO();
         BeanUtils.copyProperties(mouldQueryForm, mouldQueryDTO);
         PageDTO<MouldListDTO> pageDTO = purchaseMouldService.getlist(mouldQueryDTO);
