@@ -15,4 +15,7 @@ public interface OrderTemplateDao extends JpaRepository<OrderTemplate, Long>, Jp
 
     //根据DY编号查询
     OrderTemplate findByDyCode(String dyCode);
+
+    //根据DY编号查询未收费开单的样板
+    OrderTemplate findByDyCodeAndChargeOpening(String dyCode, Integer chargeOpening);
 }

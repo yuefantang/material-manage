@@ -23,4 +23,7 @@ public class AddDeliveryNoteDTO {
 
     //货款开单备注
     private String deliveryRemarks;
+
+    //DY编号
+    private String dyCode;
 }

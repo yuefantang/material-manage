@@ -22,4 +22,7 @@ public class DictResultDTO {
 
     @ApiModelProperty(value = "模具使用状态")
     private List<DictDTO> usageStateEnum;
+
+    @ApiModelProperty(value = "其它收费开单的类型")
+    private List<DictDTO> chargeTypeEnum;
 }

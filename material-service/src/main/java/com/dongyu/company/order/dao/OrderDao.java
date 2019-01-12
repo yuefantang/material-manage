@@ -22,4 +22,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     //根据投产单号查询下单
     Order findByCommissioningCode(String commissioningCode);
 
+    //根据投产单号查询未收费开单的下单
+    Order findByCommissioningCodeAndChargeOpening(String commissioningCode,Integer chargeOpening);
+
 }

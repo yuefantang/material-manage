@@ -34,6 +34,10 @@ public class AddDeliveryNoteForm {
     @NotBlank(message = "投产单号不能为空")
     private String commissioningCode;
 
+    @ApiModelProperty(value = "DY编号")
+    @NotBlank(message = "DY编号不能为空")
+    private String dyCode;
+
     @ApiModelProperty(value = "货款开单备注")
     private String deliveryRemarks;
 

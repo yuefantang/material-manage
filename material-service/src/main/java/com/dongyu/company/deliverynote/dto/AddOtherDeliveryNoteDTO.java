@@ -48,4 +48,7 @@ public class AddOtherDeliveryNoteDTO {
     //单位
     private String deliveryUnit;
 
+    //开单类型(1:模具开单,2:样板开单,3:其它开单)
+    private Integer chargeType;
+
 }
