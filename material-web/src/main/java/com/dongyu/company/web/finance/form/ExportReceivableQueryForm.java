@@ -1,24 +1,26 @@
 package com.dongyu.company.web.finance.form;
 
-import com.dongyu.company.common.form.PageForm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * MI登记价格分页查询Form
+ * 收款导出查询Form
  *
  * @author TYF
- * @date 2018/12/5
+ * @date 2019/1/20
  * @since 1.0.0
  */
-@Data
-@ApiModel("MI登记价格分页查询Form")
-public class MiPriceQueryForm extends PageForm {
 
-    @ApiModelProperty(value = "DY编号")
-    private String miDyCode;
+@Data
+@ApiModel("收款导出查询Form")
+public class ExportReceivableQueryForm {
+
+    @ApiModelProperty(value = "客户名称")
+    private String customerName;
+
+    @ApiModelProperty(value = "款项年月份")
+    private String fundMonth;
 
     @ApiModelProperty(value = "订单是否删除（0：未删除，1：已删除），默认0")
     private Integer deleted;
