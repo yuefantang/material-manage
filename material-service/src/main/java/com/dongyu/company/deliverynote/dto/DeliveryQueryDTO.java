@@ -4,7 +4,7 @@ import com.dongyu.company.common.dto.PageQueryDTO;
 import lombok.Data;
 
 /**
- * 货款单分页查询DTO
+ * 货款单和账单明细分页查询DTO
  *
  * @author TYF
  * @date 2018/12/4
@@ -30,5 +30,13 @@ public class DeliveryQueryDTO extends PageQueryDTO {
 
     //客户名称
     private String customerName;
+
+    //对账月份
+    private String billMonth;
+
+    //核实状态（0：未核实，1：已核实），默认-1查全部
+    private Integer verifyState;
+
+
 
 }

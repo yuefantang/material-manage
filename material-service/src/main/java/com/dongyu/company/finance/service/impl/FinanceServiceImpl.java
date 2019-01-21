@@ -5,10 +5,17 @@ import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
+import com.dongyu.company.common.utils.DateUtil;
+import com.dongyu.company.deliverynote.dao.DeliveryNoteDao;
+import com.dongyu.company.deliverynote.dao.DeliverySpecs;
+import com.dongyu.company.deliverynote.domain.DeliveryNote;
+import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.finance.dao.MiPriceDao;
 import com.dongyu.company.finance.dao.MiPriceSpecs;
 import com.dongyu.company.finance.domain.MiPrice;
 import com.dongyu.company.finance.dto.AddMiPriceDTO;
+import com.dongyu.company.finance.dto.BillListDTO;
 import com.dongyu.company.finance.dto.EditMiPriceDTO;
 import com.dongyu.company.finance.dto.MiPriceDetailDTO;
 import com.dongyu.company.finance.dto.MiPriceListDTO;
@@ -39,6 +46,8 @@ public class FinanceServiceImpl implements FinanceService {
     private MiPriceDao miPriceDao;
     @Autowired
     private RegisterDao registerDao;
+    @Autowired
+    private DeliveryNoteDao deliveryNoteDao;
 
     @Override
     @Transactional
@@ -141,4 +150,26 @@ public class FinanceServiceImpl implements FinanceService {
         log.info("FinanceServiceImpl getDetail method end;");
         return miPriceDetailDTO;
     }
+
+    @Override
+    public PageDTO<BillListDTO> getBillList(DeliveryQueryDTO dto) {
+        log.info("FinanceServiceImpl getBillList method start Parm:" + JSONObject.toJSONString(dto));
+        PageRequest pageRequest = new PageRequest(dto.getPageNo() - 1, dto.getPageSize(), Sort.Direction.DESC, Constants.CREATE_TIME);
+        Page<DeliveryNote> page = deliveryNoteDao.findAll(DeliverySpecs.orederQuerySpec(dto), pageRequest);
+
+        PageDTO<BillListDTO> pageDTO = PageDTO.of(page, item -> {
+            BillListDTO billListDTO = new BillListDTO();
+            BeanUtils.copyProperties(item, billListDTO);
+            //送货日期
+            if (item.getDeliveryDate() != null) {
+                billListDTO.setDeliveryDate(DateUtil.parseDateToStr(item.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            }
+            return billListDTO;
+        });
+        log.info("FinanceServiceImpl getBillList method end;");
+        return pageDTO;
+    }
+
+
+
 }

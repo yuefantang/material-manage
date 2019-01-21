@@ -2,6 +2,7 @@ package com.dongyu.company.deliverynote.dao;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.constants.DeletedEnum;
+import com.dongyu.company.common.constants.VerifyStateEnum;
 import com.dongyu.company.deliverynote.domain.DeliveryNote;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class DeliverySpecs {
     private static final String MI_DY_CODE = "miDyCode";
     private static final String DELIVERY_DATE = "deliveryDate";
     private static final String CUSTOMER_NAME = "customerName";
+    private static final String BILL_MONTH = "billMonth";
+    private static final String VERIFY_STATE = "verifyState";
+
 
     public static Specification<DeliveryNote> orederQuerySpec(DeliveryQueryDTO queryDTO) {
         log.info("DeliverySpecs orederQuerySpec method start Parm:" + JSONObject.toJSONString(queryDTO));
@@ -64,6 +68,20 @@ public class DeliverySpecs {
             } else if (queryDTO.getDeleted() == DeletedEnum.DELETED.getValue()) {
                 //作废查询
                 list.add(builder.equal(root.get(DELETED), queryDTO.getDeleted()));
+            }
+
+            //根据对账月份查询
+            if (StringUtils.isNotBlank(queryDTO.getBillMonth())) {
+                list.add(builder.equal(root.get(BILL_MONTH), queryDTO.getBillMonth()));
+            }
+
+            //根据对账核实状态查询
+            if (queryDTO.getVerifyState() == VerifyStateEnum.UNVERIFY.getValue()) {
+                //未核实查询
+                list.add(builder.equal(root.get(VERIFY_STATE), queryDTO.getVerifyState()));
+            } else if (queryDTO.getVerifyState() == VerifyStateEnum.VERIFY.getValue()) {
+                //已核实查询
+                list.add(builder.equal(root.get(VERIFY_STATE), queryDTO.getVerifyState()));
             }
             log.info("DeliverySpecs orederQuerySpec method end;");
             return builder.and(list.toArray(new Predicate[list.size()]));

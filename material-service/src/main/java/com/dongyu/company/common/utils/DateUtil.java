@@ -44,6 +44,11 @@ public class DateUtil {
     public static final String DATE_FORMAT_YYMMDD = "yyMMdd";
 
     /**
+     * 日期格式，年月，例如：0506，0808
+     */
+    public static final String DATE_FORMAT_YYMM = "yyMM";
+
+    /**
      * 日期格式，年月日，用横杠分开，例如：06-12-25，08-08-08
      */
     public static final String DATE_FORMAT_YY_MM_DD = "yy-MM-dd";
@@ -139,6 +144,19 @@ public class DateUtil {
         cal.setTime(date);
         int day = cal.get(Calendar.DATE);//获取日
         return day;
+    }
+
+    /**
+     * 根据当前日期获取下月指定格式字符串日期
+     *
+     * @param time,timeFromat
+     * @return
+     */
+    public static String getYearMonthDate(Date time, String timeFromat) {
+        Calendar aCalendar = Calendar.getInstance();
+        aCalendar.setTime(time);
+        aCalendar.add(Calendar.MONTH, 1);
+        return parseDateToStr(aCalendar.getTime(), timeFromat);
     }
 
 

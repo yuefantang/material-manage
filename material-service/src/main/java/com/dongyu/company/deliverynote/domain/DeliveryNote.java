@@ -3,6 +3,7 @@ package com.dongyu.company.deliverynote.domain;
 import com.dongyu.company.common.annotation.AttributeOpName;
 import com.dongyu.company.common.annotation.AttributeOpRecord;
 import com.dongyu.company.common.constants.DeletedEnum;
+import com.dongyu.company.common.constants.VerifyStateEnum;
 import com.dongyu.company.common.domain.BaseDomain;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -89,5 +90,12 @@ public class DeliveryNote extends BaseDomain {
 
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '开单类型（1：货款开单，2：其它收费开单）'")
     private Integer billingType;
+
+    @Column(columnDefinition = "varchar(20) COMMENT '对账月份'")
+    private String billMonth;
+
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '核实状态（0：未核实，1：已核实）'")
+    @AttributeOpName("核实状态")
+    private Integer verifyState= VerifyStateEnum.UNVERIFY.getValue();
 
 }

@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,7 +83,10 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         DeliveryNote deliveryNote = new DeliveryNote();
         BeanUtils.copyProperties(dto, deliveryNote);
         //送货日期时间转换
-        deliveryNote.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+        deliveryNote.setDeliveryDate(deliveryDate);
+        //对账月份（为送货日期的下个月）
+        deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
         //将mi信息赋值给货款单
         deliveryNote = this.copy(order, deliveryNote, deliveryNum);
         //该订单设置成已收费开单
@@ -156,7 +160,10 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             BeanUtils.copyProperties(dto, deliveryNote);
         }
         //送货日期时间转换
-        deliveryNote.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+        deliveryNote.setDeliveryDate(deliveryDate);
+        //对账月份（为送货日期的下个月）
+        deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
         deliveryNoteDao.save(deliveryNote);
         log.info("DeliveryNoteServiceImpl edit method end;");
     }
@@ -213,7 +220,10 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //设置为其它收费开单类型
         deliveryNote.setBillingType(BillingTypeEnum.OTHER_CHARGES_TYPE.getValue());
         //送货日期时间转换
-        deliveryNote.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+        deliveryNote.setDeliveryDate(deliveryDate);
+        //对账月份（为送货日期的下个月）
+        deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
         deliveryNoteDao.save(deliveryNote);
         log.info("DeliveryNoteServiceImpl addOtherDelivery method end;");
     }

@@ -1,7 +1,9 @@
 package com.dongyu.company.finance.service;
 
 import com.dongyu.company.common.dto.PageDTO;
+import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.finance.dto.AddMiPriceDTO;
+import com.dongyu.company.finance.dto.BillListDTO;
 import com.dongyu.company.finance.dto.EditMiPriceDTO;
 import com.dongyu.company.finance.dto.MiPriceDetailDTO;
 import com.dongyu.company.finance.dto.MiPriceListDTO;
@@ -51,4 +53,12 @@ public interface FinanceService {
      * @return
      */
     MiPriceDetailDTO getDetail(Long id);
+
+    /**
+     * 财务账单明细分页查询
+     * @param dto
+     * @return
+     */
+    PageDTO<BillListDTO> getBillList(DeliveryQueryDTO dto);
+
 }

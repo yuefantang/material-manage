@@ -4,13 +4,18 @@ import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
+import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
+import com.dongyu.company.deliverynote.service.DeliveryNoteService;
 import com.dongyu.company.finance.dto.AddReceivableDTO;
+import com.dongyu.company.finance.dto.BillListDTO;
 import com.dongyu.company.finance.dto.EditReceivableDTO;
 import com.dongyu.company.finance.dto.ReceivableListDTO;
 import com.dongyu.company.finance.dto.ReceivableQueryDTO;
+import com.dongyu.company.finance.service.FinanceService;
 import com.dongyu.company.finance.service.ReceivableService;
 import com.dongyu.company.finance.view.ReceivableExcelView;
 import com.dongyu.company.web.finance.form.AddReceivableForm;
+import com.dongyu.company.web.finance.form.BillQueryForm;
 import com.dongyu.company.web.finance.form.EditReceivableForm;
 import com.dongyu.company.web.finance.form.ExportReceivableQueryForm;
 import com.dongyu.company.web.finance.form.ReceivableQueryForm;
@@ -51,6 +56,8 @@ public class ReceivableController {
 
     @Autowired
     private ReceivableService receivableService;
+    @Autowired
+    private FinanceService financeService;
 
     @ApiOperation("新增收款")
     @RequiresRoles(value = {"admin"})
@@ -118,5 +125,66 @@ public class ReceivableController {
         ReceivableExcelView excelView = new ReceivableExcelView();
         return new ModelAndView(excelView, map);
     }
+
+
+    @ApiOperation("财务账单明细查询")
+    @GetMapping(value = "/bill")
+    @RequiresRoles(value = {"admin"})
+    public ResponseVo<PageDTO<BillListDTO>> getBill(@ModelAttribute BillQueryForm form) {
+        DeliveryQueryDTO dto = new DeliveryQueryDTO();
+        BeanUtils.copyProperties(form, dto);
+        PageDTO<BillListDTO> billList = financeService.getBillList(dto);
+        return ResponseVo.successResponse(billList);
+    }
+
+//查询统计
+
+
+//    @ApiOperation("财务账单核实")
+//    @GetMapping(value = "/verify")
+//    @RequiresRoles(value = {"admin"})
+//    public ResponseVo<PageDTO<DeliveryListDTO>> get(@ModelAttribute ReceivableQueryForm form) {
+//        ReceivableQueryDTO dto = new ReceivableQueryDTO();
+//        BeanUtils.copyProperties(form, dto);
+//        PageDTO<ReceivableListDTO> pageDTO = receivableService.getlist(dto);
+//        return ResponseVo.successResponse(pageDTO);
+//    }
+
+//    @ApiOperation("财务账单核实取消")
+//    @GetMapping(value = "/unverify")
+//    @RequiresRoles(value = {"admin"})
+//    public ResponseVo<PageDTO<DeliveryListDTO>> get(@ModelAttribute ReceivableQueryForm form) {
+//        ReceivableQueryDTO dto = new ReceivableQueryDTO();
+//        BeanUtils.copyProperties(form, dto);
+//        PageDTO<ReceivableListDTO> pageDTO = receivableService.getlist(dto);
+//        return ResponseVo.successResponse(pageDTO);
+//    }
+
+//    @ApiOperation("财务账单打印")
+//    @GetMapping(value = "/print")
+//    @RequiresRoles(value = {"admin"})
+//    public ResponseVo<PageDTO<DeliveryListDTO>> getPrint(@ModelAttribute ReceivableQueryForm form) {
+//        ReceivableQueryDTO dto = new ReceivableQueryDTO();
+//        BeanUtils.copyProperties(form, dto);
+//        PageDTO<ReceivableListDTO> pageDTO = receivableService.getlist(dto);
+//        return ResponseVo.successResponse(pageDTO);
+//    }
+
+    //    @ApiOperation("财务账单导出")
+//    @GetMapping(value = "/export")
+//    @RequiresRoles(value = {"admin"})
+//    public ModelAndView exportExcel(@ModelAttribute ReceivableQueryForm form) {
+//        DeliveryQueryDTO deliveryQueryDTO = new DeliveryQueryDTO();
+//        BeanUtils.copyProperties(form, deliveryQueryDTO);
+//        List<DeliveryDetailDTO> deliveryDTOList = deliveryNoteService.getExportList(deliveryQueryDTO);
+//        String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
+//        String fileName = "货款单" + date + ".xlsx";
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("deliveryDTOList", deliveryDTOList);
+//        map.put("fileName", fileName);
+//        DeliveryNoteView excelView = new DeliveryNoteView();
+//        return new ModelAndView(excelView, map);
+//    }
+
 
 }
