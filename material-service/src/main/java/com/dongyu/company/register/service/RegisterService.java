@@ -69,4 +69,11 @@ public interface RegisterService {
      * @return
      */
     RegisterDetailDTO getDetail(Long id);
+
+    /**
+     * 获取客户名称下拉列表数据
+     * @param customerName
+     * @return
+     */
+    List<String> getCustomerName(String customerName);
 }

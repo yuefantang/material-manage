@@ -9,6 +9,7 @@ import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.file.service.FileService;
+import com.dongyu.company.register.dao.CustomerDao;
 import com.dongyu.company.register.dao.ProcessDao;
 import com.dongyu.company.register.dao.RegisterDao;
 import com.dongyu.company.register.dao.RegisterSpecs;
@@ -56,6 +57,8 @@ public class RegisterServiceImpl implements RegisterService {
     private FileService fileService;
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private CustomerDao customerDao;
 
     @Override
     @Transactional
@@ -268,6 +271,14 @@ public class RegisterServiceImpl implements RegisterService {
         }).collect(Collectors.toList());
         registerDetailDTO.setProcessDTOS(processDTOS);
         return registerDetailDTO;
+    }
+
+    @Override
+    public List<String> getCustomerName(String customerName) {
+        log.info("RegisterServiceImpl getCustomerName method start Parm:" + customerName);
+        List<String> stringList = customerDao.query(customerName);
+        log.info("RegisterServiceImpl getCustomerName method end;");
+        return stringList;
     }
 
 

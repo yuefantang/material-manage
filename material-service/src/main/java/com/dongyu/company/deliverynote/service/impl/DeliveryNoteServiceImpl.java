@@ -347,6 +347,9 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         BeanUtils.copyProperties(miRegister, deliveryNote);
         //客户订单号
         deliveryNote.setCustomerOrderCode(order.getCustomerOrderCode());
+        if (miRegister.getMiPriceId() == null) {
+            throw new BizException(miRegister.getMiDyCode() + "该DY编号的MI登记价格未录入，请先录入价格！");
+        }
         MiPrice miPrice = miPriceDao.findOne(miRegister.getMiPriceId());
         if (miPrice != null) {
             //单价（单位分）

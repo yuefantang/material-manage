@@ -3,19 +3,21 @@ package com.dongyu.company.finance.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.constants.DeletedEnum;
+import com.dongyu.company.common.constants.VerifyStateEnum;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.deliverynote.dao.DeliveryNoteDao;
 import com.dongyu.company.deliverynote.dao.DeliverySpecs;
 import com.dongyu.company.deliverynote.domain.DeliveryNote;
-import com.dongyu.company.deliverynote.dto.DeliveryListDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
+import com.dongyu.company.finance.dao.BillStatisticsDao;
 import com.dongyu.company.finance.dao.MiPriceDao;
 import com.dongyu.company.finance.dao.MiPriceSpecs;
 import com.dongyu.company.finance.domain.MiPrice;
 import com.dongyu.company.finance.dto.AddMiPriceDTO;
 import com.dongyu.company.finance.dto.BillListDTO;
+import com.dongyu.company.finance.dto.BillStatisticsDTO;
 import com.dongyu.company.finance.dto.EditMiPriceDTO;
 import com.dongyu.company.finance.dto.MiPriceDetailDTO;
 import com.dongyu.company.finance.dto.MiPriceListDTO;
@@ -24,6 +26,7 @@ import com.dongyu.company.finance.service.FinanceService;
 import com.dongyu.company.register.dao.RegisterDao;
 import com.dongyu.company.register.domain.MiRegister;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +34,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 财务业务处理Service实现类
@@ -48,6 +54,9 @@ public class FinanceServiceImpl implements FinanceService {
     private RegisterDao registerDao;
     @Autowired
     private DeliveryNoteDao deliveryNoteDao;
+    @Autowired
+    private BillStatisticsDao billStatisticsDao;
+
 
     @Override
     @Transactional
@@ -164,12 +173,75 @@ public class FinanceServiceImpl implements FinanceService {
             if (item.getDeliveryDate() != null) {
                 billListDTO.setDeliveryDate(DateUtil.parseDateToStr(item.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             }
+            //核实状态赋值
+            if (item.getVerifyState() == VerifyStateEnum.UNVERIFY.getValue()) {
+                billListDTO.setVerifyState(VerifyStateEnum.UNVERIFY.getDesc());
+            } else {
+                billListDTO.setVerifyState(VerifyStateEnum.VERIFY.getDesc());
+            }
             return billListDTO;
         });
         log.info("FinanceServiceImpl getBillList method end;");
         return pageDTO;
     }
 
+    @Override
+    public BillStatisticsDTO count(DeliveryQueryDTO dto) {
+        log.info("FinanceServiceImpl count method  start Parm:" + JSONObject.toJSONString(dto));
+        BillStatisticsDTO query = billStatisticsDao.query(dto);
+        log.info("FinanceServiceImpl count method end;");
+        return query;
+    }
 
+    @Override
+    public void verify(List<Long> listId) {
+        log.info("FinanceServiceImpl verify method  start Parm:" + JSONObject.toJSONString(listId));
+        if (CollectionUtils.isEmpty(listId)) {
+            throw new BizException("未选择要核实的数据，请勾选!");
+        }
+        List<DeliveryNote> noteList = deliveryNoteDao.findAll(listId);
+        for (DeliveryNote deliveryNote : noteList) {
+            deliveryNote.setVerifyState(VerifyStateEnum.VERIFY.getValue());
+            deliveryNoteDao.save(deliveryNote);
+        }
+        log.info("FinanceServiceImpl verify method end;");
+    }
 
+    @Override
+    public void unverify(List<Long> listId) {
+        log.info("FinanceServiceImpl unverify method  start Parm:" + JSONObject.toJSONString(listId));
+        if (CollectionUtils.isEmpty(listId)) {
+            throw new BizException("未选择要核实取消的数据，请勾选!");
+        }
+        List<DeliveryNote> noteList = deliveryNoteDao.findAll(listId);
+        for (DeliveryNote deliveryNote : noteList) {
+            deliveryNote.setVerifyState(VerifyStateEnum.UNVERIFY.getValue());
+            deliveryNoteDao.save(deliveryNote);
+        }
+        log.info("FinanceServiceImpl unverify method end;");
+    }
+
+    @Override
+    public List<BillListDTO> getBillExportList(DeliveryQueryDTO dto) {
+        log.info("FinanceServiceImpl getBillExportList method  start Parm:" + JSONObject.toJSONString(dto));
+        List<DeliveryNote> deliveryNotes = deliveryNoteDao.findAll(DeliverySpecs.orederQuerySpec(dto));
+        if (CollectionUtils.isEmpty(deliveryNotes)) {
+            return null;
+        }
+        List<BillListDTO> detailDTOList = deliveryNotes.stream().map(deliveryNote -> {
+            BillListDTO billListDTO = new BillListDTO();
+            BeanUtils.copyProperties(deliveryNote, billListDTO);
+            //送货日期
+            billListDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            //核实状态赋值
+            if (deliveryNote.getVerifyState() == VerifyStateEnum.UNVERIFY.getValue()) {
+                billListDTO.setVerifyState(VerifyStateEnum.UNVERIFY.getDesc());
+            } else {
+                billListDTO.setVerifyState(VerifyStateEnum.VERIFY.getDesc());
+            }
+            return billListDTO;
+        }).collect(Collectors.toList());
+        log.info("FinanceServiceImpl getBillExportList method end;");
+        return detailDTOList;
+    }
 }

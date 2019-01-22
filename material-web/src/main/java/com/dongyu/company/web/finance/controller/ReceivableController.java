@@ -5,18 +5,20 @@ import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
-import com.dongyu.company.deliverynote.service.DeliveryNoteService;
 import com.dongyu.company.finance.dto.AddReceivableDTO;
 import com.dongyu.company.finance.dto.BillListDTO;
+import com.dongyu.company.finance.dto.BillStatisticsDTO;
 import com.dongyu.company.finance.dto.EditReceivableDTO;
 import com.dongyu.company.finance.dto.ReceivableListDTO;
 import com.dongyu.company.finance.dto.ReceivableQueryDTO;
 import com.dongyu.company.finance.service.FinanceService;
 import com.dongyu.company.finance.service.ReceivableService;
+import com.dongyu.company.finance.view.BillExcelView;
 import com.dongyu.company.finance.view.ReceivableExcelView;
 import com.dongyu.company.web.finance.form.AddReceivableForm;
 import com.dongyu.company.web.finance.form.BillQueryForm;
 import com.dongyu.company.web.finance.form.EditReceivableForm;
+import com.dongyu.company.web.finance.form.ExportBillQueryForm;
 import com.dongyu.company.web.finance.form.ExportReceivableQueryForm;
 import com.dongyu.company.web.finance.form.ReceivableQueryForm;
 import io.swagger.annotations.Api;
@@ -36,6 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -137,54 +141,59 @@ public class ReceivableController {
         return ResponseVo.successResponse(billList);
     }
 
-//查询统计
+    @ApiOperation("财务账单查询统计金额")
+    @GetMapping(value = "/bill/count")
+    @RequiresRoles(value = {"admin"})
+    public ResponseVo<BillStatisticsDTO> count(@ModelAttribute ExportBillQueryForm form) {
+        DeliveryQueryDTO dto = new DeliveryQueryDTO();
+        BeanUtils.copyProperties(form, dto);
+        BillStatisticsDTO count = financeService.count(dto);
+        return ResponseVo.successResponse(count);
+    }
 
+    @ApiOperation("财务账单核实")
+    @PostMapping(value = "/verify")
+    @RequiresRoles(value = {"admin"})
+    public ResponseVo verify(@RequestBody Long[] ids) {
+        List<Long> listId = new ArrayList<>(Arrays.asList(ids));
+        financeService.verify(listId);
+        return ResponseVo.successResponse();
+    }
 
-//    @ApiOperation("财务账单核实")
-//    @GetMapping(value = "/verify")
-//    @RequiresRoles(value = {"admin"})
-//    public ResponseVo<PageDTO<DeliveryListDTO>> get(@ModelAttribute ReceivableQueryForm form) {
-//        ReceivableQueryDTO dto = new ReceivableQueryDTO();
-//        BeanUtils.copyProperties(form, dto);
-//        PageDTO<ReceivableListDTO> pageDTO = receivableService.getlist(dto);
-//        return ResponseVo.successResponse(pageDTO);
-//    }
-
-//    @ApiOperation("财务账单核实取消")
-//    @GetMapping(value = "/unverify")
-//    @RequiresRoles(value = {"admin"})
-//    public ResponseVo<PageDTO<DeliveryListDTO>> get(@ModelAttribute ReceivableQueryForm form) {
-//        ReceivableQueryDTO dto = new ReceivableQueryDTO();
-//        BeanUtils.copyProperties(form, dto);
-//        PageDTO<ReceivableListDTO> pageDTO = receivableService.getlist(dto);
-//        return ResponseVo.successResponse(pageDTO);
-//    }
+    @ApiOperation("财务账单核实取消")
+    @PostMapping(value = "/unverify")
+    @RequiresRoles(value = {"admin"})
+    public ResponseVo unverify(@RequestBody Long[] ids) {
+        List<Long> listId = new ArrayList<>(Arrays.asList(ids));
+        financeService.unverify(listId);
+        return ResponseVo.successResponse();
+    }
 
 //    @ApiOperation("财务账单打印")
 //    @GetMapping(value = "/print")
 //    @RequiresRoles(value = {"admin"})
-//    public ResponseVo<PageDTO<DeliveryListDTO>> getPrint(@ModelAttribute ReceivableQueryForm form) {
-//        ReceivableQueryDTO dto = new ReceivableQueryDTO();
+//    public ResponseVo<List<BillListDTO>> getPrint(@ModelAttribute ExportBillQueryForm form) {
+//        DeliveryQueryDTO dto = new DeliveryQueryDTO();
 //        BeanUtils.copyProperties(form, dto);
-//        PageDTO<ReceivableListDTO> pageDTO = receivableService.getlist(dto);
-//        return ResponseVo.successResponse(pageDTO);
+//        List<BillListDTO> list = financeService.getBillExportList(dto);
+//        return ResponseVo.successResponse(list);
 //    }
 
-    //    @ApiOperation("财务账单导出")
-//    @GetMapping(value = "/export")
-//    @RequiresRoles(value = {"admin"})
-//    public ModelAndView exportExcel(@ModelAttribute ReceivableQueryForm form) {
-//        DeliveryQueryDTO deliveryQueryDTO = new DeliveryQueryDTO();
-//        BeanUtils.copyProperties(form, deliveryQueryDTO);
-//        List<DeliveryDetailDTO> deliveryDTOList = deliveryNoteService.getExportList(deliveryQueryDTO);
-//        String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
-//        String fileName = "货款单" + date + ".xlsx";
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("deliveryDTOList", deliveryDTOList);
-//        map.put("fileName", fileName);
-//        DeliveryNoteView excelView = new DeliveryNoteView();
-//        return new ModelAndView(excelView, map);
-//    }
+    @ApiOperation("财务账单导出")
+    @GetMapping(value = "/bill/export")
+    @RequiresRoles(value = {"admin"})
+    public ModelAndView exportExcel(@ModelAttribute ExportBillQueryForm form) {
+        DeliveryQueryDTO dto = new DeliveryQueryDTO();
+        BeanUtils.copyProperties(form, dto);
+        List<BillListDTO> billExportList = financeService.getBillExportList(dto);
+        String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
+        String fileName = "账单明细" + date + ".xlsx";
+        Map<String, Object> map = new HashMap<>();
+        map.put("billExportList", billExportList);
+        map.put("fileName", fileName);
+        BillExcelView excelView = new BillExcelView();
+        return new ModelAndView(excelView, map);
+    }
 
 
 }

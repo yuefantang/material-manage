@@ -24,6 +24,12 @@ public class BillListDTO {
     @ApiModelProperty(value = "送货日期yyyy-MM-dd")
     private String deliveryDate;
 
+    @ApiModelProperty(value = "投产单号")
+    private String commissioningCode;
+
+    @ApiModelProperty(value = "货款开单备注")
+    private String deliveryRemarks;
+
     @ApiModelProperty(value = "DY编号")
     private String miDyCode;
 
@@ -39,14 +45,11 @@ public class BillListDTO {
     @ApiModelProperty(value = "送货单号")
     private String deliveryCode;
 
-    @ApiModelProperty(value = "单价（单位分）")
+    @ApiModelProperty(value = "单价（单位元）")
     private String price;
 
-    @ApiModelProperty(value = "金额(单位分)")
+    @ApiModelProperty(value = "金额(单位元)")
     private String amount;
-
-    @ApiModelProperty(value = "单位")
-    private String deliveryUnit;
 
     @ApiModelProperty(value = "对账月份")
     private String billMonth;

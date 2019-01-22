@@ -4,10 +4,13 @@ import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.finance.dto.AddMiPriceDTO;
 import com.dongyu.company.finance.dto.BillListDTO;
+import com.dongyu.company.finance.dto.BillStatisticsDTO;
 import com.dongyu.company.finance.dto.EditMiPriceDTO;
 import com.dongyu.company.finance.dto.MiPriceDetailDTO;
 import com.dongyu.company.finance.dto.MiPriceListDTO;
 import com.dongyu.company.finance.dto.MiPriceQueryDTO;
+
+import java.util.List;
 
 /**
  * 财务业务处理Service
@@ -56,9 +59,41 @@ public interface FinanceService {
 
     /**
      * 财务账单明细分页查询
+     *
      * @param dto
      * @return
      */
     PageDTO<BillListDTO> getBillList(DeliveryQueryDTO dto);
+
+    /**
+     * 财务账单查询统计金额
+     *
+     * @param dto
+     * @return
+     */
+    BillStatisticsDTO count(DeliveryQueryDTO dto);
+
+    /**
+     * 财务账单核实
+     *
+     * @param listId
+     */
+    void verify(List<Long> listId);
+
+    /**
+     * 财务账单核实取消
+     *
+     * @param listId
+     */
+    void unverify(List<Long> listId);
+
+    /**
+     * 财务账单明细导出和打印数据
+     *
+     * @param dto
+     * @return
+     */
+    List<BillListDTO> getBillExportList(DeliveryQueryDTO dto);
+
 
 }
