@@ -62,6 +62,7 @@ public class DeliverySpecs {
             }
 
             //根据送货单是否作废查询
+            if (queryDTO.getDeleted()!=null){
             if (queryDTO.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
                 //未作废查询
                 list.add(builder.equal(root.get(DELETED), queryDTO.getDeleted()));
@@ -69,19 +70,21 @@ public class DeliverySpecs {
                 //作废查询
                 list.add(builder.equal(root.get(DELETED), queryDTO.getDeleted()));
             }
-
+            }
             //根据对账月份查询
             if (StringUtils.isNotBlank(queryDTO.getBillMonth())) {
                 list.add(builder.equal(root.get(BILL_MONTH), queryDTO.getBillMonth()));
             }
 
             //根据对账核实状态查询
+            if (queryDTO.getVerifyState()!=null){
             if (queryDTO.getVerifyState() == VerifyStateEnum.UNVERIFY.getValue()) {
                 //未核实查询
                 list.add(builder.equal(root.get(VERIFY_STATE), queryDTO.getVerifyState()));
             } else if (queryDTO.getVerifyState() == VerifyStateEnum.VERIFY.getValue()) {
                 //已核实查询
                 list.add(builder.equal(root.get(VERIFY_STATE), queryDTO.getVerifyState()));
+            }
             }
             log.info("DeliverySpecs orederQuerySpec method end;");
             return builder.and(list.toArray(new Predicate[list.size()]));
