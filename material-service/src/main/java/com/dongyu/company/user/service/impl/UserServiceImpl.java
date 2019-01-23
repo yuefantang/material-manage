@@ -90,8 +90,8 @@ public class UserServiceImpl implements UserService {
 
         //赋予角色
         UserRole userRole = new UserRole();
-        userRole.setUser(user);
-        userRole.setRole(role);
+        userRole.setUserId(user.getId());
+        userRole.setRoleId(role.getId());
         userRoleDao.save(userRole);
         return true;
     }
@@ -116,10 +116,11 @@ public class UserServiceImpl implements UserService {
             UserListDTO userListDTO = new UserListDTO();
             BeanUtils.copyProperties(item, userListDTO);
             //获取用户角色信息
-            UserRole byUser = userRoleDao.findByUser(item);
+            UserRole byUser = userRoleDao.findByUserId(item.getId());
             if (byUser != null) {
-                userListDTO.setDescript(byUser.getRole().getDescript());
-                userListDTO.setRoleName(byUser.getRole().getRoleName());
+                Role role = roleDao.findOneById(byUser.getRoleId());
+                userListDTO.setDescript(role.getDescript());
+                userListDTO.setRoleName(role.getRoleName());
             }
             return userListDTO;
         });

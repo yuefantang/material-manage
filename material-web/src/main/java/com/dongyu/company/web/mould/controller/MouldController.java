@@ -18,6 +18,8 @@ import com.dongyu.company.web.mould.form.MouldQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,7 +48,7 @@ import java.util.Map;
 
 @RestController
 @Api(tags = "MouldController", description = "模具采购相关")
-@RequestMapping(value = Constants.WEB_PREFIX + "/mould")
+@RequestMapping(value = Constants.WEB_PREFIX + "/engineering/mould")
 public class MouldController {
 
     @Autowired
@@ -65,6 +67,7 @@ public class MouldController {
 
     @ApiOperation("查询模具采购")
     @PostMapping
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<PageDTO<MouldListDTO>> get(@RequestBody MouldQueryForm mouldQueryForm) {
         MouldQueryDTO mouldQueryDTO = new MouldQueryDTO();
         BeanUtils.copyProperties(mouldQueryForm, mouldQueryDTO);

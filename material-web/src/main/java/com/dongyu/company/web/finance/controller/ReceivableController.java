@@ -24,6 +24,7 @@ import com.dongyu.company.web.finance.form.ReceivableQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping(value = Constants.WEB_PREFIX + "/receive")
+@RequestMapping(value = Constants.WEB_PREFIX + "/finance/receive")
 @Api(tags = "ReceivableController", description = "财务收款相关管理")
 public class ReceivableController {
 
@@ -64,7 +65,7 @@ public class ReceivableController {
     private FinanceService financeService;
 
     @ApiOperation("新增收款")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     @PostMapping(value = "/add")
     public ResponseVo add(@Valid @RequestBody AddReceivableForm addReceivableForm) {
         AddReceivableDTO addReceivableDTO = new AddReceivableDTO();
@@ -76,7 +77,7 @@ public class ReceivableController {
 
     @ApiOperation("财务收款信息查询")
     @GetMapping
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo<PageDTO<ReceivableListDTO>> get(@ModelAttribute ReceivableQueryForm form) {
         ReceivableQueryDTO dto = new ReceivableQueryDTO();
         BeanUtils.copyProperties(form, dto);
@@ -86,6 +87,7 @@ public class ReceivableController {
 
     @ApiOperation("编辑收款信息")
     @PostMapping(value = "/edit")
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo edite(@Valid @RequestBody EditReceivableForm editReceivableForm) {
         EditReceivableDTO editReceivableDTO = new EditReceivableDTO();
         BeanUtils.copyProperties(editReceivableForm, editReceivableDTO);
@@ -96,6 +98,7 @@ public class ReceivableController {
 
     @ApiOperation("删除收款记录")
     @DeleteMapping(value = "/deleted")
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo deleted(@ApiParam(name = "id", value = "收款ID") @RequestParam("id") Long id) {
         receivableService.deleted(id);
         return ResponseVo.successResponse();
@@ -103,6 +106,7 @@ public class ReceivableController {
 
     @ApiOperation("恢复收款记录")
     @GetMapping(value = "/recovery")
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo recovery(@ApiParam(name = "id", value = "收款ID") @RequestParam("id") Long id) {
         receivableService.recovery(id);
         return ResponseVo.successResponse();
@@ -110,6 +114,7 @@ public class ReceivableController {
 
     @ApiOperation("收款记录详情")
     @GetMapping(value = "/detail")
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo<ReceivableListDTO> detail(@ApiParam(name = "id", value = "收款ID") @RequestParam("id") Long id) {
         ReceivableListDTO detail = receivableService.getDetail(id);
         return ResponseVo.successResponse(detail);
@@ -117,6 +122,7 @@ public class ReceivableController {
 
     @ApiOperation("收款记录导出")
     @GetMapping(value = "/export")
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ModelAndView exportExcel(@ModelAttribute ExportReceivableQueryForm form) {
         ReceivableQueryDTO dto = new ReceivableQueryDTO();
         BeanUtils.copyProperties(form, dto);
@@ -133,7 +139,7 @@ public class ReceivableController {
 
     @ApiOperation("财务账单明细查询")
     @GetMapping(value = "/bill")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo<PageDTO<BillListDTO>> getBill(@ModelAttribute BillQueryForm form) {
         DeliveryQueryDTO dto = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, dto);
@@ -143,7 +149,7 @@ public class ReceivableController {
 
     @ApiOperation("财务账单查询统计金额")
     @GetMapping(value = "/bill/count")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo<BillStatisticsDTO> count(@ModelAttribute ExportBillQueryForm form) {
         DeliveryQueryDTO dto = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, dto);
@@ -153,7 +159,7 @@ public class ReceivableController {
 
     @ApiOperation("财务账单核实")
     @PostMapping(value = "/verify")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo verify(@RequestBody Long[] ids) {
         List<Long> listId = new ArrayList<>(Arrays.asList(ids));
         financeService.verify(listId);
@@ -162,7 +168,7 @@ public class ReceivableController {
 
     @ApiOperation("财务账单核实取消")
     @PostMapping(value = "/unverify")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo unverify(@RequestBody Long[] ids) {
         List<Long> listId = new ArrayList<>(Arrays.asList(ids));
         financeService.unverify(listId);
@@ -181,7 +187,7 @@ public class ReceivableController {
 
     @ApiOperation("财务账单导出")
     @GetMapping(value = "/bill/export")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ModelAndView exportExcel(@ModelAttribute ExportBillQueryForm form) {
         DeliveryQueryDTO dto = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, dto);

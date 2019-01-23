@@ -20,6 +20,7 @@ import com.dongyu.company.web.deliverynote.form.ExportDeliveryQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +48,14 @@ import java.util.Map;
  * @since 1.0.0
  */
 @RestController
-@RequestMapping(value = Constants.WEB_PREFIX + "/delivery")
+@RequestMapping(value = Constants.WEB_PREFIX + "/engineering/delivery")
 @Api(tags = "DeliveryNoteController", description = "货款单相关管理")
 public class DeliveryNoteController {
     @Autowired
     private DeliveryNoteService deliveryNoteService;
 
     @ApiOperation("新增货款开单")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     @PostMapping(value = "/add")
     public ResponseVo<List<DeliveryListDTO>> add(@Valid @RequestBody List<AddDeliveryNoteForm> addDeliveryNoteForm) {
         List<DeliveryListDTO> list = new ArrayList();
@@ -68,7 +69,7 @@ public class DeliveryNoteController {
     }
 
     @ApiOperation("新增其它收费开单")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     @PostMapping(value = "/add/otherDeliver")
     public ResponseVo addOtherDelivery(@Valid @RequestBody AddOtherDeliveryNoteForm form) {
         AddOtherDeliveryNoteDTO addOtherDeliveryNoteDTO = new AddOtherDeliveryNoteDTO();
@@ -79,7 +80,7 @@ public class DeliveryNoteController {
 
     @ApiOperation("查询货款单")
     @GetMapping
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<PageDTO<DeliveryListDTO>> get(@ModelAttribute DeliveryQueryForm form) {
         DeliveryQueryDTO deliveryQueryDTO = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, deliveryQueryDTO);
@@ -88,7 +89,7 @@ public class DeliveryNoteController {
     }
 
     @ApiOperation("送货单作废")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     @GetMapping(value = "/deleted")
     public ResponseVo deleted(@ApiParam(name = "id", value = "货款单id") @RequestParam("id") Long id) {
         deliveryNoteService.deleted(id);
@@ -96,7 +97,7 @@ public class DeliveryNoteController {
     }
 
     @ApiOperation("货款详情")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     @GetMapping(value = "/detail")
     public ResponseVo<DeliveryDetailDTO> detail(@ApiParam(name = "id", value = "货款单id") @RequestParam("id") Long id) {
         DeliveryDetailDTO detail = deliveryNoteService.getDetail(id);
@@ -104,7 +105,7 @@ public class DeliveryNoteController {
     }
 
     @ApiOperation("编辑货款单")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     @PostMapping(value = "/edit")
     public ResponseVo edite(@Valid @RequestBody EditDeliveryForm form) {
         EditDeliveryDTO editDeliveryDTO = new EditDeliveryDTO();
@@ -115,6 +116,7 @@ public class DeliveryNoteController {
 
     @ApiOperation("货款单导出")
     @GetMapping(value = "/export")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ModelAndView exportExcel(@ModelAttribute ExportDeliveryQueryForm form) {
         DeliveryQueryDTO deliveryQueryDTO = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, deliveryQueryDTO);

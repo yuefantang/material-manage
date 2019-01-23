@@ -2,6 +2,7 @@ package com.dongyu.company.common.handler;
 
 import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.exception.BizException;
+import com.dongyu.company.user.dao.RoleDao;
 import com.dongyu.company.user.dao.UserDao;
 import com.dongyu.company.user.dao.UserRoleDao;
 import com.dongyu.company.user.domain.Role;
@@ -36,18 +37,20 @@ public class ShiroRelam extends AuthorizingRealm {
     private UserDao userDao;
     @Autowired
     private UserRoleDao userRoleDao;
+    @Autowired
+    private RoleDao roleDao;
 
     //授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        log.info("doGetAuthorizationInfo" + principals.toString());
+        log.info("doGetAuthorizationInfo start：" + principals.toString());
         User user = (User) SecurityUtils.getSubject().getPrincipal();
-        UserRole userRole = userRoleDao.findByUser(user);
+        UserRole userRole = userRoleDao.findByUserId(user.getId());
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         if (userRole == null) {
             return info;
         }
-        Role role = userRole.getRole();
+        Role role = roleDao.findOneById(userRole.getRoleId());
         //将角色放入shiro中
         info.addRole(role.getRoleName());
         return info;

@@ -15,6 +15,7 @@ import com.dongyu.company.web.finance.form.MiPriceQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class FinanceController {
     private FinanceService financeService;
 
     @ApiOperation("新增MI登记价格")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     @PostMapping(value = "/add")
     public ResponseVo add(@Valid @RequestBody AddMiPriceForm addMiPriceForm) {
         AddMiPriceDTO addMiPriceDTO = new AddMiPriceDTO();
@@ -55,7 +56,7 @@ public class FinanceController {
 
     @ApiOperation("查询MI登记价格")
     @GetMapping
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     public ResponseVo<PageDTO<MiPriceListDTO>> get(@ModelAttribute MiPriceQueryForm form) {
         MiPriceQueryDTO miPriceQueryDTO = new MiPriceQueryDTO();
         BeanUtils.copyProperties(form, miPriceQueryDTO);
@@ -64,7 +65,7 @@ public class FinanceController {
     }
 
     @ApiOperation("MI登记价格删除")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     @GetMapping(value = "/deleted")
     public ResponseVo deleted(@ApiParam(name = "id", value = "MI登记价格id") @RequestParam("id") Long id) {
         financeService.deleted(id);
@@ -73,7 +74,7 @@ public class FinanceController {
 
 
     @ApiOperation("编辑MI登记价格")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     @PostMapping(value = "/edit")
     public ResponseVo edite(@Valid @RequestBody EditMiPriceForm form) {
         EditMiPriceDTO editMiPriceDTO = new EditMiPriceDTO();
@@ -83,7 +84,7 @@ public class FinanceController {
     }
 
     @ApiOperation("MI登记价格详情")
-    @RequiresRoles(value = {"admin"})
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
     @GetMapping(value = "/detail")
     public ResponseVo<MiPriceDetailDTO> detail(@ApiParam(name = "id", value = "MI登记价格id") @RequestParam("id") Long id) {
         MiPriceDetailDTO detail = financeService.getDetail(id);

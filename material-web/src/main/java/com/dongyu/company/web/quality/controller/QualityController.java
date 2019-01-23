@@ -16,6 +16,8 @@ import com.dongyu.company.web.quality.form.QualityQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,6 +48,7 @@ public class QualityController {
 
     @ApiOperation("新增品质问题")
     @PostMapping(value = "/add")
+    @RequiresRoles(value = {"admin", "quality"}, logical = Logical.OR)
     public ResponseVo add(@Valid @RequestBody AddQualityForm addQualityForm) {
         AddQualityDTO addQualityDTO = new AddQualityDTO();
         BeanUtils.copyProperties(addQualityForm, addQualityDTO);
@@ -56,6 +59,7 @@ public class QualityController {
 
     @ApiOperation("查询品质问题")
     @GetMapping
+    @RequiresRoles(value = {"admin", "quality"}, logical = Logical.OR)
     public ResponseVo<PageDTO<QualityListDTO>> get(@ModelAttribute QualityQueryForm qualityQueryForm) {
         QualityQueryDTO qualityQueryDTO = new QualityQueryDTO();
         BeanUtils.copyProperties(qualityQueryForm, qualityQueryDTO);
@@ -65,6 +69,7 @@ public class QualityController {
 
     @ApiOperation("编辑品质问题")
     @PostMapping(value = "/edit")
+    @RequiresRoles(value = {"admin", "quality"}, logical = Logical.OR)
     public ResponseVo edite(@Valid @RequestBody EditQualityForm editQualityForm) {
         EditQualityDTO editQualityDTO = new EditQualityDTO();
         BeanUtils.copyProperties(editQualityForm, editQualityDTO);
@@ -75,6 +80,7 @@ public class QualityController {
 
     @ApiOperation("删除品质问题")
     @DeleteMapping(value = "/deleted")
+    @RequiresRoles(value = {"admin", "quality"}, logical = Logical.OR)
     public ResponseVo deleted(@ApiParam(name = "id", value = "品质问题id") @RequestParam("id") Long id) {
         qualityService.deleted(id);
         return ResponseVo.successResponse();
@@ -82,6 +88,7 @@ public class QualityController {
 
     @ApiOperation("恢复删除品质问题")
     @GetMapping(value = "/recovery")
+    @RequiresRoles(value = {"admin", "quality"}, logical = Logical.OR)
     public ResponseVo recovery(@ApiParam(name = "id", value = "品质问题id") @RequestParam("id") Long id) {
         qualityService.recovery(id);
         return ResponseVo.successResponse();
@@ -89,6 +96,7 @@ public class QualityController {
 
     @ApiOperation("品质问题详情")
     @GetMapping(value = "/detail")
+    @RequiresRoles(value = {"admin", "quality"}, logical = Logical.OR)
     public ResponseVo<QualityDetailDTO> detail(@ApiParam(name = "id", value = "品质问题id") @RequestParam("id") Long id) {
         QualityDetailDTO detail = qualityService.getDetail(id);
         return ResponseVo.successResponse(detail);

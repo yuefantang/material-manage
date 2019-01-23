@@ -13,6 +13,8 @@ import com.dongyu.company.web.warehouse.form.StockQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +45,7 @@ public class WarehouseController {
 
     @ApiOperation("新增库存登记")
     @PostMapping(value = "/add")
+    @RequiresRoles(value = {"admin","warehouse"},logical = Logical.OR)
     public ResponseVo add(@Valid @RequestBody AddStockForm form) {
         AddStockDTO addStockDTO = new AddStockDTO();
         BeanUtils.copyProperties(form, addStockDTO);
@@ -52,6 +55,7 @@ public class WarehouseController {
 
     @ApiOperation("查询库存")
     @GetMapping
+    @RequiresRoles(value = {"admin","warehouse"},logical = Logical.OR)
     public ResponseVo<PageDTO<StockListDTO>> get(@ModelAttribute StockQueryForm queryForm) {
         StockQueryDTO stockQueryDTO = new StockQueryDTO();
         BeanUtils.copyProperties(queryForm, stockQueryDTO);
@@ -61,6 +65,7 @@ public class WarehouseController {
 
     @ApiOperation("编辑库存")
     @PostMapping(value = "/edit")
+    @RequiresRoles(value = {"admin","warehouse"},logical = Logical.OR)
     public ResponseVo edite(@Valid @RequestBody EditStockForm form) {
         AddStockDTO addStockDTO = new AddStockDTO();
         BeanUtils.copyProperties(form, addStockDTO);
@@ -69,6 +74,7 @@ public class WarehouseController {
     }
 
     @ApiOperation("删除库存")
+    @RequiresRoles(value = {"admin","warehouse"},logical = Logical.OR)
     @DeleteMapping(value = "/deleted")
     public ResponseVo deleted(@ApiParam(name = "id", value = "库存ID") @RequestParam("id") Long id) {
         stockService.deleted(id);
@@ -77,6 +83,7 @@ public class WarehouseController {
 
     @ApiOperation("恢复库存")
     @GetMapping(value = "/recovery")
+    @RequiresRoles(value = {"admin","warehouse"},logical = Logical.OR)
     public ResponseVo recovery(@ApiParam(name = "id", value = "库存ID") @RequestParam("id") Long id) {
         stockService.recovery(id);
         return ResponseVo.successResponse();
@@ -84,6 +91,7 @@ public class WarehouseController {
 
     @ApiOperation("库存详情")
     @GetMapping(value = "/detail")
+    @RequiresRoles(value = {"admin","warehouse"},logical = Logical.OR)
     public ResponseVo<StockListDTO> detail(@ApiParam(name = "id", value = "库存ID") @RequestParam("id") Long id) {
         StockListDTO detail = stockService.getDetail(id);
         return ResponseVo.successResponse(detail);

@@ -1,6 +1,5 @@
 package com.dongyu.company.user.dao;
 
-import com.dongyu.company.user.domain.User;
 import com.dongyu.company.user.domain.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRoleDao extends JpaRepository<UserRole, Long> {
 
     //根据用户查找对应的用户角色关系
-    UserRole findByUser(User user);
+    UserRole findByUserId(Long userId);
+
+
 }

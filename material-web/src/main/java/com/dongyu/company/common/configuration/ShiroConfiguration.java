@@ -82,9 +82,16 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/web/user/login", "anon");
         filterChainDefinitionMap.put("/web/dict", "anon");
         filterChainDefinitionMap.put("/web/**", "authc");
+        //账号管理
         filterChainDefinitionMap.put("/web/user/**", "authc,roles[admin]");
-        filterChainDefinitionMap.put("/web/delivery/**", "authc,roles[admin]");
-        filterChainDefinitionMap.put("/web/finance/**", "authc,roles[admin]");
+        //财务相关管理
+        filterChainDefinitionMap.put("/web/finance/**", "authc,roles[admin,finance]");
+        //工程相关管理
+        filterChainDefinitionMap.put("/web/engineering/**", "authc,roles[admin,engineering]");
+       //仓库管理
+        filterChainDefinitionMap.put("/web/warehouse/**", "authc,roles[admin,warehouse]");
+        //品质管理
+        filterChainDefinitionMap.put("/web/quality/**", "authc,roles[admin,quality]");
 
         filterChainDefinitionMap.put("/**", "anon");
         //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，重定向到自定义请求接口，后台仅返回json数据

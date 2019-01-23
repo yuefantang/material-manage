@@ -16,6 +16,8 @@ import com.dongyu.company.web.order.form.OrderTemplateQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,6 +53,7 @@ public class OrderTemplateController {
 
     @ApiOperation("新增样板")
     @PostMapping(value = "/add")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo add(@Valid @RequestBody AddOrderTemplateForm form) {
         OrderTemplateDTO dto = new OrderTemplateDTO();
         BeanUtils.copyProperties(form, dto);
@@ -60,6 +63,7 @@ public class OrderTemplateController {
 
     @ApiOperation("查询样板")
     @PostMapping
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<PageDTO<OrderTemplateListDTO>> get(@RequestBody OrderTemplateQueryForm form) {
         OrderTemplateQueryDTO queryDTO = new OrderTemplateQueryDTO();
         BeanUtils.copyProperties(form, queryDTO);
@@ -69,6 +73,7 @@ public class OrderTemplateController {
 
     @ApiOperation("编辑样板")
     @PostMapping(value = "/edit")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo edite(@Valid @RequestBody EditOrderTemplateForm form) {
         OrderTemplateListDTO dto = new OrderTemplateListDTO();
         BeanUtils.copyProperties(form, dto);
@@ -78,6 +83,7 @@ public class OrderTemplateController {
 
     @ApiOperation("删除样板")
     @DeleteMapping(value = "/deleted")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo deleted(@ApiParam(name = "id", value = "样板id") @RequestParam("id") Long id) {
         orderTemplateService.deleted(id);
         return ResponseVo.successResponse();
@@ -85,6 +91,7 @@ public class OrderTemplateController {
 
     @ApiOperation("恢复删除样板")
     @GetMapping(value = "/recovery")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo recovery(@ApiParam(name = "id", value = "样板id") @RequestParam("id") Long id) {
         orderTemplateService.recovery(id);
         return ResponseVo.successResponse();
@@ -92,6 +99,7 @@ public class OrderTemplateController {
 
     @ApiOperation("样板详情")
     @GetMapping(value = "/detail")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<OrderTemplateListDTO> detail(@ApiParam(name = "id", value = "样板id") @RequestParam("id") Long id) {
         OrderTemplateListDTO detail = orderTemplateService.getDetail(id);
         return ResponseVo.successResponse(detail);
@@ -99,6 +107,7 @@ public class OrderTemplateController {
 
     @ApiOperation("样板导出")
     @GetMapping(value = "/export")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ModelAndView exportExcel(@ModelAttribute ExportOrderTemplateQueryForm form) {
         OrderTemplateQueryDTO queryDTO = new OrderTemplateQueryDTO();
         BeanUtils.copyProperties(form, queryDTO);

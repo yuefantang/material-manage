@@ -27,6 +27,8 @@ import com.dongyu.company.web.order.form.PlusOrderQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,13 +56,14 @@ import java.util.Map;
  */
 @RestController
 @Api(tags = "OrderController", description = "下单管理相关")
-@RequestMapping(value = Constants.WEB_PREFIX + "/order")
+@RequestMapping(value = Constants.WEB_PREFIX + "/engineering/order")
 public class OrderController {
     @Autowired
     private OrderService orderService;
 
     @ApiOperation("新增下单")
     @PostMapping(value = "/add")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<AddOrderResultDTO> add(@Valid @RequestBody AddOrderForm addOrderForm) {
         AddOrderDTO addOrderDTO = new AddOrderDTO();
         BeanUtils.copyProperties(addOrderForm, addOrderDTO);
@@ -70,6 +73,7 @@ public class OrderController {
 
     @ApiOperation("新增下单后余料处理")
     @PostMapping(value = "/add/surplus")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo addSurplus(@Valid @RequestBody AddSurplusForm addSurplusForm) {
         AddSurplusDTO addSurplusDTO = new AddSurplusDTO();
         BeanUtils.copyProperties(addSurplusForm, addSurplusDTO);
@@ -80,6 +84,7 @@ public class OrderController {
 
     @ApiOperation("查询下单")
     @GetMapping
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<PageDTO<OrderListDTO>> get(@ModelAttribute OrderQueryForm orderQueryForm) {
         OrderQueryDTO orderQueryDTO = new OrderQueryDTO();
         BeanUtils.copyProperties(orderQueryForm, orderQueryDTO);
@@ -89,6 +94,7 @@ public class OrderController {
 
     @ApiOperation("下单详情")
     @GetMapping(value = "/detail")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<OrderDetailDTO> detail(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
         OrderDetailDTO detail = orderService.getDetail(id);
         return ResponseVo.successResponse(detail);
@@ -96,6 +102,7 @@ public class OrderController {
 
     @ApiOperation("删除下单")
     @DeleteMapping(value = "/deleted")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo deleted(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
         orderService.deleted(id);
         return ResponseVo.successResponse();
@@ -103,6 +110,7 @@ public class OrderController {
 
     @ApiOperation("下单打印")
     @GetMapping(value = "/print")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<OrderDetailDTO> print(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
         OrderDetailDTO printOrder = orderService.getPrintOrder(id);
         return ResponseVo.successResponse(printOrder);
@@ -110,6 +118,7 @@ public class OrderController {
 
     @ApiOperation("编辑下单")
     @PostMapping(value = "/edit")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo editPlusOrder(@Valid @RequestBody EditPlusOrderForm form) {
         AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
         BeanUtils.copyProperties(form, addPlusOrderDTO);
@@ -119,6 +128,7 @@ public class OrderController {
 
     @ApiOperation("下单导出")
     @GetMapping(value = "/export")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ModelAndView exportExcel(@ModelAttribute ExportOrderQueryForm form) {
         OrderQueryDTO orderQueryDTO = new OrderQueryDTO();
         BeanUtils.copyProperties(form, orderQueryDTO);
@@ -134,6 +144,7 @@ public class OrderController {
 
     @ApiOperation("恢复下单")
     @GetMapping(value = "/recovery")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo recovery(@ApiParam(name = "id", value = "下单ID") @RequestParam("id") Long id) {
         orderService.recovery(id);
         return ResponseVo.successResponse();
@@ -141,6 +152,7 @@ public class OrderController {
 
     @ApiOperation("新增补单")
     @PostMapping(value = "/add/plus/order")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo addPlusOrder(@Valid @RequestBody AddPlusOrderForm form) {
         AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
         BeanUtils.copyProperties(form, addPlusOrderDTO);
@@ -150,6 +162,7 @@ public class OrderController {
 
     @ApiOperation("查询补单")
     @GetMapping(value = "plus/order")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<PageDTO<PlusOrderListDTO>> getPlusOrderList(@ModelAttribute PlusOrderQueryForm form) {
         PlusOrderQueryDTO plusOrderQueryDTO = new PlusOrderQueryDTO();
         BeanUtils.copyProperties(form, plusOrderQueryDTO);
@@ -159,6 +172,7 @@ public class OrderController {
 
     @ApiOperation("补单详情")
     @GetMapping(value = "/detail/plus/order")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<PlusOrderListDTO> getPlusOrderDetail(@ApiParam(name = "id", value = "补单id") @RequestParam("id") Long id) {
         PlusOrderListDTO plusOrderDetail = orderService.getPlusOrderDetail(id);
         return ResponseVo.successResponse(plusOrderDetail);
@@ -166,6 +180,7 @@ public class OrderController {
 
     @ApiOperation("删除补单")
     @DeleteMapping(value = "/deleted/plus/order")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo deletedPlusOrder(@ApiParam(name = "id", value = "补单id") @RequestParam("id") Long id) {
         orderService.deletedPlusOrder(id);
         return ResponseVo.successResponse();
@@ -173,6 +188,7 @@ public class OrderController {
 
     @ApiOperation("恢复补单")
     @GetMapping(value = "/recovery/plus/order")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo recoveryPlusOrder(@ApiParam(name = "id", value = "补单ID") @RequestParam("id") Long id) {
         orderService.recoveryPlusOrder(id);
         return ResponseVo.successResponse();
@@ -180,6 +196,7 @@ public class OrderController {
 
     @ApiOperation("编辑补单")
     @PostMapping(value = "/edit/plus/order")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
         EditOrderDTO editOrderDTO = new EditOrderDTO();
         BeanUtils.copyProperties(editOrderForm, editOrderDTO);
