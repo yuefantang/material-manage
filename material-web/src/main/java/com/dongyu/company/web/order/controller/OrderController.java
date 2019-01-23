@@ -6,18 +6,24 @@ import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
+import com.dongyu.company.order.dto.AddPlusOrderDTO;
 import com.dongyu.company.order.dto.AddSurplusDTO;
 import com.dongyu.company.order.dto.EditOrderDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
+import com.dongyu.company.order.dto.PlusOrderListDTO;
+import com.dongyu.company.order.dto.PlusOrderQueryDTO;
 import com.dongyu.company.order.service.OrderService;
 import com.dongyu.company.order.view.OrderExcelView;
 import com.dongyu.company.web.order.form.AddOrderForm;
+import com.dongyu.company.web.order.form.AddPlusOrderForm;
 import com.dongyu.company.web.order.form.AddSurplusForm;
 import com.dongyu.company.web.order.form.EditOrderForm;
+import com.dongyu.company.web.order.form.EditPlusOrderForm;
 import com.dongyu.company.web.order.form.ExportOrderQueryForm;
 import com.dongyu.company.web.order.form.OrderQueryForm;
+import com.dongyu.company.web.order.form.PlusOrderQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -104,11 +110,11 @@ public class OrderController {
 
     @ApiOperation("编辑下单")
     @PostMapping(value = "/edit")
-    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
-        EditOrderDTO editOrderDTO = new EditOrderDTO();
-        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
-        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
-        return ResponseVo.successResponse(edit);
+    public ResponseVo editPlusOrder(@Valid @RequestBody EditPlusOrderForm form) {
+        AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
+        BeanUtils.copyProperties(form, addPlusOrderDTO);
+        orderService.editPlusOrder(addPlusOrderDTO);
+        return ResponseVo.successResponse();
     }
 
     @ApiOperation("下单导出")
@@ -133,4 +139,51 @@ public class OrderController {
         return ResponseVo.successResponse();
     }
 
+    @ApiOperation("新增补单")
+    @PostMapping(value = "/add/plus/order")
+    public ResponseVo addPlusOrder(@Valid @RequestBody AddPlusOrderForm form) {
+        AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
+        BeanUtils.copyProperties(form, addPlusOrderDTO);
+        orderService.addPlusOrder(addPlusOrderDTO);
+        return ResponseVo.successResponse();
+    }
+
+    @ApiOperation("查询补单")
+    @GetMapping(value = "plus/order")
+    public ResponseVo<PageDTO<PlusOrderListDTO>> getPlusOrderList(@ModelAttribute PlusOrderQueryForm form) {
+        PlusOrderQueryDTO plusOrderQueryDTO = new PlusOrderQueryDTO();
+        BeanUtils.copyProperties(form, plusOrderQueryDTO);
+        PageDTO<PlusOrderListDTO> pageDTO = orderService.getPlusOrderList(plusOrderQueryDTO);
+        return ResponseVo.successResponse(pageDTO);
+    }
+
+    @ApiOperation("补单详情")
+    @GetMapping(value = "/detail/plus/order")
+    public ResponseVo<PlusOrderListDTO> getPlusOrderDetail(@ApiParam(name = "id", value = "补单id") @RequestParam("id") Long id) {
+        PlusOrderListDTO plusOrderDetail = orderService.getPlusOrderDetail(id);
+        return ResponseVo.successResponse(plusOrderDetail);
+    }
+
+    @ApiOperation("删除补单")
+    @DeleteMapping(value = "/deleted/plus/order")
+    public ResponseVo deletedPlusOrder(@ApiParam(name = "id", value = "补单id") @RequestParam("id") Long id) {
+        orderService.deletedPlusOrder(id);
+        return ResponseVo.successResponse();
+    }
+
+    @ApiOperation("恢复补单")
+    @GetMapping(value = "/recovery/plus/order")
+    public ResponseVo recoveryPlusOrder(@ApiParam(name = "id", value = "补单ID") @RequestParam("id") Long id) {
+        orderService.recoveryPlusOrder(id);
+        return ResponseVo.successResponse();
+    }
+
+    @ApiOperation("编辑补单")
+    @PostMapping(value = "/edit/plus/order")
+    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
+        EditOrderDTO editOrderDTO = new EditOrderDTO();
+        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
+        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
+        return ResponseVo.successResponse(edit);
+    }
 }

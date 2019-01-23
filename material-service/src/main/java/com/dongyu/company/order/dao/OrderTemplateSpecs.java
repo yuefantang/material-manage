@@ -4,6 +4,7 @@ import com.dongyu.company.common.constants.CurrencyEunm;
 import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.order.domain.OrderTemplate;
 import com.dongyu.company.order.dto.OrderTemplateQueryDTO;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -39,12 +40,14 @@ public class OrderTemplateSpecs {
             }
 
             //根据下单是否删除查询
-            if (dto.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
-                //未删除
-                list.add(builder.equal(root.get(DELETED), dto.getDeleted()));
-            } else if (dto.getDeleted() == DeletedEnum.DELETED.getValue()) {
-                //已删除
-                list.add(builder.equal(root.get(DELETED), dto.getDeleted()));
+            if (dto.getDeleted() != null) {
+                if (dto.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
+                    //未删除
+                    list.add(builder.equal(root.get(DELETED), dto.getDeleted()));
+                } else if (dto.getDeleted() == DeletedEnum.DELETED.getValue()) {
+                    //已删除
+                    list.add(builder.equal(root.get(DELETED), dto.getDeleted()));
+                }
             }
             //收费开单
             if (dto.getChargeOpening() != null) {

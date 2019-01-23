@@ -3,11 +3,14 @@ package com.dongyu.company.order.service;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
+import com.dongyu.company.order.dto.AddPlusOrderDTO;
 import com.dongyu.company.order.dto.AddSurplusDTO;
 import com.dongyu.company.order.dto.EditOrderDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
+import com.dongyu.company.order.dto.PlusOrderListDTO;
+import com.dongyu.company.order.dto.PlusOrderQueryDTO;
 
 import java.util.List;
 
@@ -87,4 +90,51 @@ public interface OrderService {
      * @return
      */
     List<OrderDetailDTO> getExportList(OrderQueryDTO orderQueryDTO);
+
+
+    /**
+     * 新增补单
+     *
+     * @param dto
+     */
+    void addPlusOrder(AddPlusOrderDTO dto);
+
+    /**
+     * 补单分页查询
+     *
+     * @param queryDTO
+     * @return
+     */
+    PageDTO<PlusOrderListDTO> getPlusOrderList(PlusOrderQueryDTO queryDTO);
+
+    /**
+     * 删除补单
+     *
+     * @param id 补单id
+     */
+    void deletedPlusOrder(Long id);
+
+    /**
+     * 补单详情
+     *
+     * @param id 补单id
+     * @return
+     */
+    PlusOrderListDTO getPlusOrderDetail(Long id);
+
+    /**
+     * 编辑补单
+     *
+     * @param addPlusOrderDTO
+     */
+    void editPlusOrder(AddPlusOrderDTO addPlusOrderDTO);
+
+    /**
+     * 恢复删除补单
+     *
+     * @param id 补单id
+     */
+    void recoveryPlusOrder(Long id);
+
+
 }
