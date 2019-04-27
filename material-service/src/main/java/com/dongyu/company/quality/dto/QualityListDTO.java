@@ -15,6 +15,9 @@ import lombok.Data;
 @ApiModel("分页查询返回DTO")
 public class QualityListDTO {
 
+    @ApiModelProperty(value = "ID")
+    private Long id;
+
     @ApiModelProperty(value = "DY编号")
     private String dyCode;
 

@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setDeleted(Constants.USER_DELETED);
         userDao.save(user);
+        userDao.delete(userId);
         return false;
     }
 
