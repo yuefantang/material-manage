@@ -76,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public AddOrderResultDTO add(AddOrderDTO addOrderDTO) {
-        log.info("OrderServiceImpl add method start：");
+        log.info("OrderServiceImpl add method start："+ JSONObject.toJSONString(addOrderDTO));
         //用填入的下单DY编号去查询没有删除的MI登记
         MiRegister byMiDyCode = registerDao.findByMiDyCodeAndDeleted(addOrderDTO.getOrderDyCode(), DeletedEnum.UNDELETED.getValue());
         if (byMiDyCode == null) {
@@ -258,6 +258,9 @@ public class OrderServiceImpl implements OrderService {
         orderDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(order.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //余料处理数据返回
         Surplus surplus = order.getSurplus();
+        if(surplus==null){
+            throw new BizException("余料处理未填写！请完成");
+        }
         if (surplus != null) {
             BeanUtils.copyProperties(surplus, orderDetailDTO);
         }
@@ -354,7 +357,7 @@ public class OrderServiceImpl implements OrderService {
         order.setSquareNum(squareNum);
         //共用料张数(计算规则：投产数/大料PCS数,保留三位小数)
         Integer pcsNumber = Integer.valueOf(order.getMiRegister().getPcsNumber());
-        String haredMaterialsNum = new DecimalFormat("#.000").format(commissioningNum / pcsNumber);
+        String haredMaterialsNum = new DecimalFormat("0.000").format(commissioningNum / pcsNumber);
         order.setHaredMaterialsNum(haredMaterialsNum);
         orderDao.save(order);
         log.info("OrderServiceImpl addAndEdit method end;");

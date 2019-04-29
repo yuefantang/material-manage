@@ -196,9 +196,6 @@ public class FinanceServiceImpl implements FinanceService {
     @Override
     public void verify(List<Long> listId) {
         log.info("FinanceServiceImpl verify method  start Parm:" + JSONObject.toJSONString(listId));
-        if (CollectionUtils.isEmpty(listId)) {
-            throw new BizException("未选择要核实的数据，请勾选!");
-        }
         List<DeliveryNote> noteList = deliveryNoteDao.findAll(listId);
         for (DeliveryNote deliveryNote : noteList) {
             deliveryNote.setVerifyState(VerifyStateEnum.VERIFY.getValue());
@@ -210,9 +207,6 @@ public class FinanceServiceImpl implements FinanceService {
     @Override
     public void unverify(List<Long> listId) {
         log.info("FinanceServiceImpl unverify method  start Parm:" + JSONObject.toJSONString(listId));
-        if (CollectionUtils.isEmpty(listId)) {
-            throw new BizException("未选择要核实取消的数据，请勾选!");
-        }
         List<DeliveryNote> noteList = deliveryNoteDao.findAll(listId);
         for (DeliveryNote deliveryNote : noteList) {
             deliveryNote.setVerifyState(VerifyStateEnum.UNVERIFY.getValue());

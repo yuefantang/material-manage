@@ -45,12 +45,15 @@ public class OrderSpecs {
             }
 
             //根据下单是否删除查询
-            if (orderQueryDTO.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
-                //未删除
-                list.add(builder.equal(root.get(DELETED), orderQueryDTO.getDeleted()));
-            } else if (orderQueryDTO.getDeleted() == DeletedEnum.DELETED.getValue()) {
-                //已删除
-                list.add(builder.equal(root.get(DELETED), orderQueryDTO.getDeleted()));
+            if (orderQueryDTO.getDeleted() != null) {
+
+                if (orderQueryDTO.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
+                    //未删除
+                    list.add(builder.equal(root.get(DELETED), orderQueryDTO.getDeleted()));
+                } else if (orderQueryDTO.getDeleted() == DeletedEnum.DELETED.getValue()) {
+                    //已删除
+                    list.add(builder.equal(root.get(DELETED), orderQueryDTO.getDeleted()));
+                }
             }
             //收费开单
             if (orderQueryDTO.getChargeOpening() != null) {

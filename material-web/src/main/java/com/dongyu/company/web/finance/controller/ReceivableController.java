@@ -2,6 +2,7 @@ package com.dongyu.company.web.finance.controller;
 
 import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
+import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
@@ -24,6 +25,7 @@ import com.dongyu.company.web.finance.form.ReceivableQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
@@ -45,6 +47,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 财务收款相关管理
@@ -160,8 +163,13 @@ public class ReceivableController {
     @ApiOperation("财务账单核实")
     @PostMapping(value = "/verify")
     @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
-    public ResponseVo verify(@RequestBody Long[] ids) {
-        List<Long> listId = new ArrayList<>(Arrays.asList(ids));
+    public ResponseVo verify(@RequestBody List<String> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BizException("未选择要核实取消的数据，请勾选!");
+        }
+        List<Long> listId = ids.stream().map(str -> {
+            return Long.valueOf(str);
+        }).collect(Collectors.toList());
         financeService.verify(listId);
         return ResponseVo.successResponse();
     }
@@ -169,8 +177,13 @@ public class ReceivableController {
     @ApiOperation("财务账单核实取消")
     @PostMapping(value = "/unverify")
     @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
-    public ResponseVo unverify(@RequestBody Long[] ids) {
-        List<Long> listId = new ArrayList<>(Arrays.asList(ids));
+    public ResponseVo unverify(@RequestBody List<String> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BizException("未选择要核实取消的数据，请勾选!");
+        }
+        List<Long> listId = ids.stream().map(str -> {
+            return Long.valueOf(str);
+        }).collect(Collectors.toList());
         financeService.unverify(listId);
         return ResponseVo.successResponse();
     }

@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
         if (role == null) {
             throw new BizException("用户角色不存在，请选择正确角色");
         }
-        User oldUser = userDao.findByUserNameAndIsDeleted(addUserDTO.getUserName(), Constants.USER_NOT_DELETED);
+        User oldUser = userDao.findByUserName(addUserDTO.getUserName());
         if (oldUser != null) {
             throw new BizException("该用户名已存在，请更换用户名");
         }
@@ -103,10 +103,10 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new BizException("该用户不存在");
         }
-        user.setDeleted(Constants.USER_DELETED);
-        userDao.save(user);
         userDao.delete(userId);
-        return false;
+        UserRole userRole = userRoleDao.findByUserId(userId);
+        userRoleDao.delete(userRole.getId());
+        return true;
     }
 
     @Override
