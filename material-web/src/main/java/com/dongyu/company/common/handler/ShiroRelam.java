@@ -61,7 +61,7 @@ public class ShiroRelam extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken utoken = (UsernamePasswordToken) token;
         String username = utoken.getUsername();
-        User user = userDao.findByUserNameAndIsDeleted(username, Constants.USER_NOT_DELETED);
+        User user = userDao.findByUserName(username);
         if (user == null) {
             throw new BizException("该用户不存在");
         }

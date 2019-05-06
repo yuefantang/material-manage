@@ -69,39 +69,66 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
 
     @Override
     @Transactional
-    public DeliveryListDTO add(AddDeliveryNoteDTO dto) {
-        log.info("DeliveryNoteServiceImpl add method start Parm:" + JSONObject.toJSONString(dto));
+    public List<DeliveryListDTO> add(List<AddDeliveryNoteDTO> dtos) {
+        log.info("DeliveryNoteServiceImpl add method start Parm:" + JSONObject.toJSONString(dtos));
+        List<DeliveryListDTO> deliveryListDTOs = new ArrayList<>();
+        //生成送货单号（同一批次开单送货单号一样）
+        Long num = 1L;
+        String deliveryCode = null;
+        DeliveryNote deliveryNote1 = deliveryNoteDao.findFirstByOrderByCreateTimeDesc();
+        if (deliveryNote1 == null) {
+            deliveryCode = String.valueOf(num);
+        } else {
+            String deliveryCode1 = deliveryNote1.getDeliveryCode();
+            if (StringUtils.isEmpty(deliveryCode1)) {
+                deliveryCode = String.valueOf(num);
+            } else {
+                Long aLong = Long.valueOf(deliveryCode1);
+                aLong = aLong + 1L;
+                deliveryCode = String.valueOf(aLong);
+            }
+        }
         //根据投产单号查询未收费开单的下单
-        Order order = orderDao.findByCommissioningCodeAndChargeOpening(dto.getCommissioningCode(), CurrencyEunm.NO.getValue());
-        if (order == null) {
-            throw new BizException(dto.getDyCode() + "该DY编号不存在未收费开单的下单，请核实！");
+        for (AddDeliveryNoteDTO dto : dtos) {
+            Order order = orderDao.findByCommissioningCodeAndChargeOpening(dto.getCommissioningCode(), CurrencyEunm.NO.getValue());
+            if (order == null) {
+                throw new BizException(dto.getDyCode() + "该DY编号不存在未收费开单的下单，请核实！");
+            }
+            //送货数量
+            Integer deliveryNum = Integer.valueOf(dto.getDeliveryNum());
+            //更新下单记录
+            order = this.updateOrder(order, deliveryNum);
+            DeliveryNote deliveryNote = new DeliveryNote();
+            BeanUtils.copyProperties(dto, deliveryNote);
+            //送货日期时间转换
+            Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+            deliveryNote.setDeliveryDate(deliveryDate);
+            //对账月份（为送货日期的下个月）
+            deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
+            //将mi信息赋值给货款单
+            deliveryNote = this.copy(order, deliveryNote, deliveryNum);
+            //该订单设置成已收费开单
+            order.setChargeOpening(CurrencyEunm.YES.getValue());
+            orderDao.save(order);
+            //送货单号
+            deliveryNote.setDeliveryCode(deliveryCode);
+            DeliveryNote save = deliveryNoteDao.save(deliveryNote);
+            DeliveryListDTO deliveryListDTO = new DeliveryListDTO();
+            BeanUtils.copyProperties(save, deliveryListDTO);
+            //送货日期
+            if (save.getDeliveryDate() != null) {
+                deliveryListDTO.setDeliveryDate(DateUtil.parseDateToStr(save.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            }
+            deliveryListDTOs.add(deliveryListDTO);
+            log.info("DeliveryNoteServiceImpl add method end;");
         }
-        //送货数量
-        Integer deliveryNum = Integer.valueOf(dto.getDeliveryNum());
-        //更新下单记录
-        order = this.updateOrder(order, deliveryNum);
-        DeliveryNote deliveryNote = new DeliveryNote();
-        BeanUtils.copyProperties(dto, deliveryNote);
-        //送货日期时间转换
-        Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
-        deliveryNote.setDeliveryDate(deliveryDate);
-        //对账月份（为送货日期的下个月）
-        deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
-        //将mi信息赋值给货款单
-        deliveryNote = this.copy(order, deliveryNote, deliveryNum);
-        //该订单设置成已收费开单
-        order.setChargeOpening(CurrencyEunm.YES.getValue());
-        orderDao.save(order);
-        DeliveryNote save = deliveryNoteDao.save(deliveryNote);
-
-        DeliveryListDTO deliveryListDTO = new DeliveryListDTO();
-        BeanUtils.copyProperties(save, deliveryListDTO);
-        //送货日期
-        if (save.getDeliveryDate() != null) {
-            deliveryListDTO.setDeliveryDate(DateUtil.parseDateToStr(save.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        String customerName = deliveryListDTOs.get(0).getCustomerName();
+        for (DeliveryListDTO dto : deliveryListDTOs) {
+            if (!dto.getCustomerName().equals(customerName)) {
+                throw new BizException("不属于同一客户的数据不能一起开单，请核实！");
+            }
         }
-        log.info("DeliveryNoteServiceImpl add method end;");
-        return deliveryListDTO;
+        return deliveryListDTOs;
     }
 
     @Override
@@ -184,6 +211,38 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         }).collect(Collectors.toList());
         log.info("DeliveryNoteServiceImpl getExportList method end;");
         return detailDTOList;
+    }
+
+    @Override
+    public List<DeliveryListDTO> getPrintDeliveryNote(List<String> ids) {
+        log.info("DeliveryNoteServiceImpl getPrintOrder method start Parm:" + JSONObject.toJSONString(ids));
+        List<DeliveryListDTO> listDTOS = null;
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BizException("未选择要打印的数据！");
+        }
+        if (ids.size() > 10) {
+            throw new BizException("一次打印不能超过十条！");
+        }
+        List<Long> collect = ids.stream().map(str -> {
+            Long aLong = Long.valueOf(str);
+            return aLong;
+        }).collect(Collectors.toList());
+        List<DeliveryNote> all = deliveryNoteDao.findAll(collect);
+        if (CollectionUtils.isNotEmpty(all)) {
+            listDTOS = all.stream().map(deliveryNote -> {
+                DeliveryListDTO dto = new DeliveryListDTO();
+                BeanUtils.copyProperties(deliveryNote, dto);
+                return dto;
+            }).collect(Collectors.toList());
+            String deliveryCode = all.get(0).getDeliveryCode();
+            for (DeliveryNote deliveryNote : all) {
+                if (!deliveryNote.getDeliveryCode().equals(deliveryCode)) {
+                    throw new BizException("不属于同一客户的数据不能一起打印送货单，请核实！！");
+                }
+            }
+        }
+        log.info("DeliveryNoteServiceImpl getPrintOrder method end;");
+        return listDTOS;
     }
 
     @Override
@@ -364,4 +423,35 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         log.info("DeliveryNoteServiceImpl copy method end :");
         return deliveryNote;
     }
+
+    /**
+     * 生成送货单号，格式为日期yyMMdd+4位自增流水号(1811270001)，流水号按天每天重新计数
+     *
+     * @return
+     */
+    private String createDeliveryCode() {
+        //当前日期格式，年月日，例如：050630
+        String dateToStr = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYMMDD);
+        Order order = orderDao.findFirstByOrderByCreateTimeDesc();
+        //要返回的投产单号
+        String code = null;
+        if (order == null) {
+            code = String.format(dateToStr + "%04d", 1);
+            return code;
+        }
+        String commissioningCode = order.getCommissioningCode();
+        String date = commissioningCode.substring(0, 6);
+        String number = commissioningCode.substring(6, 10);
+        if (dateToStr.equals(date)) {
+            //新增的下单和前一次下单是同一天，计数累加1
+            Integer integer = Integer.valueOf(number);
+            integer += 1;
+            code = String.format(date + "%04d", integer);
+        } else {
+            //新增的下单和前一次下单不是同一天，计数重新从1开始
+            code = String.format(dateToStr + "%04d", 1);
+        }
+        return code;
+    }
+
 }

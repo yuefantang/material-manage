@@ -163,11 +163,12 @@ public class ReceivableController {
     @ApiOperation("财务账单核实")
     @PostMapping(value = "/verify")
     @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
-    public ResponseVo verify(@RequestBody List<String> ids) {
-        if (CollectionUtils.isEmpty(ids)) {
+    public ResponseVo verify(@RequestBody String[] ids) {
+        List<String> list = Arrays.asList(ids);
+        if (CollectionUtils.isEmpty(list)) {
             throw new BizException("未选择要核实取消的数据，请勾选!");
         }
-        List<Long> listId = ids.stream().map(str -> {
+        List<Long> listId = list.stream().map(str -> {
             return Long.valueOf(str);
         }).collect(Collectors.toList());
         financeService.verify(listId);
@@ -177,11 +178,12 @@ public class ReceivableController {
     @ApiOperation("财务账单核实取消")
     @PostMapping(value = "/unverify")
     @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
-    public ResponseVo unverify(@RequestBody List<String> ids) {
-        if (CollectionUtils.isEmpty(ids)) {
+    public ResponseVo unverify(@RequestBody String[] ids) {
+        List<String> list = Arrays.asList(ids);
+        if (CollectionUtils.isEmpty(list)) {
             throw new BizException("未选择要核实取消的数据，请勾选!");
         }
-        List<Long> listId = ids.stream().map(str -> {
+        List<Long> listId = list.stream().map(str -> {
             return Long.valueOf(str);
         }).collect(Collectors.toList());
         financeService.unverify(listId);

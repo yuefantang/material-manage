@@ -12,4 +12,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @since 1.0.0
  */
 public interface DeliveryNoteDao extends JpaRepository<DeliveryNote, Long>, JpaSpecificationExecutor<DeliveryNote> {
+
+    //查找最新的一条货款单记录
+    DeliveryNote findFirstByOrderByCreateTimeDesc();
 }

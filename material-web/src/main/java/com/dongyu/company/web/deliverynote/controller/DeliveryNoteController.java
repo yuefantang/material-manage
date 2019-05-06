@@ -2,6 +2,7 @@ package com.dongyu.company.web.deliverynote.controller;
 
 import com.dongyu.company.common.constant.Constants;
 import com.dongyu.company.common.dto.PageDTO;
+import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.common.vo.ResponseVo;
 import com.dongyu.company.deliverynote.dto.AddDeliveryNoteDTO;
@@ -20,6 +21,7 @@ import com.dongyu.company.web.deliverynote.form.ExportDeliveryQueryForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
@@ -39,6 +41,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 货款单相关管理
@@ -58,13 +62,15 @@ public class DeliveryNoteController {
     @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     @PostMapping(value = "/add")
     public ResponseVo<List<DeliveryListDTO>> add(@Valid @RequestBody List<AddDeliveryNoteForm> addDeliveryNoteForm) {
-        List<DeliveryListDTO> list = new ArrayList();
-        for (AddDeliveryNoteForm form : addDeliveryNoteForm) {
+        if (CollectionUtils.isEmpty(addDeliveryNoteForm)) {
+            throw new BizException("未选择开单数据，请选择再开单！");
+        }
+        List<AddDeliveryNoteDTO> deliveryNoteDTOS = addDeliveryNoteForm.stream().map(form -> {
             AddDeliveryNoteDTO addDeliveryNoteDTO = new AddDeliveryNoteDTO();
             BeanUtils.copyProperties(addDeliveryNoteForm, addDeliveryNoteDTO);
-            DeliveryListDTO dto = deliveryNoteService.add(addDeliveryNoteDTO);
-            list.add(dto);
-        }
+            return addDeliveryNoteDTO;
+        }).collect(Collectors.toList());
+        List<DeliveryListDTO> list = deliveryNoteService.add(deliveryNoteDTOS);
         return ResponseVo.successResponse(list);
     }
 
@@ -131,14 +137,13 @@ public class DeliveryNoteController {
     }
 
 
-//
-//    @ApiOperation("送货单打印")
-    //    @RequiresRoles(value = {"admin"})
-//    @GetMapping(value = "/print")
-//    public ResponseVo<OrderDetailDTO> print(@ApiParam(name = "id", value = "下单id") @RequestParam("id") Long id) {
-//        OrderDetailDTO printOrder = orderService.getPrintOrder(id);
-//        return ResponseVo.successResponse(printOrder);
-//    }
-//
+    @ApiOperation("送货单打印")
+    @RequiresRoles(value = {"admin"})
+    @PostMapping(value = "/print")
+    public ResponseVo<List<DeliveryListDTO>> print(@ApiParam(name = "id", value = "下单id") @RequestBody List<String> ids) {
+        List<DeliveryListDTO> printOrder = deliveryNoteService.getPrintDeliveryNote(ids);
+        return ResponseVo.successResponse(printOrder);
+    }
+
 
 }

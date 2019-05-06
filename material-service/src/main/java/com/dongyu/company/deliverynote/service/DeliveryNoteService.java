@@ -22,9 +22,9 @@ public interface DeliveryNoteService {
     /**
      * 货款单新增
      *
-     * @param dto
+     * @param dtos
      */
-    DeliveryListDTO add(AddDeliveryNoteDTO dto);
+    List<DeliveryListDTO> add(List<AddDeliveryNoteDTO> dtos);
 
     /**
      * 新增其它收费开单
@@ -70,4 +70,12 @@ public interface DeliveryNoteService {
      * @return
      */
     List<DeliveryDetailDTO> getExportList(DeliveryQueryDTO deliveryQueryDTO);
+
+
+    /**
+     * 送货单打印
+     *
+     * @return
+     */
+    List<DeliveryListDTO> getPrintDeliveryNote(List<String> ids);
 }

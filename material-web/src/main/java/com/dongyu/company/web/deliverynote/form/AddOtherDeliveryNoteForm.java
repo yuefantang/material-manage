@@ -49,8 +49,8 @@ public class AddOtherDeliveryNoteForm {
     @ApiModelProperty(value = "客户订单号")
     private String customerOrderCode;
 
-    @ApiModelProperty(value = "送货单号")
-    private String deliveryCode;
+//    @ApiModelProperty(value = "送货单号")
+//    private String deliveryCode;
 
     @ApiModelProperty(value = "单价（单位分）")
     @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
