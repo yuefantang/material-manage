@@ -107,17 +107,20 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
             //将mi信息赋值给货款单
             deliveryNote = this.copy(order, deliveryNote, deliveryNum);
-            //该订单设置成已收费开单
-            order.setChargeOpening(CurrencyEunm.YES.getValue());
+            //下单已完成将该订单设置成已完成收费开单
+            Long unCompletedNum = Long.valueOf(order.getUncompletedNum());
+            if (unCompletedNum == 0L) {
+                order.setChargeOpening(CurrencyEunm.YES.getValue());
+            }
             orderDao.save(order);
             //送货单号
             deliveryNote.setDeliveryCode(deliveryCode);
-            DeliveryNote save = deliveryNoteDao.save(deliveryNote);
+            deliveryNoteDao.save(deliveryNote);
             DeliveryListDTO deliveryListDTO = new DeliveryListDTO();
-            BeanUtils.copyProperties(save, deliveryListDTO);
+            BeanUtils.copyProperties(deliveryNote, deliveryListDTO);
             //送货日期
-            if (save.getDeliveryDate() != null) {
-                deliveryListDTO.setDeliveryDate(DateUtil.parseDateToStr(save.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            if (deliveryNote.getDeliveryDate() != null) {
+                deliveryListDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             }
             deliveryListDTOs.add(deliveryListDTO);
             log.info("DeliveryNoteServiceImpl add method end;");

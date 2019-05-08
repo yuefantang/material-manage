@@ -36,13 +36,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 货款单相关管理
@@ -67,7 +65,7 @@ public class DeliveryNoteController {
         }
         List<AddDeliveryNoteDTO> deliveryNoteDTOS = addDeliveryNoteForm.stream().map(form -> {
             AddDeliveryNoteDTO addDeliveryNoteDTO = new AddDeliveryNoteDTO();
-            BeanUtils.copyProperties(addDeliveryNoteForm, addDeliveryNoteDTO);
+            BeanUtils.copyProperties(form, addDeliveryNoteDTO);
             return addDeliveryNoteDTO;
         }).collect(Collectors.toList());
         List<DeliveryListDTO> list = deliveryNoteService.add(deliveryNoteDTOS);
