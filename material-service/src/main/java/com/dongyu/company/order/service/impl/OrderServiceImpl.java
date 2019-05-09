@@ -107,6 +107,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public AddOrderResultDTO edit(EditOrderDTO dto) {
         log.info("OrderServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
+        String orderNum = dto.getOrderNum();
         if (dto.getId() == null) {
             throw new BizException("下单ID不能为空！");
         }
@@ -131,8 +132,8 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderDate(DateUtil.parseStrToDate(dto.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         order.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //未完成数量为订单数量减去已完成数量
-        if (!dto.getOrderNum().equals(order.getOrderNum())) {
-            int uncompletedNum = Integer.valueOf(dto.getOrderNum()) - Integer.valueOf(order.getCompletedNum());
+        if (!orderNum.equals(order.getOrderNum())) {
+            int uncompletedNum = Integer.valueOf(orderNum) - Integer.valueOf(order.getCompletedNum());
             order.setUncompletedNum(String.valueOf(uncompletedNum));
         }
         //数据操作状态为修改

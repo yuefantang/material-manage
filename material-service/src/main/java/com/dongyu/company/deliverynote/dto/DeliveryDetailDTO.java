@@ -32,6 +32,9 @@ public class DeliveryDetailDTO {
     @ApiModelProperty(value = "货款开单备注")
     private String deliveryRemarks;
 
+    @ApiModelProperty(value = "开单类型")
+    private String billingType;
+
     @ApiModelProperty(value = "DY编号")
     private String miDyCode;
 

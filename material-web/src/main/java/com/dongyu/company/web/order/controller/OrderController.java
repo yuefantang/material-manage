@@ -119,11 +119,11 @@ public class OrderController {
     @ApiOperation("编辑下单")
     @PostMapping(value = "/edit")
     @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
-    public ResponseVo editPlusOrder(@Valid @RequestBody EditPlusOrderForm form) {
-        AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
-        BeanUtils.copyProperties(form, addPlusOrderDTO);
-        orderService.editPlusOrder(addPlusOrderDTO);
-        return ResponseVo.successResponse();
+    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
+        EditOrderDTO editOrderDTO = new EditOrderDTO();
+        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
+        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
+        return ResponseVo.successResponse(edit);
     }
 
     @ApiOperation("下单导出")
@@ -197,10 +197,10 @@ public class OrderController {
     @ApiOperation("编辑补单")
     @PostMapping(value = "/edit/plus/order")
     @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
-    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
-        EditOrderDTO editOrderDTO = new EditOrderDTO();
-        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
-        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
-        return ResponseVo.successResponse(edit);
+    public ResponseVo editPlusOrder(@Valid @RequestBody EditPlusOrderForm form) {
+        AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
+        BeanUtils.copyProperties(form, addPlusOrderDTO);
+        orderService.editPlusOrder(addPlusOrderDTO);
+        return ResponseVo.successResponse();
     }
 }

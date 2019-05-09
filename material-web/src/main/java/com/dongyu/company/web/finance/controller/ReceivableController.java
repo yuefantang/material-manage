@@ -1,6 +1,7 @@
 package com.dongyu.company.web.finance.controller;
 
 import com.dongyu.company.common.constant.Constants;
+import com.dongyu.company.common.constants.DeletedEnum;
 import com.dongyu.company.common.dto.PageDTO;
 import com.dongyu.company.common.exception.BizException;
 import com.dongyu.company.common.utils.DateUtil;
@@ -146,6 +147,7 @@ public class ReceivableController {
     public ResponseVo<PageDTO<BillListDTO>> getBill(@ModelAttribute BillQueryForm form) {
         DeliveryQueryDTO dto = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, dto);
+        dto.setDeleted(DeletedEnum.UNDELETED.getValue());
         PageDTO<BillListDTO> billList = financeService.getBillList(dto);
         return ResponseVo.successResponse(billList);
     }

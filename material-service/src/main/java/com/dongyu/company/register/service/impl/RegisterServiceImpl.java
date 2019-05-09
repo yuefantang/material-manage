@@ -248,7 +248,9 @@ public class RegisterServiceImpl implements RegisterService {
         //建档日期
         registerDetailDTO.setRecordDate(DateUtil.parseDateToStr(miRegister.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //更改日期
-        registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        if (miRegister.getChangeDate() != null) {
+            registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        }
         //单片尺寸
         registerDetailDTO.setSingleSize(String.valueOf(miRegister.getSingleSizeLength()) + "*" + String.valueOf(miRegister.getSingleSizeWide()));
         //模片尺寸

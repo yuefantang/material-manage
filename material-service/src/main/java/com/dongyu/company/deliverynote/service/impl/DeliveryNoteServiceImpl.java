@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 
 /**
  * 货款单Service实现类
+ * 警告：model类之间不要使用BeanUtils.copyProperties
  *
  * @author TYF
  * @date 2018/12/4
@@ -95,23 +96,18 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 throw new BizException(dto.getDyCode() + "该DY编号不存在未收费开单的下单，请核实！");
             }
             //送货数量
-            Integer deliveryNum = Integer.valueOf(dto.getDeliveryNum());
+            Long deliveryNum = Long.valueOf(dto.getDeliveryNum());
             //更新下单记录
             order = this.updateOrder(order, deliveryNum);
             DeliveryNote deliveryNote = new DeliveryNote();
             BeanUtils.copyProperties(dto, deliveryNote);
             //送货日期时间转换
-            Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+            Date deliveryDate = new Date();
             deliveryNote.setDeliveryDate(deliveryDate);
             //对账月份（为送货日期的下个月）
             deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
             //将mi信息赋值给货款单
             deliveryNote = this.copy(order, deliveryNote, deliveryNum);
-            //下单已完成将该订单设置成已完成收费开单
-            Long unCompletedNum = Long.valueOf(order.getUncompletedNum());
-            if (unCompletedNum == 0L) {
-                order.setChargeOpening(CurrencyEunm.YES.getValue());
-            }
             orderDao.save(order);
             //送货单号
             deliveryNote.setDeliveryCode(deliveryCode);
@@ -167,7 +163,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 //新对应下单跟新
                 Order newOrder = orderDao.findByCommissioningCode(dto.getCommissioningCode());
                 //送货数量
-                Integer deliveryNum = Integer.valueOf(dto.getDeliveryNum());
+                Long deliveryNum = Long.valueOf(dto.getDeliveryNum());
                 newOrder = this.updateOrder(newOrder, deliveryNum);
                 orderDao.save(newOrder);
                 BeanUtils.copyProperties(dto, deliveryNote);
@@ -282,7 +278,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //设置为其它收费开单类型
         deliveryNote.setBillingType(BillingTypeEnum.OTHER_CHARGES_TYPE.getValue());
         //送货日期时间转换
-        Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+        Date deliveryDate = new Date();
         deliveryNote.setDeliveryDate(deliveryDate);
         //对账月份（为送货日期的下个月）
         deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
@@ -342,6 +338,10 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         }
         DeliveryDetailDTO deliveryDetailDTO = new DeliveryDetailDTO();
         BeanUtils.copyProperties(deliveryNote, deliveryDetailDTO);
+        //送货日期
+        deliveryDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //开单类型转换
+        deliveryDetailDTO.setBillingType(String.valueOf(deliveryNote.getBillingType()));
         //返回不可编辑的字段
         if (deliveryNote.getBillingType() == BillingTypeEnum.PAYMENT_TYPE.getValue()) {
             List<String> nonEdit = new ArrayList<>();
@@ -378,15 +378,15 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
     }
 
     //下单记录完成数量、未完成数量、完成状态更新
-    private Order updateOrder(Order order, Integer deliveryNum) {
+    private Order updateOrder(Order order, Long deliveryNum) {
         log.info("DeliveryNoteServiceImpl updateOrder method start :");
         //未完成数量
-        Integer uncompletedNum = Integer.valueOf(order.getUncompletedNum());
+        Long uncompletedNum = Long.valueOf(order.getUncompletedNum());
         if (uncompletedNum < deliveryNum) {
             throw new BizException("送货数量超出下单未完成数量，请核实填写！");
         }
         //更新下单已完成数量记录
-        Integer completedNum = Integer.valueOf(order.getCompletedNum()) + deliveryNum;
+        Long completedNum = Long.valueOf(order.getCompletedNum()) + deliveryNum;
         order.setCompletedNum(String.valueOf(completedNum));
         //更新下单未完成数量记录
         uncompletedNum = uncompletedNum - deliveryNum;
@@ -395,18 +395,23 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         if (order.getUncompletedNum().equals(Constants.COMPLETED_NUM)) {
             order.setCompleteState(CompleteStateEnum.COMPLETE.getValue());
         }
-        order.setChargeOpening(CurrencyEunm.YES.getValue());
+        //下单已完成将该订单设置成已完成收费开单
+        if (uncompletedNum == 0L) {
+            order.setChargeOpening(CurrencyEunm.YES.getValue());
+        }
         log.info("DeliveryNoteServiceImpl updateOrder method end :");
         return order;
     }
 
     //将MI信息赋值到下单数据上来
-    private DeliveryNote copy(Order order, DeliveryNote deliveryNote, Integer deliveryNum) {
+    private DeliveryNote copy(Order order, DeliveryNote deliveryNote, Long deliveryNum) {
         log.info("DeliveryNoteServiceImpl copy method start :");
         //mi登记记录
         MiRegister miRegister = order.getMiRegister();
         //赋值客户信息
-        BeanUtils.copyProperties(miRegister, deliveryNote);
+        deliveryNote.setCustomerName(miRegister.getCustomerName());
+        deliveryNote.setCustomerModel(miRegister.getCustomerModel());
+        deliveryNote.setMiDyCode(miRegister.getMiDyCode());
         //客户订单号
         deliveryNote.setCustomerOrderCode(order.getCustomerOrderCode());
         if (miRegister.getMiPriceId() == null) {
@@ -417,7 +422,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             //单价（单位分）
             deliveryNote.setPrice(miPrice.getPrice());
             //金额(单位分)
-            deliveryNote.setAmount(String.valueOf(deliveryNum * Integer.valueOf(miPrice.getPrice())));
+            deliveryNote.setAmount(String.valueOf(deliveryNum * Long.valueOf(miPrice.getPrice())));
         }
         //开单类型
         deliveryNote.setBillingType(BillingTypeEnum.PAYMENT_TYPE.getValue());

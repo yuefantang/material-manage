@@ -25,4 +25,14 @@ public enum BillingTypeEnum {
     public String getDesc() {
         return desc;
     }
+
+    // 普通方法
+    public static String getValue(int index) {
+        for (BillingTypeEnum c : BillingTypeEnum.values()) {
+            if (c.getValue() == index) {
+                return c.desc;
+            }
+        }
+        return null;
+    }
 }

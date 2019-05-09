@@ -37,6 +37,7 @@ public class BillStatisticsDao {
         if (StringUtils.isNotBlank(dto.getBillMonth())) {
             sql.append("AND bill_month = '" + dto.getBillMonth() + "' ");
         }
+        sql.append("AND deleted='0' ");
         sql.append(") t, ");
         //未核实金额统计
         sql.append("(SELECT IFNULL(SUM(amount),0) unverifiedAmount  FROM t_delivery_note WHERE 1=1 ");
@@ -47,6 +48,7 @@ public class BillStatisticsDao {
             sql.append("AND bill_month = '" + dto.getBillMonth() + "' ");
         }
         sql.append("AND verify_state = '0' ");
+        sql.append("AND deleted='0' ");
         sql.append(") u, ");
         //已核实金额统计
         sql.append("(SELECT IFNULL(SUM(amount),0) verifyAmount  FROM t_delivery_note WHERE 1=1 ");
@@ -57,6 +59,7 @@ public class BillStatisticsDao {
             sql.append("AND bill_month = '" + dto.getBillMonth() + "' ");
         }
         sql.append("AND verify_state = '1' ");
+        sql.append("AND deleted='0' ");
         sql.append(") v ");
 
         SQLQuery sqlQuery = entityManager.createNativeQuery(sql.toString()).unwrap(SQLQuery.class);
