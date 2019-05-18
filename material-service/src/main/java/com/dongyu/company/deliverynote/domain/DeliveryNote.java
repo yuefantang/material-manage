@@ -91,6 +91,9 @@ public class DeliveryNote extends BaseDomain {
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '开单类型（1：货款开单，2：其它收费开单）'")
     private Integer billingType;
 
+    @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '收费种类（1, 模具收费，2：样板收费，3：其它收费，4：订单收费）'")
+    private Integer chargeType;
+
     @Column(columnDefinition = "varchar(20) COMMENT '对账月份'")
     private String billMonth;
 

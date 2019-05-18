@@ -37,17 +37,17 @@ public class DeliverySpecs {
             List<Predicate> list = new ArrayList<>();
             //根据送货单号模糊查询
             if (StringUtils.isNotBlank(queryDTO.getDeliveryCode())) {
-                list.add(builder.like(root.get(DELIVERY_DY_CODE), "%" + queryDTO.getDeliveryCode() + "%"));
+                list.add(builder.like(root.get(DELIVERY_DY_CODE), "%" + queryDTO.getDeliveryCode().trim() + "%"));
             }
 
             //根据DY编号模糊查询
             if (StringUtils.isNotBlank(queryDTO.getMiDyCode())) {
-                list.add(builder.like(root.get(MI_DY_CODE), "%" + queryDTO.getMiDyCode() + "%"));
+                list.add(builder.like(root.get(MI_DY_CODE), "%" + queryDTO.getMiDyCode().trim() + "%"));
             }
 
             //根据客户名称模糊查询
             if (StringUtils.isNotBlank(queryDTO.getCustomerName())) {
-                list.add(builder.like(root.get(CUSTOMER_NAME), "%" + queryDTO.getCustomerName() + "%"));
+                list.add(builder.like(root.get(CUSTOMER_NAME), "%" + queryDTO.getCustomerName().trim() + "%"));
             }
 
             //根据送货日期开始查询

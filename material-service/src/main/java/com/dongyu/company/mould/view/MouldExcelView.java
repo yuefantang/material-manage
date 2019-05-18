@@ -63,7 +63,7 @@ public class MouldExcelView extends ExcelView {
                     //设置标题行
                     List<String> headers = new LinkedList<>();
                     headers.addAll(Arrays.asList("DY编号", "产品型号", "长（单位毫米）", "宽（单位毫米）",
-                            "采购数量", "模具单价（单位元）", "模具金额(单位元)", "测试架单价（单位元）", "测试架金额(单位元)", "供应商", "采购日期", "所属客户",
+                            "测试架类型", "单价（单位元）", "金额(单位元)", "点数", "气缸", "供应商", "采购日期", "所属客户",
                             "模具类型", "一模出几", "采购种类", "连接", "备注"));
                     for (int i = 0; i < headers.size(); i++) {
                         Cell cell = headerRow.createCell(i);
@@ -99,30 +99,30 @@ public class MouldExcelView extends ExcelView {
                 cell4.setCellStyle(cellStyle);
                 cell4.setCellValue(Optional.ofNullable(data.getWide()).orElse(""));
 
-                //采购数量
+                //测试架类型
                 Cell cell5 = dataRow.createCell(creditNum++);
                 cell5.setCellStyle(cellStyle);
-                cell5.setCellValue(Optional.ofNullable(data.getPurchaseQuantity()).orElse(""));
+                cell5.setCellValue(Optional.ofNullable(data.getTestRackType()).orElse(""));
 
-                //模具单价（单位元）
+                //单价（单位元）
                 Cell cell6 = dataRow.createCell(creditNum++);
                 cell6.setCellStyle(cellStyle);
                 cell6.setCellValue(Optional.ofNullable(data.getMouldPrice()).orElse(""));
 
-                //模具金额(单位元)
+                //金额(单位元)
                 Cell cell7 = dataRow.createCell(creditNum++);
                 cell7.setCellStyle(cellStyle);
                 cell7.setCellValue(Optional.ofNullable(data.getMouldAmount()).orElse(""));
 
-                //测试架单价（单位元）
+                //点数
                 Cell cell8 = dataRow.createCell(creditNum++);
                 cell8.setCellStyle(cellStyle);
-                cell8.setCellValue(Optional.ofNullable(data.getRackPrice()).orElse(""));
+                cell8.setCellValue(Optional.ofNullable(data.getPoint()).orElse(""));
 
-                //测试架金额(单位元)
+                //气缸
                 Cell cell9 = dataRow.createCell(creditNum++);
                 cell9.setCellStyle(cellStyle);
-                cell9.setCellValue(Optional.ofNullable(data.getRackAmount()).orElse(""));
+                cell9.setCellValue(Optional.ofNullable(data.getCylinder()).orElse(""));
 
                 //供应商
                 Cell cell10 = dataRow.createCell(creditNum++);

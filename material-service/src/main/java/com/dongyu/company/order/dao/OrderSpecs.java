@@ -31,12 +31,12 @@ public class OrderSpecs {
             List<Predicate> list = new ArrayList<>();
             //根据投产单号模糊查询
             if (StringUtils.isNotBlank(orderQueryDTO.getCommissioningCode())) {
-                list.add(builder.like(root.get(COMMISSIONING_CODE), "%" + orderQueryDTO.getCommissioningCode() + "%"));
+                list.add(builder.like(root.get(COMMISSIONING_CODE), "%" + orderQueryDTO.getCommissioningCode().trim() + "%"));
             }
 
             //根据DY编号模糊查询
             if (StringUtils.isNotBlank(orderQueryDTO.getOrderDyCode())) {
-                list.add(builder.like(root.get(ORDER_DY_CODE), "%" + orderQueryDTO.getOrderDyCode() + "%"));
+                list.add(builder.like(root.get(ORDER_DY_CODE), "%" + orderQueryDTO.getOrderDyCode().trim() + "%"));
             }
 
             //订单是否完成

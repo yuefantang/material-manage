@@ -76,7 +76,8 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //生成送货单号（同一批次开单送货单号一样）
         Long num = 1L;
         String deliveryCode = null;
-        DeliveryNote deliveryNote1 = deliveryNoteDao.findFirstByOrderByCreateTimeDesc();
+        //DeliveryNote deliveryNote1 = deliveryNoteDao.findFirstByOrderByCreateTimeDesc();
+        DeliveryNote deliveryNote1 =  deliveryNoteDao.findNewest();
         if (deliveryNote1 == null) {
             deliveryCode = String.valueOf(num);
         } else {
@@ -100,12 +101,13 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             //更新下单记录
             order = this.updateOrder(order, deliveryNum);
             DeliveryNote deliveryNote = new DeliveryNote();
+            deliveryNote.setChargeType(ChargeTypeEnum.ORDER_TYPE.getValue());//订单收费
             BeanUtils.copyProperties(dto, deliveryNote);
             //送货日期时间转换
-            Date deliveryDate = new Date();
+            Date deliveryDate =DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
             deliveryNote.setDeliveryDate(deliveryDate);
             //对账月份（为送货日期的下个月）
-            deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
+            deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYYYMM));
             //将mi信息赋值给货款单
             deliveryNote = this.copy(order, deliveryNote, deliveryNum);
             orderDao.save(order);
@@ -231,12 +233,13 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             listDTOS = all.stream().map(deliveryNote -> {
                 DeliveryListDTO dto = new DeliveryListDTO();
                 BeanUtils.copyProperties(deliveryNote, dto);
+                dto.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
                 return dto;
             }).collect(Collectors.toList());
             String deliveryCode = all.get(0).getDeliveryCode();
             for (DeliveryNote deliveryNote : all) {
                 if (!deliveryNote.getDeliveryCode().equals(deliveryCode)) {
-                    throw new BizException("不属于同一客户的数据不能一起打印送货单，请核实！！");
+                    throw new BizException("不属于同一送货单的数据不能一起打印送货单，请核实！！");
                 }
             }
         }
@@ -250,7 +253,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         log.info("DeliveryNoteServiceImpl addOtherDelivery method start Parm:" + JSONObject.toJSONString(dto));
         Integer chargeType = dto.getChargeType();
         String dyCode = dto.getMiDyCode();
-        if (chargeType == ChargeTypeEnum.MOULD_TYPE.getValue()) {//模具开单
+        if (chargeType == ChargeTypeEnum.MOULD_TYPE.getValue()) {//模具收费
             if (StringUtils.isBlank(dyCode)) {
                 throw new BizException("开单类型为模具开单时，DY编号不能为空!");
             }
@@ -260,7 +263,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 throw new BizException("该DY编号不存在收费且没有收费开单的模具");
             }
             mould.setChargeOpening(CurrencyEunm.YES.getValue());
-        } else if (chargeType == ChargeTypeEnum.TEMPLATE_TYPE.getValue()) {//样板开单
+        } else if (chargeType == ChargeTypeEnum.TEMPLATE_TYPE.getValue()) {//样板收费
             if (StringUtils.isBlank(dyCode)) {
                 throw new BizException("开单类型为样板开单时，DY编号不能为空!");
             }
@@ -270,15 +273,16 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 throw new BizException("该DY编号不存在未收费开单的样板");
             }
             orderTemplate.setChargeOpening(CurrencyEunm.YES.getValue());
-        } else {//其它开单
+        } else {//其它收费
 
         }
+
         DeliveryNote deliveryNote = new DeliveryNote();
         BeanUtils.copyProperties(dto, deliveryNote);
         //设置为其它收费开单类型
         deliveryNote.setBillingType(BillingTypeEnum.OTHER_CHARGES_TYPE.getValue());
         //送货日期时间转换
-        Date deliveryDate = new Date();
+        Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
         deliveryNote.setDeliveryDate(deliveryDate);
         //对账月份（为送货日期的下个月）
         deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
@@ -313,19 +317,28 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         if (deliveryNote == null) {
             throw new BizException("该送货单已不存在！");
         }
-        //先判断该送货单记录是货款开单还是其它收费开单，如果是货款开单，对应的下单记录完成和未完成数量需要回退，然后该送货单记录作废；
-        // 如果是其它收费开单直接将该送货单记录作废；
-        String commissioningCode = deliveryNote.getCommissioningCode();
-        if (StringUtils.isNotBlank(commissioningCode)) {
-            Order order = orderDao.findByCommissioningCode(commissioningCode);
-            if (order != null) {
-                order = this.backOrder(order, deliveryNote);
-                orderDao.save(order);
+        //判读是否是第二次删除，如果是再次删除为物理删除
+        Integer deleted = deliveryNote.getDeleted();
+        if (deleted==DeletedEnum.UNDELETED.getValue()){
+            //先判断该送货单记录是货款开单还是其它收费开单，如果是货款开单，对应的下单记录完成和未完成数量需要回退，然后该送货单记录作废；
+            // 如果是其它收费开单直接将该送货单记录作废；
+            Integer billingType = deliveryNote.getBillingType();
+            if (billingType==BillingTypeEnum.PAYMENT_TYPE.getValue()){
+                String commissioningCode = deliveryNote.getCommissioningCode();
+                if (StringUtils.isNotBlank(commissioningCode)) {
+                    Order order = orderDao.findByCommissioningCode(commissioningCode);
+                    if (order != null) {
+                        order = this.backOrder(order, deliveryNote);
+                        orderDao.save(order);
+                    }
+                }
             }
+            //将该送货单记录设置为作废状态
+            deliveryNote.setDeleted(DeletedEnum.DELETED.getValue());
+            deliveryNoteDao.save(deliveryNote);
+        }else{
+            deliveryNoteDao.delete(deliveryNote.getId());
         }
-        //将该送货单记录设置为作废状态
-        deliveryNote.setDeleted(DeletedEnum.DELETED.getValue());
-        deliveryNoteDao.save(deliveryNote);
         log.info("DeliveryNoteServiceImpl deleted method end;");
     }
 
@@ -341,7 +354,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //送货日期
         deliveryDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //开单类型转换
-        deliveryDetailDTO.setBillingType(String.valueOf(deliveryNote.getBillingType()));
+        deliveryDetailDTO.setChargeType(String.valueOf(deliveryNote.getBillingType()));
         //返回不可编辑的字段
         if (deliveryNote.getBillingType() == BillingTypeEnum.PAYMENT_TYPE.getValue()) {
             List<String> nonEdit = new ArrayList<>();

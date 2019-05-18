@@ -26,10 +26,10 @@ public class RegisterSpecs {
             List<Predicate> list = new ArrayList<>();
             //根据DY编号模糊查询
             if (StringUtils.isNotBlank(registerQueryDTO.getMiDyCode())) {
-                list.add(builder.like(root.get(MI_DY_CODE), "%" + registerQueryDTO.getMiDyCode() + "%"));
+                list.add(builder.like(root.get(MI_DY_CODE), "%" + registerQueryDTO.getMiDyCode().trim() + "%"));
             }
 
-            //是否删除查询
+            //是否删除
             if (registerQueryDTO.getDeleted() != null) {
                 if (registerQueryDTO.getDeleted() == DeletedEnum.UNDELETED.getValue()) {
                     //未删除

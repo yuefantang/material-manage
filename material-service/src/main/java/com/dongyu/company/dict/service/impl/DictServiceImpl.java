@@ -3,14 +3,22 @@ package com.dongyu.company.dict.service.impl;
 import com.dongyu.company.common.constants.ChargeTypeEnum;
 import com.dongyu.company.common.constants.ProcurementTypeEnum;
 import com.dongyu.company.common.constants.UsageStateEnum;
+import com.dongyu.company.dict.dao.StaticDataDao;
+import com.dongyu.company.dict.domain.StaticData;
 import com.dongyu.company.dict.dto.DictDTO;
 import com.dongyu.company.dict.dto.DictResultDTO;
+import com.dongyu.company.dict.dto.StaticDataDTO;
 import com.dongyu.company.dict.service.DictService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 字典相关Service实现类
@@ -23,6 +31,8 @@ import java.util.List;
 @Service
 public class DictServiceImpl implements DictService {
 
+    @Autowired
+    private StaticDataDao staticDataDao;
 
     @Override
     public DictResultDTO getDictList() {
@@ -61,5 +71,19 @@ public class DictServiceImpl implements DictService {
 
         log.info("DictServiceImpl getDictList methond end");
         return dictResultDTO;
+    }
+
+    @Override
+    public Map<String, List<StaticDataDTO>> getStaticData() {
+        log.info("DictServiceImpl getStaticData methond start:");
+        List<StaticData> staticDataList = staticDataDao.findAll();
+        List<StaticDataDTO> dtoList = staticDataList.stream().map(staticData -> {
+            StaticDataDTO staticDataDTO = new StaticDataDTO();
+            BeanUtils.copyProperties(staticData, staticDataDTO);
+            return staticDataDTO;
+        }).collect(Collectors.toList());
+        Map<String, List<StaticDataDTO>> map = dtoList.stream().collect(Collectors.groupingBy(StaticDataDTO::getCodeType));
+        log.info("DictServiceImpl getStaticData methond end");
+        return map;
     }
 }

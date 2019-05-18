@@ -17,13 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface PurchaseMouldDao extends JpaRepository<PurchaseMould, Long>, JpaSpecificationExecutor<PurchaseMould> {
     //根据DY编号（唯一）查询模具采购数据
-    PurchaseMould findByDyCode(String dyCode);
+    PurchaseMould findByDyCodeAndPurchaseType(String dyCode, Integer purchaseType);
 
     //根据id查询模具采购数据
     PurchaseMould findOneById(Long id);
 
     //根据DY编号查询收费且没有收费开单的模具
-    PurchaseMould findByDyCodeAndChargeAndChargeOpening(String dyCode,Integer charge,Integer chargeOpening);
+    PurchaseMould findByDyCodeAndChargeAndChargeOpening(String dyCode, Integer charge, Integer chargeOpening);
 
     @Modifying
     @Transactional

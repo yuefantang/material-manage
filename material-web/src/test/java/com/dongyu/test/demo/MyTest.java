@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,5 +63,28 @@ public class MyTest extends MaterialWebTestApplication {
             // 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
             System.out.println("格式错误");
         }
+    }
+
+    @Test
+    public void listTest(){
+List<String> l1 = new ArrayList<>();
+l1.add("a");
+l1.add("a");
+l1.add("c");
+l1.add("c");
+List<String> l2 = new ArrayList<String>();
+l2.add("b");
+l2.add("b");
+l2.add("k");
+l2.add("k");
+
+l1.removeAll(l2);//此处指的是将与l2重复的删除
+l1.addAll(l2);//此处指加上l2
+
+        for(String str : l1){
+            System.out.println(str);
+        }
+
+
     }
 }

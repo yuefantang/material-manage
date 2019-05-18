@@ -148,6 +148,7 @@ public class ReceivableController {
         DeliveryQueryDTO dto = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, dto);
         dto.setDeleted(DeletedEnum.UNDELETED.getValue());
+        dto.setBillMonth(form.getBillMonth().replace("-",""));
         PageDTO<BillListDTO> billList = financeService.getBillList(dto);
         return ResponseVo.successResponse(billList);
     }
@@ -158,6 +159,7 @@ public class ReceivableController {
     public ResponseVo<BillStatisticsDTO> count(@ModelAttribute ExportBillQueryForm form) {
         DeliveryQueryDTO dto = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, dto);
+        dto.setBillMonth(form.getBillMonth().replace("-",""));
         BillStatisticsDTO count = financeService.count(dto);
         return ResponseVo.successResponse(count);
     }
@@ -168,7 +170,7 @@ public class ReceivableController {
     public ResponseVo verify(@RequestBody String[] ids) {
         List<String> list = Arrays.asList(ids);
         if (CollectionUtils.isEmpty(list)) {
-            throw new BizException("未选择要核实取消的数据，请勾选!");
+            throw new BizException("未选择要核实的数据，请勾选!");
         }
         List<Long> listId = list.stream().map(str -> {
             return Long.valueOf(str);
@@ -208,6 +210,7 @@ public class ReceivableController {
     public ModelAndView exportExcel(@ModelAttribute ExportBillQueryForm form) {
         DeliveryQueryDTO dto = new DeliveryQueryDTO();
         BeanUtils.copyProperties(form, dto);
+        dto.setBillMonth(form.getBillMonth().replace("-",""));
         List<BillListDTO> billExportList = financeService.getBillExportList(dto);
         String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
         String fileName = "账单明细" + date + ".xlsx";

@@ -134,7 +134,7 @@ public class OrderController {
         BeanUtils.copyProperties(form, orderQueryDTO);
         List<OrderDetailDTO> orderDetailDTOS = orderService.getExportList(orderQueryDTO);
         String date = DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYYMMDD);
-        String fileName = "MI登记" + date + ".xlsx";
+        String fileName = "下单" + date + ".xlsx";
         Map<String, Object> map = new HashMap<>();
         map.put("orderDetailDtoS", orderDetailDTOS);
         map.put("fileName", fileName);

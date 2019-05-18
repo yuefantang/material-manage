@@ -122,12 +122,4 @@ public class MiRegisterController {
         return new ModelAndView(excelView, map);
     }
 
-    @ApiOperation("获取客户名称下拉数据")
-    @GetMapping(value = "/name")
-    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
-    public ResponseVo<List<String>> getCustomerName(@ApiParam(name = "customerName", value = "客户名称(查询所有可传空字符串)") @RequestParam(value="customerName",required=false) String customerName) {
-        List<String> list = registerService.getCustomerName(customerName);
-        return ResponseVo.successResponse(list);
-    }
-
 }

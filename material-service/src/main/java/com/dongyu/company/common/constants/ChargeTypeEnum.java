@@ -1,7 +1,7 @@
 package com.dongyu.company.common.constants;
 
 /**
- * 其它收费开单类型枚举
+ * 收费种类枚举
  *
  * @author TYF
  * @date 2019/1/12
@@ -9,9 +9,10 @@ package com.dongyu.company.common.constants;
  */
 public enum ChargeTypeEnum {
 
-    MOULD_TYPE(1, "模具开单"),
-    TEMPLATE_TYPE(2, "样板开单"),
-    OTHER_TYPE(3, "其它开单");
+    MOULD_TYPE(1, "模具收费"),
+    TEMPLATE_TYPE(2, "样板收费"),
+    OTHER_TYPE(3, "其它收费"),
+    ORDER_TYPE(4, "订单收费");
 
     private final int value;
     private final String desc;

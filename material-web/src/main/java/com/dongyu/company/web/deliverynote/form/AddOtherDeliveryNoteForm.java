@@ -1,10 +1,12 @@
 package com.dongyu.company.web.deliverynote.form;
 
 import com.dongyu.company.common.constants.Constants;
+import com.dongyu.company.common.utils.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Pattern;
 
@@ -24,10 +26,10 @@ public class AddOtherDeliveryNoteForm {
     @NotBlank(message = "送货数量不能为空")
     private String deliveryNum;
 
-//    @ApiModelProperty(value = "送货日期yyyy-MM-dd")
-//    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
-//    @NotBlank(message = "送货日期不能为空")
-//    private String deliveryDate;
+    @ApiModelProperty(value = "送货日期yyyy-MM-dd")
+    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
+    @NotBlank(message = "送货日期不能为空")
+    private String deliveryDate;
 
     @ApiModelProperty(value = "投产单号")
     private String commissioningCode;
@@ -63,6 +65,6 @@ public class AddOtherDeliveryNoteForm {
     @ApiModelProperty(value = "单位")
     private String deliveryUnit;
 
-    @ApiModelProperty(value = "开单类型（1:模具开单,2:样板开单,3:其它开单）")
+    @ApiModelProperty(value = "收费种类（1:模具收费,2:样板收费,3:其它收费,4:订单收费）")
     private Integer chargeType;
 }

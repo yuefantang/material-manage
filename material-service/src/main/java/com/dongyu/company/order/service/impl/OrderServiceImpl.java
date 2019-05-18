@@ -46,7 +46,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -71,12 +73,12 @@ public class OrderServiceImpl implements OrderService {
     private SurplusDao surplusDao;
     @Autowired
     private PlusOrderDao plusOrderDao;
-
+    private static Map<String, Order> map = null;
 
     @Override
     @Transactional
     public AddOrderResultDTO add(AddOrderDTO addOrderDTO) {
-        log.info("OrderServiceImpl add method start："+ JSONObject.toJSONString(addOrderDTO));
+        log.info("OrderServiceImpl add method start：" + JSONObject.toJSONString(addOrderDTO));
         //用填入的下单DY编号去查询没有删除的MI登记
         MiRegister byMiDyCode = registerDao.findByMiDyCodeAndDeleted(addOrderDTO.getOrderDyCode(), DeletedEnum.UNDELETED.getValue());
         if (byMiDyCode == null) {
@@ -100,8 +102,9 @@ public class OrderServiceImpl implements OrderService {
         order.setOperationState(OperationStateEnum.ADD.getValue());
         //关联MI登记
         order.setMiRegister(byMiDyCode);
+        AddOrderResultDTO addOrderResultDTO = this.addAndEdit(order, addOrderDTO);
         log.info("OrderServiceImpl add method end;");
-        return this.addAndEdit(order, addOrderDTO);
+        return addOrderResultDTO;
     }
 
     @Override
@@ -181,13 +184,15 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void addSurplus(AddSurplusDTO dto) {
         log.info("OrderServiceImpl addSurplus method start Parm:" + JSONObject.toJSONString(dto));
-        if (dto.getOrderId() == null) {
-            throw new BizException("下单ID不能为空！");
-        }
-        Order order = orderDao.findByIdAndDeleted(dto.getOrderId(), DeletedEnum.UNDELETED.getValue());
-        if (order == null) {
-            throw new BizException("下单ID数据不存在或已删除！");
-        }
+//        if (dto.getOrderId() == null) {
+//            throw new BizException("下单ID不能为空！");
+//        }
+//        Order order = orderDao.findByIdAndDeleted(dto.getOrderId(), DeletedEnum.UNDELETED.getValue());
+//        if (order == null) {
+//            throw new BizException("下单ID数据不存在或已删除！");
+//        }
+       // Map<String, Order> map = (Map<String, Order>) contentTL.get();
+        Order order = map.get("order");
         //存储余料处理数据
         Surplus surplus = order.getSurplus();
         //不等于空，说明是下单编辑修改
@@ -199,10 +204,10 @@ public class OrderServiceImpl implements OrderService {
         surplus.setOperationState(order.getOperationState());
         Surplus save = surplusDao.save(surplus);
         //将余料处理数据与订单关联
-        if (order.getSurplus() == null) {//下单新增
-            order.setSurplus(save);
-            orderDao.save(order);
-        }
+        // if (order.getSurplus() == null) {//下单新增
+        order.setSurplus(save);
+        orderDao.save(order);
+        //  }
         log.info("OrderServiceImpl addSurplus method end;");
     }
 
@@ -232,6 +237,7 @@ public class OrderServiceImpl implements OrderService {
         return pageDTO;
     }
 
+    @Transactional
     @Override
     public void deleted(Long id) {
         log.info("OrderServiceImpl deleted method start Parm:" + id);
@@ -239,8 +245,16 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             throw new BizException("该订单已不存在！");
         }
-        order.setDeleted(DeletedEnum.DELETED.getValue());
-        orderDao.save(order);
+        //判段是否是第二次删除，如果是再次删除为物理删除
+        Integer deleted = order.getDeleted();
+        if (deleted==DeletedEnum.UNDELETED.getValue()){
+            order.setDeleted(DeletedEnum.DELETED.getValue());
+            orderDao.save(order);
+        }else{
+            Surplus surplus = order.getSurplus();
+            surplusDao.delete(surplus.getId());
+            orderDao.delete(id);
+        }
         log.info("OrderServiceImpl deleted method end;");
     }
 
@@ -259,7 +273,7 @@ public class OrderServiceImpl implements OrderService {
         orderDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(order.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //余料处理数据返回
         Surplus surplus = order.getSurplus();
-        if(surplus==null){
+        if (surplus == null) {
             throw new BizException("余料处理未填写！请完成");
         }
         if (surplus != null) {
@@ -360,7 +374,9 @@ public class OrderServiceImpl implements OrderService {
         Integer pcsNumber = Integer.valueOf(order.getMiRegister().getPcsNumber());
         String haredMaterialsNum = new DecimalFormat("0.000").format(commissioningNum / pcsNumber);
         order.setHaredMaterialsNum(haredMaterialsNum);
-        orderDao.save(order);
+        // orderDao.save(order);
+        map = new HashMap<>();
+        map.put("order", order);
         log.info("OrderServiceImpl addAndEdit method end;");
         return this.getSurplusResult(order);
     }

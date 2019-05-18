@@ -54,4 +54,6 @@ public class OrderListDTO {
     @ApiModelProperty(value = "未完成数量")
     private String uncompletedNum;
 
+    @ApiModelProperty(value = "下单是否删除（0：否，1：是）")
+    private Integer deleted;
 }

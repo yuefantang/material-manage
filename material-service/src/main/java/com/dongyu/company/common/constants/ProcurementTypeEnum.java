@@ -8,9 +8,7 @@ package com.dongyu.company.common.constants;
  * @since 1.0.0
  */
 public enum ProcurementTypeEnum {
-    MOULD(1, "模具"),
-    TEST_RACK(2, "测试架"),
-    MOULD_TEST_RACK(3, "模具-测试架");
+    MOULD(1, "模具"), TEST_RACK(2, "测试架");
     private final int value;
     private final String desc;
 

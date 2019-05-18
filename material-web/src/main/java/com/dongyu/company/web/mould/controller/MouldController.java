@@ -55,7 +55,7 @@ public class MouldController {
     private PurchaseMouldService purchaseMouldService;
 
 
-    @ApiOperation("新增模具采购")
+    @ApiOperation("新增模具和测试架采购")
     @PostMapping(value = "/add")
     public ResponseVo add(@Valid @RequestBody AddMouldForm addMouldForm) {
         AddMouldDTO addMouldDTO = new AddMouldDTO();

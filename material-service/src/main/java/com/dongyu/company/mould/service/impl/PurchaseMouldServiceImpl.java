@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -49,10 +51,53 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
     @Transactional
     public void add(AddMouldDTO addMouldDTO) {
         log.info("PurchaseMouldServiceImpl add method start Parm:" + JSONObject.toJSONString(addMouldDTO));
-        //根据DY编号去重
-        PurchaseMould byDyCode = purchaseMouldDao.findByDyCode(addMouldDTO.getDyCode());
+        Integer purchaseType = addMouldDTO.getPurchaseType();
+        //根据DY编号和采购种类去重
+        PurchaseMould byDyCode = purchaseMouldDao.findByDyCodeAndPurchaseType(addMouldDTO.getDyCode(), purchaseType);
         if (byDyCode != null) {
-            throw new BizException("DY编号已存在,请重新输入");
+            throw new BizException("该DY编号的模具或测试架已存在,请重新输入");
+        }
+        if (purchaseType == ProcurementTypeEnum.MOULD.getValue()) {//采购种类为模具
+            if (StringUtils.isBlank(addMouldDTO.getMouldType())) {
+                throw new BizException("模具类型不能为空");
+            }
+            if (StringUtils.isBlank(addMouldDTO.getNumber())) {
+                throw new BizException("一模出几不能为空");
+            }
+            if (StringUtils.isBlank(addMouldDTO.getConnect())) {
+                throw new BizException("连接不能为空");
+            }
+            if (StringUtils.isBlank(addMouldDTO.getWide())) {
+                throw new BizException("宽不能为空");
+            }
+            if (StringUtils.isBlank(addMouldDTO.getLength())) {
+                throw new BizException("长不能为空");
+            }
+            if (!this.numCheck(addMouldDTO.getLength())) {
+                throw new BizException("长格式错误，只能输入数字");
+            }
+            if (!this.numCheck(addMouldDTO.getWide())) {
+                throw new BizException("宽格式错误，只能输入数字");
+            }
+            if (!this.numCheck(addMouldDTO.getNumber())) {
+                throw new BizException("一模出几格式错误，只能输入数字");
+            }
+        } else {
+            if (StringUtils.isBlank(addMouldDTO.getTestRackType())) {
+                throw new BizException("测试架类型不能为空");
+            }
+            if (StringUtils.isBlank(addMouldDTO.getPoint())) {
+                throw new BizException("点数不能为空");
+            }
+            if (StringUtils.isBlank(addMouldDTO.getCylinder())) {
+                throw new BizException("气缸不能为空");
+            }
+            if (!this.numCheck(addMouldDTO.getPoint())) {
+                throw new BizException("点数格式错误，只能输入数字");
+            }
+            if (!this.numCheck(addMouldDTO.getCylinder())) {
+                throw new BizException("气缸格式错误，只能输入数字");
+            }
         }
         PurchaseMould purchaseMould = new PurchaseMould();
         addMouldDTO = this.addOrEdit(addMouldDTO);
@@ -95,12 +140,55 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
     public void edit(EditMouldDTO dto) {
         log.info("PurchaseMouldServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
         PurchaseMould oldPurchaseMould = purchaseMouldDao.findOneById(dto.getId());
+        Integer purchaseType = oldPurchaseMould.getPurchaseType();
         //DY编号修改则根据DY编号去重
         String oldDyCode = oldPurchaseMould.getDyCode();
         if (!dto.getDyCode().equals(oldDyCode)) {
-            PurchaseMould byDyCode = purchaseMouldDao.findByDyCode(dto.getDyCode());
+            PurchaseMould byDyCode = purchaseMouldDao.findByDyCodeAndPurchaseType(dto.getDyCode(), purchaseType);
             if (byDyCode != null) {
-                throw new BizException("DY编号已存在,请重新输入");
+                throw new BizException("该DY编号的模具或测试架已存在,请重新输入");
+            }
+        }
+        if (purchaseType == ProcurementTypeEnum.MOULD.getValue()) {//采购种类为模具
+            if (StringUtils.isBlank(dto.getMouldType())) {
+                throw new BizException("模具类型不能为空");
+            }
+            if (StringUtils.isBlank(dto.getNumber())) {
+                throw new BizException("一模出几不能为空");
+            }
+            if (StringUtils.isBlank(dto.getConnect())) {
+                throw new BizException("连接不能为空");
+            }
+            if (StringUtils.isBlank(dto.getWide())) {
+                throw new BizException("宽不能为空");
+            }
+            if (StringUtils.isBlank(dto.getLength())) {
+                throw new BizException("长不能为空");
+            }
+            if (!this.numCheck(dto.getLength())) {
+                throw new BizException("长格式错误，只能输入数字");
+            }
+            if (!this.numCheck(dto.getWide())) {
+                throw new BizException("宽格式错误，只能输入数字");
+            }
+            if (!this.numCheck(dto.getNumber())) {
+                throw new BizException("一模出几格式错误，只能输入数字");
+            }
+        } else {
+            if (StringUtils.isBlank(dto.getTestRackType())) {
+                throw new BizException("测试架类型不能为空");
+            }
+            if (StringUtils.isBlank(dto.getPoint())) {
+                throw new BizException("点数不能为空");
+            }
+            if (StringUtils.isBlank(dto.getCylinder())) {
+                throw new BizException("气缸不能为空");
+            }
+            if (!this.numCheck(dto.getPoint())) {
+                throw new BizException("点数格式错误，只能输入数字");
+            }
+            if (!this.numCheck(dto.getCylinder())) {
+                throw new BizException("气缸格式错误，只能输入数字");
             }
         }
         dto = (EditMouldDTO) this.addOrEdit(dto);
@@ -113,10 +201,16 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
         log.info("PurchaseMouldServiceImpl deleted method start Parm:" + id);
         PurchaseMould purchaseMould = purchaseMouldDao.findOneById(id);
         if (purchaseMould == null) {
-            throw new BizException("不存在该模具采购id");
+            throw new BizException("不存在该模具采购或测试架id");
         }
-        purchaseMould.setDeleted(DeletedEnum.DELETED.getValue());
-        purchaseMouldDao.save(purchaseMould);
+        //判段是否是第二次删除，如果是再次删除为物理删除
+        Integer deleted = purchaseMould.getDeleted();
+        if (deleted == DeletedEnum.UNDELETED.getValue()) {
+            purchaseMould.setDeleted(DeletedEnum.DELETED.getValue());
+            purchaseMouldDao.save(purchaseMould);
+        } else {
+            purchaseMouldDao.delete(id);
+        }
         log.info("PurchaseMouldServiceImpl deleted method end:");
     }
 
@@ -146,43 +240,36 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
     }
 
     /**
-     * 模具采购金额计算
+     * 模具采购和测试架金额计算
      *
      * @param addMouldDTO
      * @return
      */
-    private String amount(AddMouldDTO addMouldDTO, String price) {
-        //计算公式：金额=（长度+宽度 ）*单价
-        double length = Double.parseDouble(addMouldDTO.getLength());
-        double wide = Double.parseDouble(addMouldDTO.getWide());
-        double prices = Double.parseDouble(price);
-        String amount = String.valueOf((length + wide) * prices);
-        return amount;
-    }
-
     private AddMouldDTO addOrEdit(AddMouldDTO addMouldDTO) {
-        if (addMouldDTO.getPurchaseType() == ProcurementTypeEnum.MOULD.getValue()) {
-            if (StringUtils.isBlank(addMouldDTO.getMouldPrice())) {
-                throw new BizException("模具单价不能为空");
-            }
-            String mouldAmount = this.amount(addMouldDTO, addMouldDTO.getMouldPrice());
-            addMouldDTO.setMouldAmount(mouldAmount);
-        } else if (addMouldDTO.getPurchaseType() == ProcurementTypeEnum.TEST_RACK.getValue()) {
-            if (StringUtils.isBlank(addMouldDTO.getRackPrice())) {
-                throw new BizException("测试架单价不能为空");
-            }
-            String rackAmount = this.amount(addMouldDTO, addMouldDTO.getRackPrice());
-            addMouldDTO.setRackAmount(rackAmount);
-        } else {
-            if (StringUtils.isBlank(addMouldDTO.getMouldPrice()) || StringUtils.isBlank(addMouldDTO.getRackPrice())) {
-                throw new BizException("模具单价或测试架单价不能为空");
-            }
-            String mouldAmount = this.amount(addMouldDTO, addMouldDTO.getMouldPrice());
-            addMouldDTO.setMouldAmount(mouldAmount);
-            String rackAmount = this.amount(addMouldDTO, addMouldDTO.getRackPrice());
-            addMouldDTO.setRackAmount(rackAmount);
+        double prices = Double.parseDouble(addMouldDTO.getMouldPrice());
+        String amount = null;
+        if (addMouldDTO.getPurchaseType() == ProcurementTypeEnum.MOULD.getValue()) {//模具
+            //计算公式：金额=（长度+宽度 ）*单价
+            double length = Double.parseDouble(addMouldDTO.getLength());
+            double wide = Double.parseDouble(addMouldDTO.getWide());
+            amount = String.valueOf((length + wide) * prices);
+            addMouldDTO.setMouldAmount(amount);
+        } else if (addMouldDTO.getPurchaseType() == ProcurementTypeEnum.TEST_RACK.getValue()) {//测试架
+            //计算公式：金额=点数*单价+气缸*30
+            double point = Double.parseDouble(addMouldDTO.getPoint());
+            double cylinder = Double.parseDouble(addMouldDTO.getCylinder());
+            amount = String.valueOf((point) * prices + cylinder * 30d);
+            addMouldDTO.setMouldAmount(amount);
         }
         return addMouldDTO;
     }
 
+    //校验所传字符串是否是数字
+    private static boolean numCheck(String str) {
+        Pattern p = Pattern.compile(Constants.NUMBER_POINT_PATTERN);
+        Matcher m = p.matcher(str);
+        boolean r = m.matches();
+        return r;
+
+    }
 }
