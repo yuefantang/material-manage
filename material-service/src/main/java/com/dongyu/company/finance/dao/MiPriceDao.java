@@ -13,5 +13,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface MiPriceDao extends JpaRepository<MiPrice, Long>, JpaSpecificationExecutor<MiPrice> {
 
-    MiPrice findByMiDyCode(String miDyCode);
+    MiPrice findByMiDyCodeAndDeleted(String miDyCode, Integer deleted);
 }

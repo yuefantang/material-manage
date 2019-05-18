@@ -122,4 +122,13 @@ public class MiRegisterController {
         return new ModelAndView(excelView, map);
     }
 
+    @ApiOperation("根据DY编号查询MI登记")
+    @GetMapping(value = "/dycode")
+    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
+    public ResponseVo<RegisterDetailDTO> get(@ApiParam(name = "miDyCode", value = "MI登记DY编号") @RequestParam("miDyCode") String miDyCode) {
+        RegisterDetailDTO registerByDyCode = registerService.getRegisterByDyCode(miDyCode);
+        return ResponseVo.successResponse(registerByDyCode);
+    }
+
+
 }

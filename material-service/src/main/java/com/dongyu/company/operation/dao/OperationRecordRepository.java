@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2019/1/3
  * @since 1.0.0
  */
-public interface OperationRecordDao extends JpaRepository<OperationRecord, Long>, JpaSpecificationExecutor<OperationRecord> {
+public interface OperationRecordRepository extends JpaRepository<OperationRecord, Long>, JpaSpecificationExecutor<OperationRecord> {
 
     //根据表名和id查询日志
     List<OperationRecord> findByEntityAndEntityIdOrderByCreateTimeDesc(String entity, Long entityId);

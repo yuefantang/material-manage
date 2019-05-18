@@ -18,4 +18,11 @@ public class MiPriceQueryDTO extends PageQueryDTO {
 
     //订单是否删除（0：未删除，1：已删除），默认0
     private Integer deleted;
+
+    //客户型号
+    private String customerModel;
+
+    //客户名称
+    private String customerName;
+
 }

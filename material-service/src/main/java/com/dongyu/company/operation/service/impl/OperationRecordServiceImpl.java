@@ -2,7 +2,7 @@ package com.dongyu.company.operation.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dongyu.company.common.utils.DateUtil;
-import com.dongyu.company.operation.dao.OperationRecordDao;
+import com.dongyu.company.operation.dao.OperationRecordRepository;
 import com.dongyu.company.operation.domain.OperationRecord;
 import com.dongyu.company.operation.dto.OperationQueryDTO;
 import com.dongyu.company.operation.dto.OperationRecordTDO;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class OperationRecordServiceImpl implements OperationRecordService {
 
     @Autowired
-    private OperationRecordDao operationRecordDao;
+    private OperationRecordRepository operationRecordDao;
     @Autowired
     private UserDao userDao;
 

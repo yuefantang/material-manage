@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface PurchaseMouldDao extends JpaRepository<PurchaseMould, Long>, JpaSpecificationExecutor<PurchaseMould> {
     //根据DY编号（唯一）查询模具采购数据
-    PurchaseMould findByDyCodeAndPurchaseType(String dyCode, Integer purchaseType);
+    PurchaseMould findByDyCodeAndPurchaseTypeAndDeleted(String dyCode, Integer purchaseType, Integer deleted);
 
     //根据id查询模具采购数据
     PurchaseMould findOneById(Long id);

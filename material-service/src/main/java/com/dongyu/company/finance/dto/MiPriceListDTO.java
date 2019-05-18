@@ -44,4 +44,10 @@ public class MiPriceListDTO {
 
     @ApiModelProperty(value = "工艺")
     private String technology;
+
+    @ApiModelProperty(value = "报价日期yyyy-MM-dd")
+    private String quotationDate;
+
+    @ApiModelProperty("铜厚")
+    private String copperThick;
 }

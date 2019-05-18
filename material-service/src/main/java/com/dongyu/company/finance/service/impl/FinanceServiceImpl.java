@@ -13,7 +13,7 @@ import com.dongyu.company.deliverynote.domain.DeliveryNote;
 import com.dongyu.company.deliverynote.dto.DeliveryQueryDTO;
 import com.dongyu.company.finance.dao.BillStatisticsDao;
 import com.dongyu.company.finance.dao.MiPriceDao;
-import com.dongyu.company.finance.dao.MiPriceSpecs;
+import com.dongyu.company.finance.dao.MiPriceSqlDao;
 import com.dongyu.company.finance.domain.MiPrice;
 import com.dongyu.company.finance.dto.AddMiPriceDTO;
 import com.dongyu.company.finance.dto.BillListDTO;
@@ -56,23 +56,25 @@ public class FinanceServiceImpl implements FinanceService {
     private DeliveryNoteDao deliveryNoteDao;
     @Autowired
     private BillStatisticsDao billStatisticsDao;
-
+    @Autowired
+    private MiPriceSqlDao miPriceSqlDao;
 
     @Override
     @Transactional
     public void add(AddMiPriceDTO addMiPriceDTO) {
         log.info("FinanceServiceImpl add method start Parm:" + JSONObject.toJSONString(addMiPriceDTO));
-        MiRegister miRegister = registerDao.findByMiDyCode(addMiPriceDTO.getMiDyCode());
+        MiRegister miRegister = registerDao.findByMiDyCodeAndDeleted(addMiPriceDTO.getMiDyCode(), DeletedEnum.UNDELETED.getValue());
         if (miRegister == null) {
             throw new BizException("该DY编号没有对应的MI登记，请核实填写!");
         }
-        MiPrice miPrice = miPriceDao.findByMiDyCode(addMiPriceDTO.getMiDyCode());
+        MiPrice miPrice = miPriceDao.findByMiDyCodeAndDeleted(addMiPriceDTO.getMiDyCode(), DeletedEnum.UNDELETED.getValue());
         //根据DY编号去重
         if (miPrice != null) {
             throw new BizException("已存在该DY编号的MI登记价格!");
         }
         miPrice = new MiPrice();
         BeanUtils.copyProperties(addMiPriceDTO, miPrice);
+        miPrice.setQuotationDate(DateUtil.parseStrToDate(addMiPriceDTO.getQuotationDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //价格表关联MI登记表
         miPrice.setMiRegisterId(miRegister.getId());
         MiPrice save = miPriceDao.save(miPrice);
@@ -86,12 +88,13 @@ public class FinanceServiceImpl implements FinanceService {
     public PageDTO<MiPriceListDTO> getlist(MiPriceQueryDTO dto) {
         log.info("FinanceServiceImpl getlist method start Parm:" + JSONObject.toJSONString(dto));
         PageRequest pageRequest = new PageRequest(dto.getPageNo() - 1, dto.getPageSize(), Sort.Direction.DESC, Constants.CREATE_TIME);
-        Page<MiPrice> page = miPriceDao.findAll(MiPriceSpecs.miPriceQuerySpec(dto), pageRequest);
-
+        // Page<MiPrice> page = miPriceDao.findAll(MiPriceSpecs.miPriceQuerySpec(dto), pageRequest);
+        Page<MiPrice> page = miPriceSqlDao.queryMiPrice(dto, pageRequest);
         PageDTO<MiPriceListDTO> pageDTO = PageDTO.of(page, item -> {
             MiPriceListDTO miPriceListDTO = new MiPriceListDTO();
             BeanUtils.copyProperties(item, miPriceListDTO);
             miPriceListDTO.setMiPriceId(item.getId());
+            miPriceListDTO.setQuotationDate(DateUtil.parseDateToStr(item.getQuotationDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             MiRegister miRegister = registerDao.findOne(item.getMiRegisterId());
             if (miRegister != null) {
                 BeanUtils.copyProperties(miRegister, miPriceListDTO);
@@ -109,9 +112,35 @@ public class FinanceServiceImpl implements FinanceService {
         if (miPrice == null) {
             throw new BizException("该MI登记价格已不存在！");
         }
-        miPrice.setDeleted(DeletedEnum.DELETED.getValue());
-        miPriceDao.save(miPrice);
+        //判段是否是第二次删除，如果是再次删除为物理删除
+        Integer deleted = miPrice.getDeleted();
+        if (deleted == DeletedEnum.UNDELETED.getValue()) {
+            miPrice.setDeleted(DeletedEnum.DELETED.getValue());
+            miPriceDao.save(miPrice);
+        } else {
+            miPriceDao.delete(id);
+        }
+        MiRegister miRegister = registerDao.findByMiDyCode(miPrice.getMiDyCode());
+        miRegister.setMiPriceId(null);
+        registerDao.save(miRegister);
         log.info("FinanceServiceImpl deleted method end;");
+    }
+
+    @Override
+    public void recovery(Long id) {
+        log.info("FinanceServiceImpl recovery method start Parm:" + id);
+        MiPrice miPrice = miPriceDao.findOne(id);
+        if (miPrice == null) {
+            throw new BizException("不存在该模具采购id");
+        }
+        MiPrice oldMiPrice = miPriceDao.findByMiDyCodeAndDeleted(miPrice.getMiDyCode(), DeletedEnum.UNDELETED.getValue());
+        //根据DY编号去重
+        if (oldMiPrice != null) {
+            throw new BizException("该DY编号的MI登记价格已存在，不能恢复!");
+        }
+        miPrice.setDeleted(DeletedEnum.UNDELETED.getValue());
+        miPriceDao.save(miPrice);
+        log.info("FinanceServiceImpl recovery method end;");
     }
 
     @Override
@@ -119,6 +148,11 @@ public class FinanceServiceImpl implements FinanceService {
     public void edit(EditMiPriceDTO dto) {
         log.info("FinanceServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
         MiPrice oldMiPrice = miPriceDao.findOne(dto.getId());
+        //已删除的数据不能编辑
+        Integer deleted = oldMiPrice.getDeleted();
+        if (deleted == DeletedEnum.DELETED.getValue()) {
+            throw new BizException("已删除的数据不能编辑！");
+        }
         if (oldMiPrice == null) {
             throw new BizException("该MI登记价格已不存在！");
         }
@@ -127,21 +161,22 @@ public class FinanceServiceImpl implements FinanceService {
             if (miRegister == null) {
                 throw new BizException("该DY编号没有对应的MI登记或已删除，请核实填写!");
             }
-            MiPrice miPrice = miPriceDao.findByMiDyCode(dto.getMiDyCode());
+            MiPrice miPrice = miPriceDao.findByMiDyCodeAndDeleted(dto.getMiDyCode(), DeletedEnum.UNDELETED.getValue());
             //根据DY编号去重
             if (miPrice != null) {
                 throw new BizException("已存在该DY编号的MI登记价格!");
             }
-            miPrice = oldMiPrice;
-            BeanUtils.copyProperties(dto, miPrice);
+            BeanUtils.copyProperties(dto, oldMiPrice);
             //价格表关联MI登记表
             miPrice.setMiRegisterId(miRegister.getId());
-            MiPrice save = miPriceDao.save(miPrice);
+            oldMiPrice.setQuotationDate(DateUtil.parseStrToDate(dto.getQuotationDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            MiPrice save = miPriceDao.save(oldMiPrice);
             //MI登记表关联价格表
             miRegister.setMiPriceId(save.getId());
             registerDao.save(miRegister);
         } else {
             BeanUtils.copyProperties(dto, oldMiPrice);
+            oldMiPrice.setQuotationDate(DateUtil.parseStrToDate(dto.getQuotationDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             miPriceDao.save(oldMiPrice);
         }
         log.info("FinanceServiceImpl edit method end;");
@@ -156,6 +191,11 @@ public class FinanceServiceImpl implements FinanceService {
         }
         MiPriceDetailDTO miPriceDetailDTO = new MiPriceDetailDTO();
         BeanUtils.copyProperties(miPrice, miPriceDetailDTO);
+        miPriceDetailDTO.setQuotationDate(DateUtil.parseDateToStr(miPrice.getQuotationDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        MiRegister miRegister = registerDao.findOne(miPrice.getMiRegisterId());
+        if (miRegister != null) {
+            BeanUtils.copyProperties(miRegister, miPriceDetailDTO);
+        }
         log.info("FinanceServiceImpl getDetail method end;");
         return miPriceDetailDTO;
     }

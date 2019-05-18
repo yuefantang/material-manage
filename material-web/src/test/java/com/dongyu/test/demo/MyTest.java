@@ -1,8 +1,10 @@
 package com.dongyu.test.demo;
 
+import com.dongyu.company.finance.domain.MiPrice;
 import com.dongyu.test.MaterialWebTestApplication;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class MyTest extends MaterialWebTestApplication {
         System.out.println(str);
     }
 
+
     private void isValidDate(String str) {
         boolean convertSuccess = true;
         // 指定日期格式yyyyMMdd
@@ -67,24 +70,27 @@ public class MyTest extends MaterialWebTestApplication {
 
     @Test
     public void listTest(){
-List<String> l1 = new ArrayList<>();
-l1.add("a");
-l1.add("a");
-l1.add("c");
-l1.add("c");
-List<String> l2 = new ArrayList<String>();
-l2.add("b");
-l2.add("b");
-l2.add("k");
-l2.add("k");
-
-l1.removeAll(l2);//此处指的是将与l2重复的删除
-l1.addAll(l2);//此处指加上l2
-
-        for(String str : l1){
-            System.out.println(str);
+        MiPrice miPrice = new MiPrice();
+        printFieldMessage(miPrice);
+    }
+    private static void printFieldMessage(Object object) {
+        // 要获取类的信息，首先要获取类的类类型
+        Class<?> class1 = object.getClass();// 传递的是哪个子类的对象，class1就是该子类的类类型
+        // 获取类的名称
+        System.out.println("类的名称是：" + class1.getName());
+        /**
+         * 成员变量也是对象 java.lang.reflect.Field Field类封装了关于成员变量的操作
+         * getFields()方法获取的是所有的public的成员变量的信息
+         * getDeclaredFields获取的是该类自己声明的成员变量的信息
+         */
+        // Field[] fs = class1.getFields();
+        Field[] fs = class1.getDeclaredFields();
+        for (Field field : fs) {
+            // 得到成员变量的类型的类类型
+            Class<?> filedType = field.getType();
+            String typeName = filedType.getName();
+            String fieldName = field.getName();
+            System.out.println(typeName + " " + fieldName);
         }
-
-
     }
 }

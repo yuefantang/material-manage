@@ -70,4 +70,10 @@ public interface RegisterService {
      */
     RegisterDetailDTO getDetail(Long id);
 
+    /**
+     * 根据DY编号获取MI登记信息
+     * @param miDyCode
+     * @return
+     */
+    RegisterDetailDTO getRegisterByDyCode(String miDyCode);
 }

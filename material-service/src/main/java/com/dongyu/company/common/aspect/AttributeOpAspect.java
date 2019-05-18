@@ -4,7 +4,7 @@ import com.dongyu.company.common.annotation.AttributeOpName;
 import com.dongyu.company.common.annotation.AttributeOpRecord;
 import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.utils.DateUtil;
-import com.dongyu.company.operation.dao.OperationRecordDao;
+import com.dongyu.company.operation.dao.OperationRecordRepository;
 import com.dongyu.company.operation.domain.OperationRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -39,7 +39,7 @@ import java.util.Optional;
 public class AttributeOpAspect {
 
     @Autowired
-    private OperationRecordDao operationRecordDao;
+    private OperationRecordRepository operationRecordDao;
 
     /**
      * 添加业务逻辑方法切入点
@@ -105,7 +105,7 @@ public class AttributeOpAspect {
             this.editOperation(updateEntityClass, entityId, attribute, newValue, oldValue);
         }
         log.info("AttributeOpAspect addOperationRecordLog method end;");
-        return null;
+        return newObject;
     }
 
     /**

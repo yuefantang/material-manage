@@ -72,6 +72,14 @@ public class FinanceController {
         return ResponseVo.successResponse();
     }
 
+    @ApiOperation("恢复删除MI登记价格")
+    @GetMapping(value = "/recovery")
+    @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)
+    public ResponseVo recovery(@ApiParam(name = "id", value = "MI登记价格id") @RequestParam("id") Long id) {
+        financeService.recovery(id);
+        return ResponseVo.successResponse();
+    }
+
 
     @ApiOperation("编辑MI登记价格")
     @RequiresRoles(value = {"admin", "finance"}, logical = Logical.OR)

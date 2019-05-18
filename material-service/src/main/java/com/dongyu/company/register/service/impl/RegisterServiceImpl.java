@@ -271,4 +271,18 @@ public class RegisterServiceImpl implements RegisterService {
         registerDetailDTO.setProcessDTOS(processDTOS);
         return registerDetailDTO;
     }
+
+    @Override
+    public RegisterDetailDTO getRegisterByDyCode(String miDyCode) {
+        log.info("RegisterServiceImpl getRegisterByDyCode method start Parm:" + miDyCode);
+        MiRegister miRegister = registerDao.findByMiDyCodeAndDeleted(miDyCode, DeletedEnum.UNDELETED.getValue());
+        if (miRegister == null) {
+            throw new BizException("不存在该MI登记");
+        }
+        RegisterDetailDTO registerDetailDTO = new RegisterDetailDTO();
+        BeanUtils.copyProperties(miRegister, registerDetailDTO);
+        log.info("RegisterServiceImpl getRegisterByDyCode method end ");
+        return registerDetailDTO;
+
+    }
 }

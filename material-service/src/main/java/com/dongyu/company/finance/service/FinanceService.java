@@ -43,6 +43,12 @@ public interface FinanceService {
     void deleted(Long id);
 
     /**
+     * MI登记价格恢复
+     * @param id
+     */
+     void recovery(Long id);
+
+    /**
      * MI登记价格编辑
      *
      * @param editMiPriceDTO

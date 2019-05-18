@@ -98,7 +98,6 @@ public class DeliveryNote extends BaseDomain {
     private String billMonth;
 
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '核实状态（0：未核实，1：已核实）'")
-    @AttributeOpName("核实状态")
     private Integer verifyState= VerifyStateEnum.UNVERIFY.getValue();
 
 }
