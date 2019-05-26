@@ -54,17 +54,24 @@ public class AddOtherDeliveryNoteForm {
 
     @ApiModelProperty(value = "单价（单位分）")
     @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
-    @NotBlank(message = "单价不能为空")
+    //@NotBlank(message = "单价不能为空")
     private String price;
 
     @ApiModelProperty(value = "金额(单位分)")
     @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "格式错误，只能输入数字")
-    @NotBlank(message = "金额不能为空")
+    //@NotBlank(message = "金额不能为空")
     private String amount;
 
     @ApiModelProperty(value = "单位")
     private String deliveryUnit;
 
-    @ApiModelProperty(value = "收费种类（1:模具收费,2:样板收费,3:其它收费,4:订单收费）")
+    @ApiModelProperty(value = "下单、模具、测试架或样板数据ID")
+    private Long otherId;
+
+    @ApiModelProperty(value = "开单收费类型（1:模具收费,2:样板收费,3:其它收费,4:订单收费,5:测试架）")
     private Integer chargeType;
+
+    @ApiModelProperty(value = "领取人")
+    @NotBlank(message = "领取人不能为空")
+    private String receiver;
 }

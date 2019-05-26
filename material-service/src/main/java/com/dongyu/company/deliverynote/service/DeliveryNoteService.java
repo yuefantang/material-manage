@@ -31,7 +31,7 @@ public interface DeliveryNoteService {
      *
      * @param dto
      */
-    void addOtherDelivery(AddOtherDeliveryNoteDTO dto);
+    void addOtherDelivery(List<AddOtherDeliveryNoteDTO> dto);
 
     /**
      * 查询货款单

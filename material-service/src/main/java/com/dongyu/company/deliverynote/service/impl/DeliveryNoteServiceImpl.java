@@ -76,23 +76,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
     public List<DeliveryListDTO> add(List<AddDeliveryNoteDTO> dtos) {
         log.info("DeliveryNoteServiceImpl add method start Parm:" + JSONObject.toJSONString(dtos));
         List<DeliveryListDTO> deliveryListDTOs = new ArrayList<>();
-        //生成送货单号（同一批次开单送货单号一样）
-        Long num = 1L;
-        String deliveryCode = null;
-        //DeliveryNote deliveryNote1 = deliveryNoteDao.findFirstByOrderByCreateTimeDesc();
-        DeliveryNote deliveryNote1 = deliveryNoteDao.findNewest();
-        if (deliveryNote1 == null) {
-            deliveryCode = String.valueOf(num);
-        } else {
-            String deliveryCode1 = deliveryNote1.getDeliveryCode();
-            if (StringUtils.isEmpty(deliveryCode1)) {
-                deliveryCode = String.valueOf(num);
-            } else {
-                Long aLong = Long.valueOf(deliveryCode1);
-                aLong = aLong + 1L;
-                deliveryCode = String.valueOf(aLong);
-            }
-        }
+        String deliveryCode = AutoGenerateCode();
         //根据投产单号查询未收费开单的下单
         for (AddDeliveryNoteDTO dto : dtos) {
             Order order = orderDao.findByCommissioningCodeAndChargeOpening(dto.getCommissioningCode(), CurrencyEunm.NO.getValue());
@@ -111,6 +95,12 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             deliveryNote.setDeliveryDate(deliveryDate);
             //对账月份（为送货日期的下个月）
             deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYYYMM));
+            if (dto.getIsComplement() == CompleteStateEnum.COMPLETE.getValue()) { //人工勾选是否完成
+                if (StringUtils.isBlank(dto.getComplementExplain())) {
+                    throw new BizException(order.getOrderDyCode() + "该DY编号实际未完成，但已勾选完成，请全部完成说明栏填写说明！");
+                }
+                order.setCompleteState(CompleteStateEnum.COMPLETE.getValue());
+            }
             //将mi信息赋值给货款单
             deliveryNote = this.copy(order, deliveryNote, deliveryNum);
             orderDao.save(order);
@@ -137,6 +127,92 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
 
     @Override
     @Transactional
+    public void addOtherDelivery(List<AddOtherDeliveryNoteDTO> dtos) {
+        log.info("DeliveryNoteServiceImpl addOtherDelivery method start Parm:" + JSONObject.toJSONString(dtos));
+        String deliveryCode = AutoGenerateCode();
+        for (AddOtherDeliveryNoteDTO dto : dtos) {
+            Integer chargeType = dto.getChargeType();
+            Long id = dto.getOtherId();
+            if (chargeType == ChargeTypeEnum.MOULD_TYPE.getValue() || chargeType == ChargeTypeEnum.TEST_RACK_TYPE.getValue()) {//模具或测试架收费开单
+                if (id == null) {
+                    throw new BizException("开单类型为模具开单时，ID不能为空!");
+                }
+                //根据ID查询模具
+                PurchaseMould mould = purchaseMouldDao.findOneById(id);
+                if (mould == null) {
+                    throw new BizException("该id" + id + "不存在收费且没有收费开单的模具或测试架");
+                }
+                dto.setMiDyCode(mould.getDyCode());
+                dto.setCustomerModel(mould.getProductModel());
+                dto.setCustomerName(mould.getAffiliatedCustomer());
+                //dto.setCustomerOrderCode(mould.ge);
+                dto.setPrice(mould.getMouldPrice());
+                dto.setAmount(mould.getMouldAmount());
+                mould.setChargeOpening(CurrencyEunm.YES.getValue());
+            } else if (chargeType == ChargeTypeEnum.TEMPLATE_TYPE.getValue()) {//样板收费开单
+                if (id == null) {
+                    throw new BizException("开单类型为样板开单时，ID不能为空!");
+                }
+                //根据DY编号查询未收费开单的样板
+                OrderTemplate orderTemplate = orderTemplateDao.findOne(id);
+                if (orderTemplate == null) {
+                    throw new BizException("该id" + id + "不存在未收费开单的样板");
+                }
+                dto.setMiDyCode(orderTemplate.getDyCode());
+                dto.setCustomerModel(orderTemplate.getCustomerModel());
+                dto.setCustomerName(orderTemplate.getCustomerName());
+                //dto.setCustomerOrderCode(mould.ge);
+                //dto.setPrice(mould.getMouldPrice());
+                // dto.setAmount(mould.getMouldAmount());
+                orderTemplate.setChargeOpening(CurrencyEunm.YES.getValue());
+            } else {//其它收费
+                if (StringUtils.isBlank(dto.getPrice())) {
+                    throw new BizException("单价不能为空!");
+                }
+                if (StringUtils.isBlank(dto.getAmount())) {
+                    throw new BizException("金额不能为空!");
+                }
+            }
+            DeliveryNote deliveryNote = new DeliveryNote();
+            //送货单号
+            deliveryNote.setDeliveryCode(deliveryCode);
+            BeanUtils.copyProperties(dto, deliveryNote);
+            //设置为其它收费开单类型
+            // deliveryNote.setBillingType(BillingTypeEnum.OTHER_CHARGES_TYPE.getValue());
+            //送货日期时间转换
+            Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+            deliveryNote.setDeliveryDate(deliveryDate);
+            //对账月份（为送货日期的下个月）
+            deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
+            deliveryNoteDao.save(deliveryNote);
+            log.info("DeliveryNoteServiceImpl addOtherDelivery method end;");
+        }
+    }
+
+
+    //生成送货单号（同一批次开单送货单号一样）
+    private String AutoGenerateCode() {
+        Long num = 1L;
+        String deliveryCode = null;
+        DeliveryNote deliveryNote1 = deliveryNoteDao.findNewest();
+        if (deliveryNote1 == null) {
+            deliveryCode = String.valueOf(num);
+        } else {
+            String deliveryCode1 = deliveryNote1.getDeliveryCode();
+            if (StringUtils.isEmpty(deliveryCode1)) {
+                deliveryCode = String.valueOf(num);
+            } else {
+                Long aLong = Long.valueOf(deliveryCode1);
+                aLong = aLong + 1L;
+                deliveryCode = String.valueOf(aLong);
+            }
+        }
+        return deliveryCode;
+    }
+
+
+    @Override
+    @Transactional
     public void edit(EditDeliveryDTO dto) {
         log.info("DeliveryNoteServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
         DeliveryNote deliveryNote = deliveryNoteDao.findOne(dto.getId());
@@ -144,7 +220,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             throw new BizException("该货款单不存在！");
         }
         //货款开单编辑逻辑
-        if (deliveryNote.getBillingType() == BillingTypeEnum.PAYMENT_TYPE.getValue()) {
+        if (deliveryNote.getChargeType() == ChargeTypeEnum.ORDER_TYPE.getValue()) {
             if (StringUtils.isEmpty(dto.getCommissioningCode())) {
                 throw new BizException("投产单号不能为空！");
             }
@@ -248,48 +324,6 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         return listDTOS;
     }
 
-    @Override
-    @Transactional
-    public void addOtherDelivery(AddOtherDeliveryNoteDTO dto) {
-        log.info("DeliveryNoteServiceImpl addOtherDelivery method start Parm:" + JSONObject.toJSONString(dto));
-        Integer chargeType = dto.getChargeType();
-        String dyCode = dto.getMiDyCode();
-        if (chargeType == ChargeTypeEnum.MOULD_TYPE.getValue()) {//模具收费
-            if (StringUtils.isBlank(dyCode)) {
-                throw new BizException("开单类型为模具开单时，DY编号不能为空!");
-            }
-            //根据DY编号查询收费且没有收费开单的模具
-            PurchaseMould mould = purchaseMouldDao.findByDyCodeAndChargeAndChargeOpeningAndDeleted(dto.getMiDyCode(), CurrencyEunm.YES.getValue(), CurrencyEunm.NO.getValue(), DeletedEnum.UNDELETED.getValue());
-            if (mould == null) {
-                throw new BizException("该DY编号不存在收费且没有收费开单的模具");
-            }
-            mould.setChargeOpening(CurrencyEunm.YES.getValue());
-        } else if (chargeType == ChargeTypeEnum.TEMPLATE_TYPE.getValue()) {//样板收费
-            if (StringUtils.isBlank(dyCode)) {
-                throw new BizException("开单类型为样板开单时，DY编号不能为空!");
-            }
-            //根据DY编号查询未收费开单的样板
-            OrderTemplate orderTemplate = orderTemplateDao.findByDyCodeAndChargeOpening(dyCode, CurrencyEunm.NO.getValue());
-            if (orderTemplate == null) {
-                throw new BizException("该DY编号不存在未收费开单的样板");
-            }
-            orderTemplate.setChargeOpening(CurrencyEunm.YES.getValue());
-        } else {//其它收费
-
-        }
-
-        DeliveryNote deliveryNote = new DeliveryNote();
-        BeanUtils.copyProperties(dto, deliveryNote);
-        //设置为其它收费开单类型
-        deliveryNote.setBillingType(BillingTypeEnum.OTHER_CHARGES_TYPE.getValue());
-        //送货日期时间转换
-        Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
-        deliveryNote.setDeliveryDate(deliveryDate);
-        //对账月份（为送货日期的下个月）
-        deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYMM));
-        deliveryNoteDao.save(deliveryNote);
-        log.info("DeliveryNoteServiceImpl addOtherDelivery method end;");
-    }
 
     @Override
     public PageDTO<DeliveryListDTO> getlist(DeliveryQueryDTO dto) {
@@ -321,10 +355,11 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //判读是否是第二次删除，如果是再次删除为物理删除
         Integer deleted = deliveryNote.getDeleted();
         if (deleted == DeletedEnum.UNDELETED.getValue()) {
-            //先判断该送货单记录是货款开单还是其它收费开单，如果是货款开单，对应的下单记录完成和未完成数量需要回退，然后该送货单记录作废；
+            //先判断该送货单记录收费开单类型，对应的下单记录完成和未完成数量需要回退，然后该送货单记录作废；
             // 如果是其它收费开单直接将该送货单记录作废；
-            Integer billingType = deliveryNote.getBillingType();
-            if (billingType == BillingTypeEnum.PAYMENT_TYPE.getValue()) {
+            Integer chargeType = deliveryNote.getChargeType();
+            Long otherId = deliveryNote.getOtherId();
+            if (chargeType == ChargeTypeEnum.ORDER_TYPE.getValue()) {
                 String commissioningCode = deliveryNote.getCommissioningCode();
                 if (StringUtils.isNotBlank(commissioningCode)) {
                     Order order = orderDao.findByCommissioningCode(commissioningCode);
@@ -333,6 +368,14 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                         orderDao.save(order);
                     }
                 }
+            } else if (chargeType == ChargeTypeEnum.MOULD_TYPE.getValue() || chargeType == ChargeTypeEnum.TEST_RACK_TYPE.getValue()) {//模具或测试架开单收费状态回退
+                PurchaseMould mould = purchaseMouldDao.findOne(otherId);
+                mould.setChargeOpening(CurrencyEunm.NO.getValue());
+                purchaseMouldDao.save(mould);
+            } else if (chargeType == ChargeTypeEnum.TEMPLATE_TYPE.getValue()) {//样板开单收费状态回退
+                OrderTemplate orderTemplate = orderTemplateDao.findOne(otherId);
+                orderTemplate.setChargeOpening(CurrencyEunm.NO.getValue());
+                orderTemplateDao.save(orderTemplate);
             }
             //将该送货单记录设置为作废状态
             deliveryNote.setDeleted(DeletedEnum.DELETED.getValue());
@@ -355,9 +398,9 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //送货日期
         deliveryDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //开单类型转换
-        deliveryDetailDTO.setChargeType(String.valueOf(deliveryNote.getBillingType()));
+        deliveryDetailDTO.setChargeType(String.valueOf(deliveryNote.getChargeType()));
         //返回不可编辑的字段
-        if (deliveryNote.getBillingType() == BillingTypeEnum.PAYMENT_TYPE.getValue()) {
+        if (deliveryNote.getChargeType() == ChargeTypeEnum.ORDER_TYPE.getValue()) {
             List<String> nonEdit = new ArrayList<>();
             Field[] fields = DeliveryDetailDTO.class.getDeclaredFields();
             for (int i = 5; i < fields.length; i++) {
@@ -381,11 +424,17 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         //回退下单未完成数量记录
         Integer uncompletedNum = Integer.valueOf(order.getUncompletedNum()) + deliveryNum;
         order.setUncompletedNum(String.valueOf(uncompletedNum));
-        //更新下单是否完成状态
-        if (order.getUncompletedNum().equals(Constants.COMPLETED_NUM)) {
-            order.setCompleteState(CompleteStateEnum.COMPLETE.getValue());
-        } else {
+
+        Integer isComplement = deliveryNote.getIsComplement();
+        if (isComplement == CompleteStateEnum.COMPLETE.getValue()) {
             order.setCompleteState(CompleteStateEnum.UNCOMPLETE.getValue());
+        } else {
+            //更新下单是否完成状态
+            if (order.getUncompletedNum().equals(Constants.COMPLETED_NUM)) {
+                order.setCompleteState(CompleteStateEnum.COMPLETE.getValue());
+            } else {
+                order.setCompleteState(CompleteStateEnum.UNCOMPLETE.getValue());
+            }
         }
         log.info("DeliveryNoteServiceImpl backOrder method end :");
         return order;
@@ -439,7 +488,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             deliveryNote.setAmount(String.valueOf(deliveryNum * Long.valueOf(miPrice.getPrice())));
         }
         //开单类型
-        deliveryNote.setBillingType(BillingTypeEnum.PAYMENT_TYPE.getValue());
+        //deliveryNote.setBillingType(BillingTypeEnum.PAYMENT_TYPE.getValue());
         //单位
         //deliveryNote.setDeliveryUnit();
         log.info("DeliveryNoteServiceImpl copy method end :");

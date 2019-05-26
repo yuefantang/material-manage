@@ -42,4 +42,16 @@ public class AddDeliveryNoteForm {
     @ApiModelProperty(value = "货款开单备注")
     private String deliveryRemarks;
 
+    @ApiModelProperty(value = "领取人")
+    @NotBlank(message = "领取人不能为空")
+    private String receiver;
+
+    @ApiModelProperty(value = "是否全部完成(0否，1是；默认否不勾选)")
+    private Integer isComplement;
+
+    @ApiModelProperty(value = "全部完成说明")
+    private String complementExplain;
+
+    @ApiModelProperty(value = "下单、模具、测试架或样板数据ID")
+    private Long otherId;
 }

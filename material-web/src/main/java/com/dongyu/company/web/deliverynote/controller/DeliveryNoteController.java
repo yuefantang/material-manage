@@ -75,10 +75,16 @@ public class DeliveryNoteController {
     @ApiOperation("新增其它收费开单")
     @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     @PostMapping(value = "/add/otherDeliver")
-    public ResponseVo addOtherDelivery(@Valid @RequestBody AddOtherDeliveryNoteForm form) {
-        AddOtherDeliveryNoteDTO addOtherDeliveryNoteDTO = new AddOtherDeliveryNoteDTO();
-        BeanUtils.copyProperties(form, addOtherDeliveryNoteDTO);
-        deliveryNoteService.addOtherDelivery(addOtherDeliveryNoteDTO);
+    public ResponseVo addOtherDelivery(@Valid @RequestBody List<AddOtherDeliveryNoteForm> forms) {
+        if (CollectionUtils.isEmpty(forms)) {
+            throw new BizException("未选择开单数据，请选择再开单！");
+        }
+        List<AddOtherDeliveryNoteDTO> collect = forms.stream().map(form -> {
+            AddOtherDeliveryNoteDTO addOtherDeliveryNoteDTO = new AddOtherDeliveryNoteDTO();
+            BeanUtils.copyProperties(form, addOtherDeliveryNoteDTO);
+            return addOtherDeliveryNoteDTO;
+        }).collect(Collectors.toList());
+        deliveryNoteService.addOtherDelivery(collect);
         return ResponseVo.successResponse();
     }
 

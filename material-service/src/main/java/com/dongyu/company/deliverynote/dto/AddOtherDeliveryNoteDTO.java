@@ -24,6 +24,12 @@ public class AddOtherDeliveryNoteDTO {
     //货款开单备注
     private String deliveryRemarks;
 
+    //领取人
+    private String receiver;
+
+    //送货单号
+    private String deliveryCode;
+
     //DY编号
     private String miDyCode;
 
@@ -36,9 +42,6 @@ public class AddOtherDeliveryNoteDTO {
     //客户订单号
     private String customerOrderCode;
 
-    //送货单号
-    private String deliveryCode;
-
     //单价（单位分）
     private String price;
 
@@ -48,7 +51,11 @@ public class AddOtherDeliveryNoteDTO {
     //单位
     private String deliveryUnit;
 
-    //收费种类（1:模具收费,2:样板收费,3:其它收费,4:订单收费）
+    //下单、模具、测试架或样板数据ID
+    private Long otherId;
+
+    //开单收费类型（1:模具收费,2:样板收费,3:其它收费,4:订单收费,5:测试架）
     private Integer chargeType;
+
 
 }

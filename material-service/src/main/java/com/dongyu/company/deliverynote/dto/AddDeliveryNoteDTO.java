@@ -1,5 +1,6 @@
 package com.dongyu.company.deliverynote.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -26,4 +27,17 @@ public class AddDeliveryNoteDTO {
 
     //DY编号
     private String dyCode;
+
+    //领取人
+    private String receiver;
+
+    //是否全部完成(0否，1是；默认否不勾选)
+    private Integer isComplement;
+
+    //全部完成说明
+    private String complementExplain;
+
+    //下单、模具、测试架或样板数据ID
+    private Long otherId;
+
 }
