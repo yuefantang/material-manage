@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 样板返回DTO
  *
@@ -59,4 +61,7 @@ public class OrderTemplateDTO {
 
     @ApiModelProperty(value = "收费开单状态（0：未收费开单，1：已收费开单）")
     private Integer chargeOpening;
+
+    @ApiModelProperty(value = "是否收费（0：不收费，1：收费）")
+    private Integer charge;
 }

@@ -9,6 +9,8 @@ import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.file.service.FileService;
+import com.dongyu.company.order.dao.OrderDao;
+import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.register.dao.ProcessDao;
 import com.dongyu.company.register.dao.RegisterDao;
 import com.dongyu.company.register.dao.RegisterSpecs;
@@ -56,6 +58,8 @@ public class RegisterServiceImpl implements RegisterService {
     private FileService fileService;
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private OrderDao orderDao;
 
     @Override
     @Transactional
@@ -92,7 +96,7 @@ public class RegisterServiceImpl implements RegisterService {
         List<MiProcess> processList = processDTOS.stream().map(addProcessDTO -> {
             MiProcess miProcess = new MiProcess();
             BeanUtils.copyProperties(addProcessDTO, miProcess);
-            miProcess.setMiRegister(save);
+            miProcess.setMiRegisterId(save.getId());
             return miProcess;
         }).collect(Collectors.toList());
         processDao.save(processList);
@@ -165,12 +169,11 @@ public class RegisterServiceImpl implements RegisterService {
         if (CollectionUtils.isEmpty(processDTOS)) {
             throw new BizException("工序不能为空");
         }
-        processDao.deletedByMiRegister(miRegister);
-        List<MiProcess> miProcessList = processDao.findByMiRegister(miRegister);
+        processDao.deletedByMiRegisterId(miRegister.getId());
 
         List<MiProcess> processList = processDTOS.stream().map(editProcessDTO -> {
             MiProcess miProcess = new MiProcess();
-            miProcess.setMiRegister(miRegister);
+            miProcess.setMiRegisterId(miRegister.getId());
             miProcess.setProcess(editProcessDTO.getProcess());
             miProcess.setRemark(editProcessDTO.getRemark());
             miProcess.setOrderNumber(editProcessDTO.getOrderNumber());
@@ -188,11 +191,29 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
+    @Transactional
     public void deleted(Long id) {
         log.info("RegisterServiceImpl deleted method start Parm:" + id);
+        //已经下单的数据不能删除
+        List<Order> orderList = orderDao.findByMiRegisterIdAndDeleted(id, DeletedEnum.UNDELETED.getValue());
+        if (CollectionUtils.isNotEmpty(orderList)) {
+            throw new BizException("该MI已经下单，无法删除");
+        }
         MiRegister miRegister = registerDao.findOne(id);
         if (miRegister == null) {
             throw new BizException("不存在该MI登记，无法删除");
+        }
+
+        //判段是否是第二次删除，如果是再次删除为物理删除
+        Integer deleted = miRegister.getDeleted();
+        if (deleted == DeletedEnum.UNDELETED.getValue()) {
+            //删除MI登记
+            miRegister.setDeleted(DeletedEnum.DELETED.getValue());
+            registerDao.save(miRegister);
+        } else {
+            //删除MI登记相关的工序
+            processDao.deletedByMiRegisterId(miRegister.getId());
+            registerDao.delete(id);
         }
         //删除图片
 //        if (miRegister.getCommonFileId() != null) {
@@ -206,16 +227,12 @@ public class RegisterServiceImpl implements RegisterService {
 //                }
 //            }
 //        }
-        //删除MI登记相关的工序
-//        processDao.deletedByMiRegister(miRegister);
 
-        //删除MI登记
-        miRegister.setDeleted(DeletedEnum.DELETED.getValue());
-        registerDao.save(miRegister);
         log.info("RegisterServiceImpl deleted method end;");
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("RegisterServiceImpl recovery method start Parm:" + id);
         MiRegister miRegister = registerDao.findOne(id);
@@ -262,7 +279,7 @@ public class RegisterServiceImpl implements RegisterService {
             }
         }
         //返回MI登记相关从工序
-        List<MiProcess> processList = processDao.findByMiRegister(miRegister);
+        List<MiProcess> processList = processDao.findByMiRegisterId(miRegister.getId());
         List<EditProcessDTO> processDTOS = processList.stream().map(miProcess -> {
             EditProcessDTO processDTO = new EditProcessDTO();
             BeanUtils.copyProperties(miProcess, processDTO);

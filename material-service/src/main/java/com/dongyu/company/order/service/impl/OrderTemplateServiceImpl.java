@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
     private OrderTemplateDao orderTemplateDao;
 
     @Override
+    @Transactional
     public void add(OrderTemplateDTO orderTemplateDTO) {
         log.info("OrderTemplateServiceImpl method add start:");
         //根据DY编号去重
@@ -86,6 +88,7 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
     }
 
     @Override
+    @Transactional
     public void edit(OrderTemplateListDTO dto) {
         log.info("OrderTemplateServiceImpl method edit start:");
         OrderTemplate oldOrderTemplate = orderTemplateDao.findOne(dto.getId());
@@ -104,18 +107,25 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
     }
 
     @Override
+    @Transactional
     public void deleted(Long id) {
         log.info("OrderTemplateServiceImpl method deleted start:" + id);
         OrderTemplate orderTemplate = orderTemplateDao.findOne(id);
         if (orderTemplate == null) {
             throw new BizException("不存在该样板id");
         }
-        orderTemplate.setDeleted(DeletedEnum.DELETED.getValue());
-        orderTemplateDao.save(orderTemplate);
+        Integer deleted = orderTemplate.getDeleted();
+        if (deleted == DeletedEnum.UNDELETED.getValue()) {
+            orderTemplate.setDeleted(DeletedEnum.DELETED.getValue());
+            orderTemplateDao.save(orderTemplate);
+        } else {
+            orderTemplateDao.delete(id);
+        }
         log.info("OrderTemplateServiceImpl method deleted end;");
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("OrderTemplateServiceImpl method recovery start:" + id);
         OrderTemplate orderTemplate = orderTemplateDao.findOne(id);

@@ -36,6 +36,12 @@ public class OrderListDTO {
     @ApiModelProperty(value = "客户订单号")
     private String customerOrderCode;
 
+    @ApiModelProperty(value = "已完成数量")
+    private String completedNum;
+
+    @ApiModelProperty(value = "未完成数量")
+    private String uncompletedNum;
+
     @ApiModelProperty(value = "下单日期yyyy-MM-dd")
     private String orderDate;
 
@@ -47,12 +53,6 @@ public class OrderListDTO {
 
     @ApiModelProperty(value = "余料处理数据")
     private AddOrderResultDTO dto;
-
-    @ApiModelProperty(value = "已完成数量")
-    private String completedNum;
-
-    @ApiModelProperty(value = "未完成数量")
-    private String uncompletedNum;
 
     @ApiModelProperty(value = "下单是否删除（0：否，1：是）")
     private Integer deleted;

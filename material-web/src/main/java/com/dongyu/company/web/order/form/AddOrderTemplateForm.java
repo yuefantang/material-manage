@@ -7,6 +7,8 @@ import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 新增样板Form
  *
@@ -65,4 +67,8 @@ public class AddOrderTemplateForm {
     @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
     @NotBlank(message = "出货日期不能为空")
     private String templateDeliveryDate;
+
+    @ApiModelProperty(value = "是否收费（0：不收费，1：收费）")
+    @NotNull(message = "是否收费不能为空")
+    private Integer charge;
 }

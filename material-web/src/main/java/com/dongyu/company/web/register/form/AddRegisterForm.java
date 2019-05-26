@@ -28,30 +28,37 @@ public class AddRegisterForm {
     @NotNull(message = "DY编号不能为空")
     private String miDyCode;
 
-    @ApiModelProperty(value = "产品型号")
+    @ApiModelProperty(value = "客户型号")
+    @NotNull(message = "客户型号不能为空")
     private String customerModel;
 
     @ApiModelProperty(value = "客户名称")
+    @NotNull(message = "客户名称不能为空")
     private String customerName;
 
     @ApiModelProperty(value = "客户料号")
     private String customerMaterialNum;
 
     @ApiModelProperty(value = "板材类型")
+    @NotNull(message = "板材类型不能为空")
     private String plateType;
 
     @ApiModelProperty(value = "板厚")
     @Pattern(regexp = Constants.NUMBER_PATTERN, message = "板厚格式错误，只能输入数字")
+    @NotNull(message = "板厚不能为空")
     private String plateThick;
 
     @ApiModelProperty(value = "铜厚")
     @Pattern(regexp = Constants.NUMBER_PATTERN, message = "铜厚格式错误，只能输入数字")
+    @NotNull(message = "铜厚不能为空")
     private String copperThick;
 
     @ApiModelProperty(value = "板材商")
+    @NotNull(message = "板材商不能为空")
     private String plateMerchant;
 
     @ApiModelProperty(value = "工艺")
+    @NotNull(message = "工艺不能为空")
     private String technology;
 
     @ApiModelProperty(value = "工程更改内容")
@@ -79,12 +86,14 @@ public class AddRegisterForm {
     private String miNumber;
 
     @ApiModelProperty(value = "模具编号")
+    @NotNull(message = "模具编号不能为空")
     private String moldNumber;
 
     @ApiModelProperty(value = "模具类型")
     private String mouldType;
 
     @ApiModelProperty(value = "连接")
+    @NotNull(message = "连接不能为空")
     private String miConnect;
 
     @ApiModelProperty(value = "开模商")
@@ -164,22 +173,28 @@ public class AddRegisterForm {
     private String pcsNumber;
 
     @ApiModelProperty(value = "大料利用率")
+    @NotBlank(message = "大料利用率不能为空")
     @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "大料利用率格式错误，只能输入正整数或小数")
     private String utilizationRatio;
 
     @ApiModelProperty(value = "A(尺寸)")
+    @NotBlank(message = "A(尺寸)不能为空")
     private String miA;
 
     @ApiModelProperty(value = "B(尺寸)")
+    @NotBlank(message = "B(尺寸)不能为空")
     private String miB;
 
     @ApiModelProperty(value = "C(尺寸)")
+    @NotBlank(message = "C(尺寸)不能为空")
     private String miC;
 
     @ApiModelProperty(value = "D(尺寸)")
+    @NotBlank(message = "D(尺寸)不能为空")
     private String miD;
 
     @ApiModelProperty(value = "大料冲次")
+    @NotBlank(message = "大料冲次不能为空")
     private String punching;
 
     @ApiModelProperty(value = "大料PNL数")

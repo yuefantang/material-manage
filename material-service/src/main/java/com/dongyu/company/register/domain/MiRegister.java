@@ -224,12 +224,8 @@ public class MiRegister extends BaseDomain {
     @AttributeOpName("删除")
     private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
-//     @OneToOne(mappedBy = "miRegister")
-//    private MiPrice miPrice;
-
     @Column(columnDefinition = "bigint(20) COMMENT '单价表ID'")
     private Long miPriceId;
-
 
     @Column(columnDefinition = "bigint(20) COMMENT '文件图片表ID'")
     @AttributeOpName("图片修改")

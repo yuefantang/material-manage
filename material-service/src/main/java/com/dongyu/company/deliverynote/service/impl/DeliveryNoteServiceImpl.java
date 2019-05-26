@@ -28,6 +28,7 @@ import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.dao.OrderTemplateDao;
 import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.order.domain.OrderTemplate;
+import com.dongyu.company.register.dao.RegisterDao;
 import com.dongyu.company.register.domain.MiRegister;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -67,6 +68,8 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
     private PurchaseMouldDao purchaseMouldDao;
     @Autowired
     private OrderTemplateDao orderTemplateDao;
+    @Autowired
+    private RegisterDao registerDao;
 
     @Override
     @Transactional
@@ -77,7 +80,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         Long num = 1L;
         String deliveryCode = null;
         //DeliveryNote deliveryNote1 = deliveryNoteDao.findFirstByOrderByCreateTimeDesc();
-        DeliveryNote deliveryNote1 =  deliveryNoteDao.findNewest();
+        DeliveryNote deliveryNote1 = deliveryNoteDao.findNewest();
         if (deliveryNote1 == null) {
             deliveryCode = String.valueOf(num);
         } else {
@@ -104,7 +107,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             deliveryNote.setChargeType(ChargeTypeEnum.ORDER_TYPE.getValue());//订单收费
             BeanUtils.copyProperties(dto, deliveryNote);
             //送货日期时间转换
-            Date deliveryDate =DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
+            Date deliveryDate = DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD);
             deliveryNote.setDeliveryDate(deliveryDate);
             //对账月份（为送货日期的下个月）
             deliveryNote.setBillMonth(DateUtil.getYearMonthDate(deliveryDate, DateUtil.DATE_FORMAT_YYYYMM));
@@ -146,8 +149,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 throw new BizException("投产单号不能为空！");
             }
             //投产单号和送货数量没修改直接赋值
-            if (dto.getCommissioningCode().equals(deliveryNote.getCommissioningCode()) &&
-                    dto.getDeliveryNum().equals(deliveryNote.getDeliveryNum())) {
+            if (dto.getCommissioningCode().equals(deliveryNote.getCommissioningCode()) && dto.getDeliveryNum().equals(deliveryNote.getDeliveryNum())) {
                 deliveryNote.setDeliveryRemarks(dto.getDeliveryRemarks());
             }
 
@@ -172,8 +174,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 deliveryNote = this.copy(newOrder, deliveryNote, deliveryNum);
             }
             //投产单号未修改但送货数量修改
-            if (dto.getCommissioningCode().equals(deliveryNote.getCommissioningCode()) &&
-                    !dto.getDeliveryNum().equals(deliveryNote.getDeliveryNum())) {
+            if (dto.getCommissioningCode().equals(deliveryNote.getCommissioningCode()) && !dto.getDeliveryNum().equals(deliveryNote.getDeliveryNum())) {
                 //原来下单回退
                 Order oldOrder = orderDao.findByCommissioningCode(deliveryNote.getCommissioningCode());
                 oldOrder = this.backOrder(oldOrder, deliveryNote);
@@ -258,7 +259,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 throw new BizException("开单类型为模具开单时，DY编号不能为空!");
             }
             //根据DY编号查询收费且没有收费开单的模具
-            PurchaseMould mould = purchaseMouldDao.findByDyCodeAndChargeAndChargeOpening(dto.getMiDyCode(), CurrencyEunm.YES.getValue(), CurrencyEunm.NO.getValue());
+            PurchaseMould mould = purchaseMouldDao.findByDyCodeAndChargeAndChargeOpeningAndDeleted(dto.getMiDyCode(), CurrencyEunm.YES.getValue(), CurrencyEunm.NO.getValue(), DeletedEnum.UNDELETED.getValue());
             if (mould == null) {
                 throw new BizException("该DY编号不存在收费且没有收费开单的模具");
             }
@@ -319,11 +320,11 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         }
         //判读是否是第二次删除，如果是再次删除为物理删除
         Integer deleted = deliveryNote.getDeleted();
-        if (deleted==DeletedEnum.UNDELETED.getValue()){
+        if (deleted == DeletedEnum.UNDELETED.getValue()) {
             //先判断该送货单记录是货款开单还是其它收费开单，如果是货款开单，对应的下单记录完成和未完成数量需要回退，然后该送货单记录作废；
             // 如果是其它收费开单直接将该送货单记录作废；
             Integer billingType = deliveryNote.getBillingType();
-            if (billingType==BillingTypeEnum.PAYMENT_TYPE.getValue()){
+            if (billingType == BillingTypeEnum.PAYMENT_TYPE.getValue()) {
                 String commissioningCode = deliveryNote.getCommissioningCode();
                 if (StringUtils.isNotBlank(commissioningCode)) {
                     Order order = orderDao.findByCommissioningCode(commissioningCode);
@@ -336,7 +337,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             //将该送货单记录设置为作废状态
             deliveryNote.setDeleted(DeletedEnum.DELETED.getValue());
             deliveryNoteDao.save(deliveryNote);
-        }else{
+        } else {
             deliveryNoteDao.delete(deliveryNote.getId());
         }
         log.info("DeliveryNoteServiceImpl deleted method end;");
@@ -420,7 +421,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
     private DeliveryNote copy(Order order, DeliveryNote deliveryNote, Long deliveryNum) {
         log.info("DeliveryNoteServiceImpl copy method start :");
         //mi登记记录
-        MiRegister miRegister = order.getMiRegister();
+        MiRegister miRegister = registerDao.findOne(order.getMiRegisterId());
         //赋值客户信息
         deliveryNote.setCustomerName(miRegister.getCustomerName());
         deliveryNote.setCustomerModel(miRegister.getCustomerModel());

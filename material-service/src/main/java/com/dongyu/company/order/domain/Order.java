@@ -100,13 +100,29 @@ public class Order extends BaseDomain {
     @AttributeOpName("下单完成状态")
     private Integer completeState = CompleteStateEnum.UNCOMPLETE.getValue();
 
-    @OneToOne
-    @JoinColumn(name = "surplus_id", columnDefinition = "bigint(20) COMMENT '余料处理ID'")
-    private Surplus surplus;
+    //    @OneToOne
+    //    @JoinColumn(name = "surplus_id", columnDefinition = "bigint(20) COMMENT '余料处理ID'")
+//    @Column(columnDefinition = "bigint(20) COMMENT '余料处理ID'")
+//    private Long surplusId;
 
-    @ManyToOne
-    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记ID'")
-    private MiRegister miRegister;
+    @Column(columnDefinition = "varchar(255) COMMENT '余料处理方法'")
+    private String surplusTreatment;
+
+    @Column(columnDefinition = "varchar(255) COMMENT '余料处理备注'")
+    private String surplusRemarks;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '余料PCS'")
+    private String surplusPcs;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '余料PNL'")
+    private String surplusPnl;
+
+//    @ManyToOne
+//    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记ID'")
+//    private MiRegister miRegister;
+
+    @Column(columnDefinition = "bigint(20) COMMENT 'MI登记ID'")
+    private Long miRegisterId;
 
     @Column(columnDefinition = "varchar(50) NOT NULL DEFAULT '0' COMMENT '共用料张数'")
     @AttributeOpName("共用料张数")

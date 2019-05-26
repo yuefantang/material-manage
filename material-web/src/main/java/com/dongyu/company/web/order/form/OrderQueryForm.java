@@ -30,4 +30,12 @@ public class OrderQueryForm extends PageForm {
 
     @ApiModelProperty("收费开单（0：未收费开单，1：已收费开单）默认0")
     private Integer chargeOpening;
+
+    @ApiModelProperty(value = "客户型号")
+    private String customerModel;
+
+    @ApiModelProperty(value = "客户名称")
+    private String customerName;
+
+
 }

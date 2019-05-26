@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 品质问题Service实现类
@@ -37,6 +38,7 @@ public class QualityServiceImpl implements QualityService {
     private QualityDao qualityDao;
 
     @Override
+    @Transactional
     public void add(AddQualityDTO addQualityDTO) {
         log.info("QualityServiceImpl add method start Parm:" + JSONObject.toJSONString(addQualityDTO));
         Quality quality = new Quality();
@@ -62,6 +64,7 @@ public class QualityServiceImpl implements QualityService {
     }
 
     @Override
+    @Transactional
     public void edit(EditQualityDTO editQualityDTO) {
         log.info("QualityServiceImpl edit method start Parm:" + JSONObject.toJSONString(editQualityDTO));
         Quality oldQuality = qualityDao.findOne(editQualityDTO.getId());
@@ -71,6 +74,7 @@ public class QualityServiceImpl implements QualityService {
     }
 
     @Override
+    @Transactional
     public void deleted(Long id) {
         log.info("QualityServiceImpl deleted method start Parm:" + id);
         Quality quality = qualityDao.findOne(id);
@@ -83,6 +87,7 @@ public class QualityServiceImpl implements QualityService {
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("QualityServiceImpl recovery method start Parm:" + id);
         Quality quality = qualityDao.findOne(id);

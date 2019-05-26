@@ -63,7 +63,7 @@ public class OrderExcelView extends ExcelView {
                     //设置标题行
                     List<String> headers = new LinkedList<>();
                     headers.addAll(Arrays.asList("投产单号", "DY编号", "客户名称", "客户型号",
-                            "订单数量", "客户订单号", "平方数", "已完成数量", "未完成数量", "下单日期", "交货日期"));
+                            "订单数量", "客户订单号", "平方数", "已完成数量", "未完成数量", "下单日期", "交货日期","备注"));
                     for (int i = 0; i < headers.size(); i++) {
                         Cell cell = headerRow.createCell(i);
                         cell.setCellValue(headers.get(i));
@@ -132,6 +132,11 @@ public class OrderExcelView extends ExcelView {
                 Cell cell11 = dataRow.createCell(creditNum++);
                 cell11.setCellStyle(cellStyle);
                 cell11.setCellValue(Optional.ofNullable(data.getDeliveryDate()).orElse(""));
+
+                //备注
+                Cell cell12 = dataRow.createCell(creditNum++);
+                cell11.setCellStyle(cellStyle);
+                cell11.setCellValue(Optional.ofNullable(data.getSurplusRemarks()).orElse(""));
 
                 rowCount++;
                 totalCount++;

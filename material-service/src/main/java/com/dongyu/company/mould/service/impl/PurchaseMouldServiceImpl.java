@@ -201,6 +201,7 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
     }
 
     @Override
+    @Transactional
     public void deleted(Long id) {
         log.info("PurchaseMouldServiceImpl deleted method start Parm:" + id);
         PurchaseMould purchaseMould = purchaseMouldDao.findOneById(id);
@@ -219,6 +220,7 @@ public class PurchaseMouldServiceImpl implements PurchaseMouldService {
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("PurchaseMouldServiceImpl recovery method start Parm:" + id);
         PurchaseMould purchaseMould = purchaseMouldDao.findOneById(id);

@@ -37,9 +37,10 @@ public class MiProcess {
     @Column(columnDefinition = "varchar(255) COMMENT '备注'")
     private String remark;
 
-    @ManyToOne
-    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记表ID'")
-    private MiRegister miRegister;
+//    @ManyToOne
+//    @JoinColumn(name = "mi_register_id", columnDefinition = "bigint(20) COMMENT 'MI登记表ID'")
+    @Column(columnDefinition = "bigint(20) COMMENT 'MI登记表ID'")
+    private Long miRegisterId;
 
 
 }

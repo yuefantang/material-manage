@@ -4,6 +4,8 @@ import com.dongyu.company.order.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+
 /**
  * 下单数据处理
  *
@@ -27,4 +29,6 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     //根据投产单号查询未收费开单的下单
     Order findByCommissioningCodeAndChargeOpening(String commissioningCode, Integer chargeOpening);
 
+    //根据miRegisterId查找下单
+    List<Order> findByMiRegisterIdAndDeleted(Long miRegisterId, Integer deleted);
 }

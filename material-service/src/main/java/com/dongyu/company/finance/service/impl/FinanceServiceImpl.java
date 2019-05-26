@@ -106,6 +106,7 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
+    @Transactional
     public void deleted(Long id) {
         log.info("FinanceServiceImpl deleted method start Parm:" + id);
         MiPrice miPrice = miPriceDao.findOne(id);
@@ -127,6 +128,7 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("FinanceServiceImpl recovery method start Parm:" + id);
         MiPrice miPrice = miPriceDao.findOne(id);

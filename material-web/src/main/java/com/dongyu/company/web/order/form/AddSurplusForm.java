@@ -19,8 +19,8 @@ import javax.validation.constraints.Pattern;
 @ApiModel("余料添加Form")
 public class AddSurplusForm {
 
-    @ApiModelProperty(value = "下单ID")
-    private Long orderId;
+//    @ApiModelProperty(value = "下单ID")
+//    private Long orderId;
 
     @ApiModelProperty(value = "余料处理方法")
     private String surplusTreatment;
@@ -36,6 +36,5 @@ public class AddSurplusForm {
     @ApiModelProperty(value = "余料PNL")
     @NotBlank(message = "余料PNL不能为空")
     @Pattern(regexp = Constants.NUMBER_PATTERN, message = "余料PNL格式错误，只能输入数字")
-
     private String surplusPnl;
 }

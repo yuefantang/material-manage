@@ -112,6 +112,7 @@ public class OwnAliasToBeanResultTransformer extends AliasedTupleSubsetResultTra
             }
             this.aliases[i] = alias;
             setters[i] = propertyAccessStrategy.buildPropertyAccess(resultClass, alias).getSetter();
+            aliases[i] = alias;
         }
         isInitialized = true;
     }

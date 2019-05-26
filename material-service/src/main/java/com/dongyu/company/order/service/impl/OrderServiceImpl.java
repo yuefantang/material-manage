@@ -12,6 +12,7 @@ import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.order.dao.OrderDao;
 import com.dongyu.company.order.dao.OrderSpecs;
+import com.dongyu.company.order.dao.OrderSqlDao;
 import com.dongyu.company.order.dao.PlusOrderDao;
 import com.dongyu.company.order.dao.PlusOrderSpecs;
 import com.dongyu.company.order.dao.SurplusDao;
@@ -39,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -73,6 +75,9 @@ public class OrderServiceImpl implements OrderService {
     private SurplusDao surplusDao;
     @Autowired
     private PlusOrderDao plusOrderDao;
+    @Autowired
+    private OrderSqlDao orderSqlDao;
+
     private static Map<String, Order> map = null;
 
     @Override
@@ -101,13 +106,14 @@ public class OrderServiceImpl implements OrderService {
         //数据操作状态为新增
         order.setOperationState(OperationStateEnum.ADD.getValue());
         //关联MI登记
-        order.setMiRegister(byMiDyCode);
+        order.setMiRegisterId(byMiDyCode.getId());
         AddOrderResultDTO addOrderResultDTO = this.addAndEdit(order, addOrderDTO);
         log.info("OrderServiceImpl add method end;");
         return addOrderResultDTO;
     }
 
     @Override
+    @Transactional
     public AddOrderResultDTO edit(EditOrderDTO dto) {
         log.info("OrderServiceImpl edit method start Parm:" + JSONObject.toJSONString(dto));
         String orderNum = dto.getOrderNum();
@@ -120,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
         }
         if (!dto.getOrderDyCode().equals(order.getOrderDyCode())) {
             //用修改的下单DY编号去查询MI登记
-            MiRegister byMiDyCode = registerDao.findByMiDyCode(dto.getOrderDyCode());
+            MiRegister byMiDyCode = registerDao.findByMiDyCodeAndDeleted(dto.getOrderDyCode(), DeletedEnum.UNDELETED.getValue());
             if (byMiDyCode == null) {
                 throw new BizException("该DY编号没有对应的MI登记，请核实!");
             }
@@ -129,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new BizException("该DY编号MI工程不允许投产，请核实！");
             }
             //关联MI登记
-            order.setMiRegister(byMiDyCode);
+            order.setMiRegisterId(byMiDyCode.getId());
         }
         BeanUtils.copyProperties(dto, order);
         order.setOrderDate(DateUtil.parseStrToDate(dto.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
@@ -146,6 +152,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("OrderServiceImpl recovery method start Parm:" + id);
         Order order = orderDao.findOne(id);
@@ -160,14 +167,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDetailDTO> getExportList(OrderQueryDTO orderQueryDTO) {
         log.info("OrderServiceImpl getExportList method start Parm:" + JSONObject.toJSONString(orderQueryDTO));
-        List<Order> orderList = orderDao.findAll(OrderSpecs.orederQuerySpec(orderQueryDTO));
+        //List<Order> orderList = orderDao.findAll(OrderSpecs.orederQuerySpec(orderQueryDTO));
+        List<Order> orderList = orderSqlDao.queryOrderList(orderQueryDTO);
         if (CollectionUtils.isEmpty(orderList)) {
             return null;
         }
         List<OrderDetailDTO> detailDTOList = orderList.stream().map(order -> {
             OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
             BeanUtils.copyProperties(order, orderDetailDTO);
-            MiRegister miRegister = order.getMiRegister();
+            Long miRegisterId = order.getMiRegisterId();
+            MiRegister miRegister = registerDao.findOne(miRegisterId);
             RegisterDetailDTO detail = registerService.getDetail(miRegister.getId());
             orderDetailDTO.setRegisterDetailDTO(detail);
             //下单日期
@@ -191,21 +200,22 @@ public class OrderServiceImpl implements OrderService {
 //        if (order == null) {
 //            throw new BizException("下单ID数据不存在或已删除！");
 //        }
-       // Map<String, Order> map = (Map<String, Order>) contentTL.get();
+        // Map<String, Order> map = (Map<String, Order>) contentTL.get();
         Order order = map.get("order");
         //存储余料处理数据
-        Surplus surplus = order.getSurplus();
-        //不等于空，说明是下单编辑修改
-        if (surplus == null) {
-            surplus = new Surplus();
-        }
-        BeanUtils.copyProperties(dto, surplus);
+//        Long surplusId = order.getSurplusId();
+//        Surplus surplus = surplusDao.findOne(surplusId);
+//        //不等于空，说明是下单编辑修改
+//        if (surplus == null) {
+//            surplus = new Surplus();
+//        }
+        BeanUtils.copyProperties(dto, order);
         //与下单保持数据操作状态一致
-        surplus.setOperationState(order.getOperationState());
-        Surplus save = surplusDao.save(surplus);
+//        surplus.setOperationState(order.getOperationState());
+//        Surplus save = surplusDao.save(surplus);
         //将余料处理数据与订单关联
         // if (order.getSurplus() == null) {//下单新增
-        order.setSurplus(save);
+        // order.setSurplusId(save.getId());
         orderDao.save(order);
         //  }
         log.info("OrderServiceImpl addSurplus method end;");
@@ -215,12 +225,18 @@ public class OrderServiceImpl implements OrderService {
     public PageDTO<OrderListDTO> getlist(OrderQueryDTO dto) {
         log.info("OrderServiceImpl getlist method start Parm:" + JSONObject.toJSONString(dto));
         PageRequest pageRequest = new PageRequest(dto.getPageNo() - 1, dto.getPageSize(), Sort.Direction.DESC, Constants.CREATE_TIME);
-        Page<Order> page = orderDao.findAll(OrderSpecs.orederQuerySpec(dto), pageRequest);
+        // Page<Order> page = orderDao.findAll(OrderSpecs.orederQuerySpec(dto), pageRequest);
+        Map<String, Object> map = orderSqlDao.queryOrder(dto, pageRequest);
+        List<Order> resultList = (List<Order>) map.get("resultList");
+        Long count = (Long) map.get("count");
+        Page<Order> page = new PageImpl<>(resultList, pageRequest, count);
 
         PageDTO<OrderListDTO> pageDTO = PageDTO.of(page, item -> {
             OrderListDTO orderListDTO = new OrderListDTO();
+            Long miRegisterId = item.getMiRegisterId();
             BeanUtils.copyProperties(item, orderListDTO);
-            MiRegister miRegister = item.getMiRegister();
+            MiRegister miRegister = registerDao.findOne(miRegisterId);
+
             //客户名称
             orderListDTO.setCustomerName(miRegister.getCustomerName());
             //客户 型号
@@ -247,12 +263,13 @@ public class OrderServiceImpl implements OrderService {
         }
         //判段是否是第二次删除，如果是再次删除为物理删除
         Integer deleted = order.getDeleted();
-        if (deleted==DeletedEnum.UNDELETED.getValue()){
+        if (deleted == DeletedEnum.UNDELETED.getValue()) {
             order.setDeleted(DeletedEnum.DELETED.getValue());
             orderDao.save(order);
-        }else{
-            Surplus surplus = order.getSurplus();
-            surplusDao.delete(surplus.getId());
+        } else {
+//            Long surplusId = order.getSurplusId();
+//            Surplus surplus = surplusDao.findOne(surplusId);
+//            surplusDao.delete(surplus.getId());
             orderDao.delete(id);
         }
         log.info("OrderServiceImpl deleted method end;");
@@ -272,24 +289,26 @@ public class OrderServiceImpl implements OrderService {
         //交货日期
         orderDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(order.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //余料处理数据返回
-        Surplus surplus = order.getSurplus();
-        if (surplus == null) {
-            throw new BizException("余料处理未填写！请完成");
-        }
-        if (surplus != null) {
-            BeanUtils.copyProperties(surplus, orderDetailDTO);
-        }
+//        Long surplusId = order.getSurplusId();
+//        Surplus surplus = surplusDao.findOne(surplusId);
+//        if (surplus == null) {
+//            throw new BizException("余料处理未填写！请完成");
+//        }
+//        if (surplus != null) {
+//            BeanUtils.copyProperties(surplus, orderDetailDTO);
+//        }
         //MI登记详情返回数据
-        MiRegister miRegister = order.getMiRegister();
+        Long miRegisterId = order.getMiRegisterId();
+        MiRegister miRegister = registerDao.findOne(miRegisterId);
         Integer materialNum = null;//实际下料总数
         if (miRegister != null) {
             RegisterDetailDTO detail = registerService.getDetail(miRegister.getId());
             orderDetailDTO.setRegisterDetailDTO(detail);
             //下料总数=余料处理展示共用料张数整数部分+余料PCS/大料PCS
             //大料PCS数
-            Integer pcsNumber = Integer.valueOf(order.getMiRegister().getPcsNumber());
+            Integer pcsNumber = Integer.valueOf(miRegister.getPcsNumber());
             //余料PCS数
-            Integer surplusPcs = Integer.valueOf(surplus.getSurplusPcs());
+            Integer surplusPcs = Integer.valueOf(order.getSurplusPcs());
             //共用料张数整数部分
             Integer materialInteger = Integer.valueOf(order.getHaredMaterialsNum().split("\\.")[0]);
             materialNum = materialInteger + surplusPcs / pcsNumber;
@@ -301,7 +320,7 @@ public class OrderServiceImpl implements OrderService {
         }
         //线路印次（计算规则：PNL数乘线路乘以下料总数+余料PNL数，以下类似）
         if (StringUtils.isNotBlank(miRegister.getPnlNumber())) {
-            Integer surplusPnlNumber = Integer.valueOf(surplus.getSurplusPnl());//余料PNL数
+            Integer surplusPnlNumber = Integer.valueOf(order.getSurplusPnl());//余料PNL数
             Integer pnlNumber = Integer.valueOf(miRegister.getPnlNumber());//PNL数
             orderDetailDTO.setLineImpression(String.valueOf(Integer.valueOf(miRegister.getLine()) * pnlNumber * materialNum + surplusPnlNumber));
             //绿油印次
@@ -333,13 +352,14 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             throw new BizException("该订单已不存在！");
         }
-        Surplus surplus = order.getSurplus();
-        if (surplus == null) {
-            throw new BizException("该订单余料处理未填写！");
-        }
-        if (order.getOperationState() != surplus.getOperationState()) {
-            throw new BizException("该订单修改完余料处理未修改！");
-        }
+//        Long surplusId = order.getSurplusId();
+//        Surplus surplus = surplusDao.findOne(surplusId);
+//        if (surplus == null) {
+//            throw new BizException("该订单余料处理未填写！");
+//        }
+//        if (order.getOperationState() != surplus.getOperationState()) {
+//            throw new BizException("该订单修改完余料处理未修改！");
+//        }
         OrderDetailDTO detailDTO = this.getDetail(id);
         log.info("OrderServiceImpl getPrintOrder method end;");
         return detailDTO;
@@ -353,7 +373,8 @@ public class OrderServiceImpl implements OrderService {
      */
     private AddOrderResultDTO addAndEdit(Order order, AddOrderDTO addOrderDTO) {
         log.info("OrderServiceImpl addAndEdit method start:");
-        MiRegister byMiDyCode = order.getMiRegister();
+        Long miRegisterId = order.getMiRegisterId();
+        MiRegister byMiDyCode = registerDao.findOne(miRegisterId);
         //订单数
         Integer orderNum = Integer.valueOf(addOrderDTO.getOrderNum());
         //备品率
@@ -371,7 +392,7 @@ public class OrderServiceImpl implements OrderService {
         String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * orderNum);
         order.setSquareNum(squareNum);
         //共用料张数(计算规则：投产数/大料PCS数,保留三位小数)
-        Integer pcsNumber = Integer.valueOf(order.getMiRegister().getPcsNumber());
+        Integer pcsNumber = Integer.valueOf(byMiDyCode.getPcsNumber());
         String haredMaterialsNum = new DecimalFormat("0.000").format(commissioningNum / pcsNumber);
         order.setHaredMaterialsNum(haredMaterialsNum);
         // orderDao.save(order);
@@ -391,9 +412,11 @@ public class OrderServiceImpl implements OrderService {
         log.info("OrderServiceImpl getSurplusResult method start:");
         AddOrderResultDTO resultDTO = new AddOrderResultDTO();
         resultDTO.setId(order.getId());
+        Long miRegisterId = order.getMiRegisterId();
+        MiRegister byMiDyCode = registerDao.findOne(miRegisterId);
         //返回图片信息
-        if (order.getMiRegister().getCommonFileId() != null) {
-            CommonFile commonFile = fileDao.findOne(order.getMiRegister().getCommonFileId());
+        if (byMiDyCode.getCommonFileId() != null) {
+            CommonFile commonFile = fileDao.findOne(byMiDyCode.getCommonFileId());
             if (commonFile != null) {
                 resultDTO.setFileName(commonFile.getFileName());
                 resultDTO.setCommonFileId(commonFile.getId());
@@ -401,7 +424,7 @@ public class OrderServiceImpl implements OrderService {
         }
         //返回共用料张数(计算规则：投产数/大料PCS数,保留三位小数)
         //大料PCS数
-        Integer pcsNumber = Integer.valueOf(order.getMiRegister().getPcsNumber());
+        Integer pcsNumber = Integer.valueOf(byMiDyCode.getPcsNumber());
         //String haredMaterialsNum = new DecimalFormat("#.000").format(Double.parseDouble(order.getCommissioningNum()) / pcsNumber);
         String haredMaterialsNum = order.getHaredMaterialsNum();
         resultDTO.setHaredMaterialsNum(haredMaterialsNum);

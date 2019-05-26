@@ -102,6 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("CustomerServiceImpl recovery method start：" + JSONObject.toJSONString(id));
         Customer customer = customerDao.findOne(id);

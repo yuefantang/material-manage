@@ -20,9 +20,9 @@ import java.util.List;
 public interface ProcessDao extends JpaRepository<MiProcess, Long>, JpaSpecificationExecutor<MiProcess> {
 
     @Modifying
-    @Query("delete from MiProcess m where m.miRegister=:miRegister")
-    void deletedByMiRegister(@Param("miRegister") MiRegister miRegister);
+    @Query("delete from MiProcess m where m.miRegisterId=:miRegisterId")
+    void deletedByMiRegisterId(@Param("miRegisterId") Long miRegisterId);
 
-    List<MiProcess> findByMiRegister(MiRegister miRegister);
+    List<MiProcess> findByMiRegisterId(Long miRegisterId);
 
 }

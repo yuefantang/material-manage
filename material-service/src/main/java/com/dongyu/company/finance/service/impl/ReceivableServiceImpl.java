@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -122,6 +123,7 @@ public class ReceivableServiceImpl implements ReceivableService {
     }
 
     @Override
+    @Transactional
     public void deleted(Long id) {
         log.info("ReceivableServiceImpl deleted method start:" + id);
         if (id == null) {
@@ -137,6 +139,7 @@ public class ReceivableServiceImpl implements ReceivableService {
     }
 
     @Override
+    @Transactional
     public void recovery(Long id) {
         log.info("ReceivableServiceImpl recovery method start:" + id);
         if (id == null) {

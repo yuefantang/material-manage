@@ -20,6 +20,9 @@ import java.util.List;
 public class RegisterSpecs {
     private static final String MI_DY_CODE = "miDyCode";
     private static final String DELETED = "deleted";
+    private static final String CUSTOMER_MODEL = "customerModel";
+    private static final String CUSTOMER_NAME = "customerName";
+
 
     public static Specification<MiRegister> registerQuerySpec(RegisterQueryDTO registerQueryDTO) {
         return (root, query, builder) -> {
@@ -27,6 +30,16 @@ public class RegisterSpecs {
             //根据DY编号模糊查询
             if (StringUtils.isNotBlank(registerQueryDTO.getMiDyCode())) {
                 list.add(builder.like(root.get(MI_DY_CODE), "%" + registerQueryDTO.getMiDyCode().trim() + "%"));
+            }
+
+            //根据客户型号模糊查询
+            if (StringUtils.isNotBlank(registerQueryDTO.getCustomerModel())) {
+                list.add(builder.like(root.get(CUSTOMER_MODEL), "%" + registerQueryDTO.getCustomerModel().trim() + "%"));
+            }
+
+            //根据客户名称模糊查询
+            if (StringUtils.isNotBlank(registerQueryDTO.getCustomerName())) {
+                list.add(builder.like(root.get(CUSTOMER_NAME), "%" + registerQueryDTO.getCustomerName().trim() + "%"));
             }
 
             //是否删除

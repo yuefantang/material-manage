@@ -100,4 +100,8 @@ public class OrderTemplate extends BaseDomain {
     @AttributeOpName("收费开单状态")
     private Integer chargeOpening = CurrencyEunm.NO.getValue();
 
+    @AttributeOpName("是否收费")
+    @Column(columnDefinition = "tinyint(4) COMMENT '是否收费（0：不收费，1：收费）'")
+    private Integer charge;
+
 }

@@ -27,4 +27,10 @@ public class OrderQueryDTO extends PageQueryDTO {
 
     //收费开单（0：未收费开单，1：已收费开单）默认0
     private Integer chargeOpening;
+
+    //客户型号
+    private String customerModel;
+
+    //客户名称
+    private String customerName;
 }

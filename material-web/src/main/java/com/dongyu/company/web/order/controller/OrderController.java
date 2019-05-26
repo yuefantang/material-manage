@@ -8,7 +8,6 @@ import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.AddPlusOrderDTO;
 import com.dongyu.company.order.dto.AddSurplusDTO;
-import com.dongyu.company.order.dto.EditOrderDTO;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import com.dongyu.company.order.dto.OrderListDTO;
 import com.dongyu.company.order.dto.OrderQueryDTO;
@@ -19,7 +18,6 @@ import com.dongyu.company.order.view.OrderExcelView;
 import com.dongyu.company.web.order.form.AddOrderForm;
 import com.dongyu.company.web.order.form.AddPlusOrderForm;
 import com.dongyu.company.web.order.form.AddSurplusForm;
-import com.dongyu.company.web.order.form.EditOrderForm;
 import com.dongyu.company.web.order.form.EditPlusOrderForm;
 import com.dongyu.company.web.order.form.ExportOrderQueryForm;
 import com.dongyu.company.web.order.form.OrderQueryForm;
@@ -116,15 +114,15 @@ public class OrderController {
         return ResponseVo.successResponse(printOrder);
     }
 
-    @ApiOperation("编辑下单")
-    @PostMapping(value = "/edit")
-    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
-    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
-        EditOrderDTO editOrderDTO = new EditOrderDTO();
-        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
-        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
-        return ResponseVo.successResponse(edit);
-    }
+//    @ApiOperation("编辑下单")
+//    @PostMapping(value = "/edit")
+//    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
+//    public ResponseVo<AddOrderResultDTO> edite(@Valid @RequestBody EditOrderForm editOrderForm) {
+//        EditOrderDTO editOrderDTO = new EditOrderDTO();
+//        BeanUtils.copyProperties(editOrderForm, editOrderDTO);
+//        AddOrderResultDTO edit = orderService.edit(editOrderDTO);
+//        return ResponseVo.successResponse(edit);
+//    }
 
     @ApiOperation("下单导出")
     @GetMapping(value = "/export")

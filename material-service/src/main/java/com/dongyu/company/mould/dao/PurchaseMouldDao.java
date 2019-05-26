@@ -22,8 +22,8 @@ public interface PurchaseMouldDao extends JpaRepository<PurchaseMould, Long>, Jp
     //根据id查询模具采购数据
     PurchaseMould findOneById(Long id);
 
-    //根据DY编号查询收费且没有收费开单的模具
-    PurchaseMould findByDyCodeAndChargeAndChargeOpening(String dyCode, Integer charge, Integer chargeOpening);
+    //根据DY编号查询收费且没有收费开单的未删除的模具
+    PurchaseMould findByDyCodeAndChargeAndChargeOpeningAndDeleted(String dyCode, Integer charge, Integer chargeOpening,Integer deleted);
 
     @Modifying
     @Transactional

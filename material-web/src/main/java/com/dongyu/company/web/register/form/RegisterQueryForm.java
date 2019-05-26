@@ -22,4 +22,11 @@ public class RegisterQueryForm extends PageForm {
     @ApiModelProperty(value = "Mi登记是否删除（0：未删除，1：已删除），默认0")
     private Integer deleted;
 
+    @ApiModelProperty(value = "客户型号")
+    private String customerModel;
+
+    @ApiModelProperty(value = "客户名称")
+    private String customerName;
+
+
 }
