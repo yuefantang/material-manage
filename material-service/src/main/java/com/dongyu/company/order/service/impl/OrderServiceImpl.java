@@ -11,14 +11,12 @@ import com.dongyu.company.common.utils.DateUtil;
 import com.dongyu.company.file.dao.FileDao;
 import com.dongyu.company.file.domian.CommonFile;
 import com.dongyu.company.order.dao.OrderDao;
-import com.dongyu.company.order.dao.OrderSpecs;
 import com.dongyu.company.order.dao.OrderSqlDao;
 import com.dongyu.company.order.dao.PlusOrderDao;
 import com.dongyu.company.order.dao.PlusOrderSpecs;
 import com.dongyu.company.order.dao.SurplusDao;
 import com.dongyu.company.order.domain.Order;
 import com.dongyu.company.order.domain.PlusOrder;
-import com.dongyu.company.order.domain.Surplus;
 import com.dongyu.company.order.dto.AddOrderDTO;
 import com.dongyu.company.order.dto.AddOrderResultDTO;
 import com.dongyu.company.order.dto.AddPlusOrderDTO;
@@ -388,7 +386,7 @@ public class OrderServiceImpl implements OrderService {
         //一模出几
         Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber());
         // 模片尺寸相乘
-        double v2 = byMiDyCode.getDieSizeLength() * byMiDyCode.getDieSizeWide();
+        double v2 = Double.parseDouble(byMiDyCode.getDieSizeLength()) * Double.parseDouble(byMiDyCode.getDieSizeWide());
         String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * orderNum);
         order.setSquareNum(squareNum);
         //共用料张数(计算规则：投产数/大料PCS数,保留三位小数)
@@ -583,7 +581,7 @@ public class OrderServiceImpl implements OrderService {
         //一模出几
         Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber());
         // 模片尺寸相乘
-        double v2 = byMiDyCode.getDieSizeLength() * byMiDyCode.getDieSizeWide();
+        double v2 = Double.parseDouble(byMiDyCode.getDieSizeLength()) * Double.parseDouble(byMiDyCode.getDieSizeWide());
         String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * dto.getFactPlusOrderNum());
         plusOrder.setSquareNum(Double.parseDouble(squareNum));
     }

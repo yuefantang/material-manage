@@ -43,4 +43,7 @@ public class MouldQueryForm extends PageForm {
     @ApiModelProperty("收费开单（0：未收费开单，1：已收费开单）默认0")
     private Integer chargeOpening;
 
+    @ApiModelProperty(value = "采购种类(1:模具,2:测试架)")
+    private Integer purchaseType;
+
 }

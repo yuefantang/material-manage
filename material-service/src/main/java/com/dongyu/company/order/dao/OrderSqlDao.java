@@ -89,7 +89,7 @@ public class OrderSqlDao {
 
     public List<Order> queryOrderList(OrderQueryDTO orderQueryDTO) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" select o.* ");
+        sql.append(" SELECT o.id,o.charge_opening,o.commissioning_code,o.commissioning_num,o.complete_state,o.completed_num,o.customer_order_code,o.deleted,o.delivery_date,o.hared_materials_num,o.mi_register_id,o.operation_state,o.order_date,o.order_dy_code,o.order_num,o.spare_parts_num,o.spare_parts_rate,o.square_num,o.surplus_pcs,o.surplus_pnl,o.surplus_remarks,o.surplus_treatment,o.uncompleted_num ");
         sql.append(" from t_order o ,t_mi_register m ");
         sql.append(" WHERE o.mi_register_id=m.id ");
         //根据客户型号模糊查询
@@ -137,33 +137,28 @@ public class OrderSqlDao {
         return resultList.stream().map(obj -> {
             Order order = new Order();
             order.setId(obj[0] == null ? null : Long.valueOf(obj[0].toString()));
-            order.setCreateBy(obj[1] == null ? null : Long.valueOf(obj[1].toString()));
-            order.setCreateTime(obj[2] == null ? null : (Date) obj[2]);
-            order.setUpdateBy(obj[3] == null ? null : Long.valueOf(obj[3].toString()));
-            order.setUpdateTime(obj[4] == null ? null : (Date) obj[4]);
-            order.setCommissioningCode(obj[5] == null ? null : obj[5].toString());
-            order.setCommissioningNum(obj[6] == null ? null : obj[6].toString());
-            order.setCustomerOrderCode(obj[7] == null ? null : obj[7].toString());
-            order.setDeleted(obj[8] == null ? null : Integer.valueOf(obj[8].toString()));
-            order.setDeliveryDate(obj[9] == null ? null : (Date) obj[9]);
-            order.setOrderDate(obj[10] == null ? null : (Date) obj[10]);
-            order.setOrderDyCode(obj[11] == null ? null : obj[11].toString());
-            order.setOrderNum(obj[12] == null ? null : obj[12].toString());
-            order.setSparePartsNum(obj[13] == null ? null : obj[13].toString());
-            order.setSparePartsRate(obj[14] == null ? null : obj[14].toString());
-            order.setSquareNum(obj[15] == null ? null : obj[15].toString());
-            order.setMiRegisterId(obj[16] == null ? null : Long.valueOf(obj[16].toString()));
-            // order.setSurplusId(obj[17] == null ? null : Long.valueOf(obj[17].toString()));
-            order.setOperationState(obj[17] == null ? null : Integer.valueOf(obj[17].toString()));
-            order.setCompleteState(obj[18] == null ? null : Integer.valueOf(obj[18].toString()));
-            order.setCompletedNum(obj[19] == null ? null : obj[19].toString());
-            order.setUncompletedNum(obj[20] == null ? null : obj[20].toString());
-            order.setHaredMaterialsNum(obj[21] == null ? null : obj[21].toString());
-            order.setChargeOpening(obj[22] == null ? null : Integer.valueOf(obj[22].toString()));
-            order.setSurplusPcs(obj[23] == null ? null : obj[23].toString());
-            order.setSurplusPnl(obj[24] == null ? null : obj[24].toString());
-            order.setSurplusRemarks(obj[25] == null ? null : obj[25].toString());
-            order.setSurplusTreatment(obj[26] == null ? null : obj[26].toString());
+            order.setChargeOpening(obj[1] == null ? null : Integer.valueOf(obj[1].toString()));
+            order.setCommissioningCode(obj[2] == null ? null : obj[2].toString());
+            order.setCommissioningNum(obj[3] == null ? null : obj[3].toString());
+            order.setCompleteState(obj[4] == null ? null : Integer.valueOf(obj[4].toString()));
+            order.setCompletedNum(obj[5] == null ? null : obj[5].toString());
+            order.setCustomerOrderCode(obj[6] == null ? null : obj[6].toString());
+            order.setDeleted(obj[7] == null ? null : Integer.valueOf(obj[7].toString()));
+            order.setDeliveryDate(obj[8] == null ? null : (Date) obj[8]);
+            order.setHaredMaterialsNum(obj[9] == null ? null : obj[9].toString());
+            order.setMiRegisterId(obj[10] == null ? null : Long.valueOf(obj[10].toString()));
+            order.setOperationState(obj[11] == null ? null : Integer.valueOf(obj[11].toString()));
+            order.setOrderDate(obj[12] == null ? null : (Date) obj[12]);
+            order.setOrderDyCode(obj[13] == null ? null : obj[13].toString());
+            order.setOrderNum(obj[14] == null ? null : obj[14].toString());
+            order.setSparePartsNum(obj[15] == null ? null : obj[15].toString());
+            order.setSparePartsRate(obj[16] == null ? null : obj[16].toString());
+            order.setSquareNum(obj[17] == null ? null : obj[17].toString());
+            order.setSurplusPcs(obj[18] == null ? null : obj[18].toString());
+            order.setSurplusPnl(obj[19] == null ? null : obj[19].toString());
+            order.setSurplusRemarks(obj[20] == null ? null : obj[20].toString());
+            order.setSurplusTreatment(obj[21] == null ? null : obj[21].toString());
+            order.setUncompletedNum(obj[22] == null ? null : obj[22].toString());
             return order;
         }).collect(Collectors.toList());
     }

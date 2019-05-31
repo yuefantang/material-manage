@@ -25,6 +25,7 @@ import com.dongyu.company.register.dto.RegisterQueryDTO;
 import com.dongyu.company.register.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -85,6 +86,8 @@ public class RegisterServiceImpl implements RegisterService {
         if (dto.getCommonFileId() != null) {
             //关联图片
             miRegister.setCommonFileId(dto.getCommonFileId());
+        }else{
+            throw new BizException("图片不能为空");
         }
         MiRegister save = registerDao.save(miRegister);
 
@@ -162,6 +165,26 @@ public class RegisterServiceImpl implements RegisterService {
         //修改MI登记表数据
         BeanUtils.copyProperties(editRegisterDTO, miRegister);
         entityManager.detach(miRegister);//从持久性上下文中移除给定的实体，导致托管实体分离
+        //开模日期
+        miRegister.setOpenMoldDate(DateUtil.parseStrToDate(editRegisterDTO.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //样板确认日期
+        miRegister.setConfirmDate(DateUtil.parseStrToDate(editRegisterDTO.getConfirmDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //建档日期
+        miRegister.setRecordDate(DateUtil.parseStrToDate(editRegisterDTO.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+//        if(StringUtils.isNotBlank(editRegisterDTO.getChangeContent())){
+//            if(StringUtils.isBlank(editRegisterDTO.getChangeDate())){
+//                throw new BizException("更改时间不能为空！");
+//            }
+//        }
+        //更改日期
+        miRegister.setChangeDate(DateUtil.parseStrToDate(editRegisterDTO.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        //获取上传图片
+        if (editRegisterDTO.getCommonFileId() != null) {
+            //关联图片
+            miRegister.setCommonFileId(editRegisterDTO.getCommonFileId());
+        }else{
+            throw new BizException("图片不能为空");
+        }
         registerDao.save(miRegister);
 
         //修改MI登记下的工序
@@ -178,13 +201,6 @@ public class RegisterServiceImpl implements RegisterService {
             miProcess.setRemark(editProcessDTO.getRemark());
             miProcess.setOrderNumber(editProcessDTO.getOrderNumber());
             return miProcess;
-//            for (MiProcess miProcess : miProcessList) {
-//                if (editProcessDTO.getId() == miProcess.getId()) {
-//                    BeanUtils.copyProperties(editProcessDTO, miProcess);
-//                    return miProcess;
-//                }
-//            }
-//            return null;
         }).collect(Collectors.toList());
         processDao.save(processList);
 
@@ -266,9 +282,9 @@ public class RegisterServiceImpl implements RegisterService {
             registerDetailDTO.setChangeDate(DateUtil.parseDateToStr(miRegister.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         }
         //单片尺寸
-        registerDetailDTO.setSingleSize(String.valueOf(miRegister.getSingleSizeLength()) + "*" + String.valueOf(miRegister.getSingleSizeWide()));
+       // registerDetailDTO.setSingleSize(String.valueOf(miRegister.getSingleSizeLength()) + "*" + String.valueOf(miRegister.getSingleSizeWide()));
         //模片尺寸
-        registerDetailDTO.setDieSize(String.valueOf(miRegister.getDieSizeLength()) + "*" + String.valueOf(miRegister.getDieSizeWide()));
+        //registerDetailDTO.setDieSize(String.valueOf(miRegister.getDieSizeLength()) + "*" + String.valueOf(miRegister.getDieSizeWide()));
         //返回图片信息
         if (miRegister.getCommonFileId() != null) {
             CommonFile commonFile = fileDao.findOne(miRegister.getCommonFileId());
@@ -298,6 +314,8 @@ public class RegisterServiceImpl implements RegisterService {
         }
         RegisterDetailDTO registerDetailDTO = new RegisterDetailDTO();
         BeanUtils.copyProperties(miRegister, registerDetailDTO);
+
+
         log.info("RegisterServiceImpl getRegisterByDyCode method end ");
         return registerDetailDTO;
 

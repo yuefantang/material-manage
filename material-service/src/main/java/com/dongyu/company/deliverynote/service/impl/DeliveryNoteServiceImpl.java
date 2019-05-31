@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -285,6 +286,21 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             BeanUtils.copyProperties(deliveryNote, deliveryDetailDTO);
             //送货日期
             deliveryDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            deliveryDetailDTO.setChargeType(ChargeTypeEnum.getValue(deliveryNote.getChargeType()));
+            if (deliveryNote.getChargeType() == ChargeTypeEnum.ORDER_TYPE.getValue()) {
+                //是下单开单数据获取出货方数（出货方数=数量*（该DY号MI中模片尺寸长*宽/一模出几））
+                Order order = orderDao.findOne(deliveryNote.getOtherId());
+                Long miRegisterId = order.getMiRegisterId();
+                MiRegister byMiDyCode = registerDao.findOne(miRegisterId);
+                Integer deliveryNum = Integer.valueOf(deliveryNote.getDeliveryNum());
+                //一模出几
+                Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber());
+                // 模片尺寸相乘
+                double v2 = Double.parseDouble(byMiDyCode.getDieSizeLength()) * Double.parseDouble(byMiDyCode.getDieSizeWide());
+                //出货方数
+                String numberShipper = new DecimalFormat("0.000").format(v2 / miNumber * deliveryNum);
+                deliveryDetailDTO.setNumberShipper(numberShipper);
+            }
             return deliveryDetailDTO;
         }).collect(Collectors.toList());
         log.info("DeliveryNoteServiceImpl getExportList method end;");

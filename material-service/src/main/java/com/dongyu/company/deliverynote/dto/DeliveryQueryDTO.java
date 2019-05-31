@@ -37,6 +37,7 @@ public class DeliveryQueryDTO extends PageQueryDTO {
     //核实状态（0：未核实，1：已核实），默认-1查全部
     private Integer verifyState;
 
-
+    //客户型号
+    private String customerModel;
 
 }

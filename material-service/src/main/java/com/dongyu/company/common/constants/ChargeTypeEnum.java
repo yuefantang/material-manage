@@ -26,4 +26,13 @@ public enum ChargeTypeEnum {
     public String getDesc() {
         return desc;
     }
+
+    public static String getValue(int index) {
+        for (ChargeTypeEnum typeEnum : ChargeTypeEnum.values()) {
+            if (typeEnum.getValue() == index) {
+                return typeEnum.getDesc();
+            }
+        }
+        return null;
+    }
 }

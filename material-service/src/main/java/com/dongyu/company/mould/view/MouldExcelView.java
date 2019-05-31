@@ -6,6 +6,7 @@ import com.dongyu.company.common.utils.ExcelUtil;
 import com.dongyu.company.common.view.ExcelView;
 import com.dongyu.company.mould.dto.MouldDetailDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -49,6 +50,9 @@ public class MouldExcelView extends ExcelView {
         Sheet sheet = null;
         while (true) {
             //填充数据
+            if(CollectionUtils.isEmpty(listDTO)){
+                throw new BizException("导出数据为空！");
+            }
             for (MouldDetailDTO data : listDTO) {
                 //导出数量超出excel存储的量抛异常
                 if (totalCount > Constants.MAX_XLS_TOTAL_ROW) {

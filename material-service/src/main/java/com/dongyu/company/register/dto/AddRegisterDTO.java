@@ -48,16 +48,16 @@ public class AddRegisterDTO {
     private String changeContent;
 
     @ApiModelProperty(value = "单片尺寸长")
-    private Double singleSizeLength;
+    private String singleSizeLength;
 
     @ApiModelProperty(value = "单片尺寸宽")
-    private Double singleSizeWide;
+    private String singleSizeWide;
 
     @ApiModelProperty(value = "模片尺寸长")
-    private Double dieSizeLength;
+    private String dieSizeLength;
 
     @ApiModelProperty(value = "模片尺寸宽")
-    private Double dieSizeWide;
+    private String dieSizeWide;
 
     @ApiModelProperty(value = "一模出几")
     private String miNumber;

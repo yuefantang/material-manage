@@ -27,6 +27,7 @@ public class MouldSpecs {
     private static final String DELETED = "deleted";
     private static final String CHARGE = "charge";
     private static final String CHARGE_OPENING = "chargeOpening";
+    private static final String PURCHASE_TYPE = "purchaseType";
 
     public static Specification<PurchaseMould> mouldListQuerySpec(MouldQueryDTO mouldQueryDTO) {
         return (root, query, builder) -> {
@@ -92,6 +93,12 @@ public class MouldSpecs {
                     list.add(builder.equal(root.get(CHARGE_OPENING), mouldQueryDTO.getChargeOpening()));
                 }
             }
+
+            //采购种类(1:模具,2:测试架)
+            if (mouldQueryDTO.getPurchaseType() != null) {
+                list.add(builder.equal(root.get(PURCHASE_TYPE), mouldQueryDTO.getPurchaseType()));
+            }
+
             return builder.and(list.toArray(new Predicate[list.size()]));
         };
     }

@@ -80,21 +80,21 @@ public class MiRegister extends BaseDomain {
     @AttributeOpName("工程更改内容")
     private String changeContent;
 
-    @Column(columnDefinition = "double(16,3) COMMENT '单片尺寸长'")
+    @Column(columnDefinition = "varchar(50) COMMENT '单片尺寸长'")
     @AttributeOpName("单片尺寸长")
-    private Double singleSizeLength;
+    private String singleSizeLength;
 
-    @Column(columnDefinition = "double(16,3) COMMENT '单片尺寸宽'")
+    @Column(columnDefinition = "varchar(50) COMMENT '单片尺寸宽'")
     @AttributeOpName("单片尺寸宽")
-    private Double singleSizeWide;
+    private String singleSizeWide;
 
-    @Column(columnDefinition = "double(16,3) COMMENT '模片尺寸长'")
+    @Column(columnDefinition = "varchar(50) COMMENT '模片尺寸长'")
     @AttributeOpName("模片尺寸长")
-    private Double dieSizeLength;
+    private String dieSizeLength;
 
-    @Column(columnDefinition = "double(16,3) COMMENT '模片尺寸宽'")
+    @Column(columnDefinition = "varchar(50) COMMENT '模片尺寸宽'")
     @AttributeOpName("模片尺寸宽")
-    private Double dieSizeWide;
+    private String dieSizeWide;
 
     @Column(columnDefinition = "varchar(20) COMMENT '一模出几'")
     @AttributeOpName("一模出几")

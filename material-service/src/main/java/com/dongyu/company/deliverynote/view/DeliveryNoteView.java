@@ -62,8 +62,7 @@ public class DeliveryNoteView extends ExcelView {
                     Row headerRow = sheet.createRow(0);
                     //设置标题行
                     List<String> headers = new LinkedList<>();
-                    headers.addAll(Arrays.asList("DY编号", "客户名称", "客户型号", "客户订单号",
-                            "送货单号", "送货数量", "单价(单位元)", "金额（单位元）", "投产单号", "送货日期", "货款开单备注"));
+                    headers.addAll(Arrays.asList("DY编号", "客户名称", "客户型号", "客户订单号", "送货单号", "送货数量", "单价(单位元)", "金额（单位元）", "投产单号", "送货日期", "货款开单备注", "单位", "领取人", "类型", "出货方数"));
                     for (int i = 0; i < headers.size(); i++) {
                         Cell cell = headerRow.createCell(i);
                         cell.setCellValue(headers.get(i));
@@ -132,6 +131,26 @@ public class DeliveryNoteView extends ExcelView {
                 Cell cell12 = dataRow.createCell(creditNum++);
                 cell12.setCellStyle(cellStyle);
                 cell12.setCellValue(Optional.ofNullable(data.getDeliveryRemarks()).orElse(""));
+
+                //单位
+                Cell cell13 = dataRow.createCell(creditNum++);
+                cell13.setCellStyle(cellStyle);
+                cell13.setCellValue(Optional.ofNullable(data.getDeliveryUnit()).orElse(""));
+
+                //领取人
+                Cell cell14 = dataRow.createCell(creditNum++);
+                cell14.setCellStyle(cellStyle);
+                cell14.setCellValue(Optional.ofNullable(data.getReceiver()).orElse(""));
+
+                //类型
+                Cell cell15 = dataRow.createCell(creditNum++);
+                cell15.setCellStyle(cellStyle);
+                cell15.setCellValue(Optional.ofNullable(data.getChargeType()).orElse(""));
+
+                //出货方数
+                Cell cell16 = dataRow.createCell(creditNum++);
+                cell16.setCellStyle(cellStyle);
+                cell16.setCellValue(Optional.ofNullable(data.getNumberShipper()).orElse(""));
 
                 rowCount++;
                 totalCount++;

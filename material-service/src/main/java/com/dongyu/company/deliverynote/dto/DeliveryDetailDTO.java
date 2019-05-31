@@ -59,6 +59,15 @@ public class DeliveryDetailDTO {
     @ApiModelProperty(value = "单位")
     private String deliveryUnit;
 
+    @ApiModelProperty(value = "领取人")
+    private String receiver;
+
+    @ApiModelProperty(value = "全部完成说明")
+    private String complementExplain;
+
+    @ApiModelProperty(value = "出货方数")
+    private String numberShipper;
+
     @ApiModelProperty(value = "不可编辑字段")
     private List<String> nonEditable;
 }
