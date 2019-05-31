@@ -31,7 +31,7 @@ public class OrderSqlDao {
     public Map<String, Object> queryOrder(OrderQueryDTO orderQueryDTO, Pageable pageable) {
         StringBuilder sql = new StringBuilder();
         StringBuilder countSql = new StringBuilder();
-        sql.append(" select o.* ");
+        sql.append(" SELECT o.id,o.charge_opening,o.commissioning_code,o.commissioning_num,o.complete_state,o.completed_num,o.customer_order_code,o.deleted,o.delivery_date,o.hared_materials_num,o.mi_register_id,o.operation_state,o.order_date,o.order_dy_code,o.order_num,o.spare_parts_num,o.spare_parts_rate,o.square_num,o.surplus_pcs,o.surplus_pnl,o.surplus_remarks,o.surplus_treatment,o.uncompleted_num ");
         sql.append(" from t_order o ,t_mi_register m ");
         sql.append(" WHERE o.mi_register_id=m.id ");
         //根据客户型号模糊查询

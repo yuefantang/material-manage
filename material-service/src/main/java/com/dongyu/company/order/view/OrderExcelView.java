@@ -6,6 +6,7 @@ import com.dongyu.company.common.utils.ExcelUtil;
 import com.dongyu.company.common.view.ExcelView;
 import com.dongyu.company.order.dto.OrderDetailDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -49,6 +50,9 @@ public class OrderExcelView extends ExcelView {
         Sheet sheet = null;
         while (true) {
             //填充数据
+            if(CollectionUtils.isEmpty(listDTO)){
+                throw new BizException("无数据内容导出！");
+            }
             for (OrderDetailDTO data : listDTO) {
                 //导出数量超出excel存储的量抛异常
                 if (totalCount > Constants.MAX_XLS_TOTAL_ROW) {
@@ -135,8 +139,8 @@ public class OrderExcelView extends ExcelView {
 
                 //备注
                 Cell cell12 = dataRow.createCell(creditNum++);
-                cell11.setCellStyle(cellStyle);
-                cell11.setCellValue(Optional.ofNullable(data.getSurplusRemarks()).orElse(""));
+                cell12.setCellStyle(cellStyle);
+                cell12.setCellValue(Optional.ofNullable(data.getSurplusRemarks()).orElse(""));
 
                 rowCount++;
                 totalCount++;
