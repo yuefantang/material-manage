@@ -44,12 +44,10 @@ public class AddRegisterForm {
     private String plateType;
 
     @ApiModelProperty(value = "板厚")
-    //@Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "板厚格式错误，只能输入数字")
     @NotNull(message = "板厚不能为空")
     private String plateThick;
 
     @ApiModelProperty(value = "铜厚")
-    //@Pattern(regexp = Constants.NUMBER_PATTERN, message = "铜厚格式错误，只能输入数字")
     @NotNull(message = "铜厚不能为空")
     private String copperThick;
 
@@ -211,7 +209,7 @@ public class AddRegisterForm {
 
     @ApiModelProperty(value = "是否允许投产（0：否，1：是）默认为1")
     @NotNull(message = "是否允许投产不能为空")
-    private Integer production;
+    private String production;
 
     @ApiModelProperty(value = "文件图片表ID")
     private Long commonFileId;

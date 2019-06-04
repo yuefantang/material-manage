@@ -36,49 +36,9 @@ public class OrderTemplate extends BaseDomain {
     @Column(columnDefinition = "bigint(20) COMMENT '主键id'")
     private Long id;
 
-//    @Column(unique = true, columnDefinition = "varchar(50) COMMENT '样板编号'")
-//    @AttributeOpName("样板编号")
-//    private String templateCode;
-
-    @Column(unique = true, columnDefinition = "varchar(30) COMMENT 'DY编号'")
-    @AttributeOpName("DY编号")
-    private String dyCode;
-
-    @Column(columnDefinition = "int COMMENT '数量'")
-    @AttributeOpName("数量")
-    private Integer templateNum;
-
-    @Column(columnDefinition = "double(16,3) COMMENT '面积'")
-    @AttributeOpName("面积")
-    private double areaNum;
-
-    @Column(columnDefinition = "double(16,3) COMMENT '长'")
-    @AttributeOpName("长")
-    private double templateLength;
-
-    @Column(columnDefinition = "double(16,3) COMMENT '宽'")
-    @AttributeOpName("宽")
-    private double templateWide;
-
-    @Column(columnDefinition = "double(16,3) COMMENT '厚度'")
-    @AttributeOpName("厚度")
-    private double thickness;
-
-    @Column(columnDefinition = "varchar(100) COMMENT '类型'")
-    @AttributeOpName("类型")
-    private String templateType;
-
-    @Column(columnDefinition = "varchar(255) COMMENT '备注'")
-    @AttributeOpName("备注")
-    private String templateRemark;
-
-    @Column(columnDefinition = "varchar(100) COMMENT '领取人'")
-    @AttributeOpName("领取人")
-    private String receiver;
-
-    @Column(columnDefinition = "varchar(100) COMMENT '板材'")
-    @AttributeOpName("板材")
-    private String board;
+    @Column(unique = true, columnDefinition = "varchar(50) COMMENT '样板编号'")
+    @AttributeOpName("样板编号")
+    private String templateCode;
 
     @Column(columnDefinition = "varchar(100) COMMENT '客户名称'")
     @AttributeOpName("客户名称")
@@ -87,6 +47,50 @@ public class OrderTemplate extends BaseDomain {
     @Column(columnDefinition = "varchar(100) COMMENT '客户型号'")
     @AttributeOpName("客户型号")
     private String customerModel;
+
+    @Column(columnDefinition = "varchar(100) COMMENT '类型'")
+    @AttributeOpName("类型")
+    private String templateType;
+
+    @Column(columnDefinition = "varchar(100) COMMENT '板材'")
+    @AttributeOpName("板材")
+    private String board;
+
+    @Column(columnDefinition = "varchar(20) COMMENT '板厚'")
+    @AttributeOpName("板厚")
+    private String plateThick;
+
+    @Column(columnDefinition = "varchar(20) COMMENT '铜厚'")
+    @AttributeOpName("铜厚")
+    private String copperThick;
+
+    @Column(columnDefinition = "varchar(20) COMMENT '数量'")
+    @AttributeOpName("数量")
+    private String templateNum;
+
+    @Column(columnDefinition = "varchar(20) COMMENT '面积'")
+    @AttributeOpName("面积")
+    private String areaNum;
+
+    @Column(columnDefinition = "varchar(20) COMMENT '长'")
+    @AttributeOpName("长")
+    private String templateLength;
+
+    @Column(columnDefinition = "varchar(20) COMMENT '宽'")
+    @AttributeOpName("宽")
+    private String templateWide;
+
+    @Column(columnDefinition = "datetime COMMENT '下单日期'")
+    @AttributeOpName("下单日期")
+    private Date orderDate;
+
+    @Column(columnDefinition = "varchar(255) COMMENT '备注'")
+    @AttributeOpName("备注")
+    private String templateRemark;
+
+    @Column(columnDefinition = "varchar(100) COMMENT '领取人'")
+    @AttributeOpName("领取人")
+    private String receiver;
 
     @Column(columnDefinition = "datetime COMMENT '出货日期'")
     @AttributeOpName("出货日期")

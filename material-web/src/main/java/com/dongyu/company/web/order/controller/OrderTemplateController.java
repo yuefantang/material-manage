@@ -62,9 +62,9 @@ public class OrderTemplateController {
     }
 
     @ApiOperation("查询样板")
-    @PostMapping
+    @GetMapping
     @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
-    public ResponseVo<PageDTO<OrderTemplateListDTO>> get(@RequestBody OrderTemplateQueryForm form) {
+    public ResponseVo<PageDTO<OrderTemplateListDTO>> get(@ModelAttribute OrderTemplateQueryForm form) {
         OrderTemplateQueryDTO queryDTO = new OrderTemplateQueryDTO();
         BeanUtils.copyProperties(form, queryDTO);
         PageDTO<OrderTemplateListDTO> pageDTO = orderTemplateService.getlist(queryDTO);

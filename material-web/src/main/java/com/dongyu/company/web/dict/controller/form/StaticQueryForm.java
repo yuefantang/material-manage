@@ -1,22 +1,23 @@
-package com.dongyu.company.dict.dto;
+package com.dongyu.company.web.dict.controller.form;
 
+import com.dongyu.company.common.form.PageForm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 下拉列表静态数据值返回集合DTO
+ * 列表数据分页查询Form
  *
  * @author TYF
- * @date 2019/5/16
+ * @date 2019/6/4
  * @since 1.0.0
  */
 @Data
-@ApiModel("下拉列表静态数据值返回集合DTO")
-public class StaticDataDTO {
+@ApiModel("列表数据分页查询Form")
+public class StaticQueryForm extends PageForm {
 
-    @ApiModelProperty(value = "id")
-    private Long id;
+    @ApiModelProperty(value = "数据描述")
+    private String codeDesc;
 
     @ApiModelProperty(value = "数据类型")
     private String codeType;
@@ -27,9 +28,6 @@ public class StaticDataDTO {
     @ApiModelProperty(value = "数据key对应的值")
     private String codeValue;
 
-    @ApiModelProperty(value = "数据描述")
-    private String codeDesc;
-
-    @ApiModelProperty(value = "状态")
+    @ApiModelProperty(value = "状态（0：未删除，1：已删除）")
     private Integer deleted;
 }

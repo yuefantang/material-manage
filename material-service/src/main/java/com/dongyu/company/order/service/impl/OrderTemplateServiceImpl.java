@@ -44,13 +44,14 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
     public void add(OrderTemplateDTO orderTemplateDTO) {
         log.info("OrderTemplateServiceImpl method add start:");
         //根据DY编号去重
-        OrderTemplate byTemplateCode = orderTemplateDao.findByDyCode(orderTemplateDTO.getDyCode());
+        OrderTemplate byTemplateCode = orderTemplateDao.findByTemplateCode(orderTemplateDTO.getTemplateCode());
         if (byTemplateCode != null) {
             throw new BizException("DY编号已存在,请重新输入");
         }
         OrderTemplate orderTemplate = new OrderTemplate();
         BeanUtils.copyProperties(orderTemplateDTO, orderTemplate);
         orderTemplate.setTemplateDeliveryDate(DateUtil.parseStrToDate(orderTemplateDTO.getTemplateDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        orderTemplate.setOrderDate(DateUtil.parseStrToDate(orderTemplateDTO.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         orderTemplateDao.save(orderTemplate);
         log.info("OrderTemplateServiceImpl method add end;");
     }
@@ -64,6 +65,7 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
             OrderTemplateListDTO templateListDTO = new OrderTemplateListDTO();
             BeanUtils.copyProperties(item, templateListDTO);
             templateListDTO.setTemplateDeliveryDate(DateUtil.parseDateToStr(item.getTemplateDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            templateListDTO.setOrderDate(DateUtil.parseDateToStr(item.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             return templateListDTO;
         });
         log.info("OrderTemplateServiceImpl method getlist end;");
@@ -81,6 +83,7 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
             OrderTemplateDTO orderTemplateDTO = new OrderTemplateDTO();
             BeanUtils.copyProperties(orderTemplate, orderTemplateDTO);
             orderTemplateDTO.setTemplateDeliveryDate(DateUtil.parseDateToStr(orderTemplate.getTemplateDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            orderTemplateDTO.setOrderDate(DateUtil.parseDateToStr(orderTemplate.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             return orderTemplateDTO;
         }).collect(Collectors.toList());
         log.info("OrderTemplateServiceImpl method getExportList end;");
@@ -93,9 +96,9 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
         log.info("OrderTemplateServiceImpl method edit start:");
         OrderTemplate oldOrderTemplate = orderTemplateDao.findOne(dto.getId());
         //DY编号修改则根据DY编号去重
-        String oldDyCode = oldOrderTemplate.getDyCode();
-        if (!dto.getDyCode().equals(oldDyCode)) {
-            OrderTemplate orderTemplate = orderTemplateDao.findByDyCode(dto.getDyCode());
+        String oldDyCode = oldOrderTemplate.getTemplateCode();
+        if (!dto.getTemplateCode().equals(oldDyCode)) {
+            OrderTemplate orderTemplate = orderTemplateDao.findByTemplateCode(dto.getTemplateCode());
             if (orderTemplate != null) {
                 throw new BizException("DY编号已存在,请重新输入");
             }
@@ -147,6 +150,7 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
         OrderTemplateListDTO detailDTO = new OrderTemplateListDTO();
         BeanUtils.copyProperties(orderTemplate, detailDTO);
         detailDTO.setTemplateDeliveryDate(DateUtil.parseDateToStr(orderTemplate.getTemplateDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        detailDTO.setOrderDate(DateUtil.parseDateToStr(orderTemplate.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         log.info("OrderTemplateServiceImpl method getDetail end;");
         return null;
     }

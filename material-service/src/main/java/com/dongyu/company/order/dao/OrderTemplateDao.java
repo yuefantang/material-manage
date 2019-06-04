@@ -14,8 +14,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface OrderTemplateDao extends JpaRepository<OrderTemplate, Long>, JpaSpecificationExecutor<OrderTemplate> {
 
     //根据DY编号查询
-    OrderTemplate findByDyCode(String dyCode);
+    OrderTemplate findByTemplateCode(String templateCode);
 
     //根据DY编号查询未收费开单的样板
-    OrderTemplate findByDyCodeAndChargeOpening(String dyCode, Integer chargeOpening);
+    OrderTemplate findByTemplateCodeAndChargeOpeningAndDeleted(String templateCode, Integer chargeOpening,Integer deleted);
 }

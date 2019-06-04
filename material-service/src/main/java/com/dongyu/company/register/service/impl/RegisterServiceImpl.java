@@ -74,6 +74,7 @@ public class RegisterServiceImpl implements RegisterService {
         //存储MI登记
         MiRegister miRegister = new MiRegister();
         BeanUtils.copyProperties(dto, miRegister);
+        miRegister.setProduction(Integer.valueOf(dto.getProduction()));
         //开模日期
         miRegister.setOpenMoldDate(DateUtil.parseStrToDate(dto.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //样板确认日期
@@ -171,11 +172,7 @@ public class RegisterServiceImpl implements RegisterService {
         miRegister.setConfirmDate(DateUtil.parseStrToDate(editRegisterDTO.getConfirmDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //建档日期
         miRegister.setRecordDate(DateUtil.parseStrToDate(editRegisterDTO.getRecordDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-//        if(StringUtils.isNotBlank(editRegisterDTO.getChangeContent())){
-//            if(StringUtils.isBlank(editRegisterDTO.getChangeDate())){
-//                throw new BizException("更改时间不能为空！");
-//            }
-//        }
+        miRegister.setProduction(Integer.valueOf(editRegisterDTO.getProduction()));
         //更改日期
         miRegister.setChangeDate(DateUtil.parseStrToDate(editRegisterDTO.getChangeDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //获取上传图片
@@ -270,6 +267,7 @@ public class RegisterServiceImpl implements RegisterService {
 
         RegisterDetailDTO registerDetailDTO = new RegisterDetailDTO();
         BeanUtils.copyProperties(miRegister, registerDetailDTO);
+        registerDetailDTO.setProduction(miRegister.getProduction().toString());
         //处理时间格式
         //开模日期
         registerDetailDTO.setOpenMoldDate(DateUtil.parseDateToStr(miRegister.getOpenMoldDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));

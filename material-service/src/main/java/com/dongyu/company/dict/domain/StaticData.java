@@ -35,24 +35,20 @@ public class StaticData extends BaseDomain {
     private Long id;
 
     @AttributeOpName("数据类型")
-    @Column(name = "code_type", columnDefinition = "varchar(255) COMMENT '数据类型'")
+    @Column(columnDefinition = "varchar(255) COMMENT '数据类型'")
     private String codeType;
 
     @AttributeOpName("数据key")
-    @Column(name = "CODE_VALUE", columnDefinition = "varchar(255) COMMENT '数据key'")
+    @Column( columnDefinition = "varchar(255) COMMENT '数据key'")
     private String codeKey;
 
     @AttributeOpName("数据key对应的值")
-    @Column(name = "CODE_NAME", columnDefinition = "varchar(255) COMMENT '数据key对应的值'")
+    @Column(columnDefinition = "varchar(255) COMMENT '数据key对应的值'")
     private String codeValue;
 
     @AttributeOpName("数据描述")
-    @Column(name = "CODE_DESC", columnDefinition = "varchar(255) COMMENT '数据描述'")
+    @Column(columnDefinition = "varchar(255) COMMENT '数据描述'")
     private String codeDesc;
-
-    @AttributeOpName("排序号")
-    @Column(name = "SORT_ID", columnDefinition = "bigint(20) COMMENT '排序号'")
-    private Long sortId;
 
     @AttributeOpName("状态")
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单是否删除（0：未删除，1：已删除）'")

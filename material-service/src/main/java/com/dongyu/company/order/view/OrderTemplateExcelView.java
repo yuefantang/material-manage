@@ -63,8 +63,8 @@ public class OrderTemplateExcelView extends ExcelView {
                     Row headerRow = sheet.createRow(0);
                     //设置标题行
                     List<String> headers = new LinkedList<>();
-                    headers.addAll(Arrays.asList("DY编号", "客户名称", "客户型号","长","宽",
-                            "数量", "面积", "板材", "厚度", "类型", "出货日期", "领取人","备注"));
+                    headers.addAll(Arrays.asList("样板编号", "客户名称", "客户型号","长","宽",
+                            "数量", "面积", "板材", "板厚", "类型", "出货日期", "领取人","铜厚","下单日期","备注"));
                     for (int i = 0; i < headers.size(); i++) {
                         Cell cell = headerRow.createCell(i);
                         cell.setCellValue(headers.get(i));
@@ -82,7 +82,7 @@ public class OrderTemplateExcelView extends ExcelView {
                 //DY编号
                 Cell cell1 = dataRow.createCell(creditNum++);
                 cell1.setCellStyle(cellStyle);
-                cell1.setCellValue(Optional.ofNullable(data.getDyCode()).orElse(""));
+                cell1.setCellValue(Optional.ofNullable(data.getTemplateCode()).orElse(""));
 
                 //客户名称
                 Cell cell2 = dataRow.createCell(creditNum++);
@@ -97,32 +97,32 @@ public class OrderTemplateExcelView extends ExcelView {
                 //长
                 Cell cell4 = dataRow.createCell(creditNum++);
                 cell4.setCellStyle(cellStyle);
-                cell4.setCellValue(Optional.ofNullable(data.getTemplateLength()).orElse(0d));
+                cell4.setCellValue(Optional.ofNullable(data.getTemplateLength()).orElse(""));
 
                 //宽
                 Cell cell5 = dataRow.createCell(creditNum++);
                 cell5.setCellStyle(cellStyle);
-                cell5.setCellValue(Optional.ofNullable(data.getTemplateWide()).orElse(0d));
+                cell5.setCellValue(Optional.ofNullable(data.getTemplateWide()).orElse(""));
 
                 //数量
                 Cell cell6 = dataRow.createCell(creditNum++);
                 cell6.setCellStyle(cellStyle);
-                cell6.setCellValue(Optional.ofNullable(data.getTemplateNum()).orElse(0));
+                cell6.setCellValue(Optional.ofNullable(data.getTemplateNum()).orElse(""));
 
                 //面积
                 Cell cell7 = dataRow.createCell(creditNum++);
                 cell7.setCellStyle(cellStyle);
-                cell7.setCellValue(Optional.ofNullable(data.getAreaNum()).orElse(0d));
+                cell7.setCellValue(Optional.ofNullable(data.getAreaNum()).orElse(""));
 
                 //板材
                 Cell cell8 = dataRow.createCell(creditNum++);
                 cell8.setCellStyle(cellStyle);
                 cell8.setCellValue(Optional.ofNullable(data.getBoard()).orElse(""));
 
-                //厚度
+                //板厚
                 Cell cell9 = dataRow.createCell(creditNum++);
                 cell9.setCellStyle(cellStyle);
-                cell9.setCellValue(Optional.ofNullable(data.getThickness()).orElse(0d));
+                cell9.setCellValue(Optional.ofNullable(data.getPlateThick()).orElse(""));
 
                 //类型
                 Cell cell10 = dataRow.createCell(creditNum++);
@@ -136,13 +136,23 @@ public class OrderTemplateExcelView extends ExcelView {
 
                 //领取人
                 Cell cell12 = dataRow.createCell(creditNum++);
-                cell11.setCellStyle(cellStyle);
-                cell11.setCellValue(Optional.ofNullable(data.getReceiver()).orElse(""));
+                cell12.setCellStyle(cellStyle);
+                cell12.setCellValue(Optional.ofNullable(data.getReceiver()).orElse(""));
+
+                //铜厚
+                Cell cell13 = dataRow.createCell(creditNum++);
+                cell13.setCellStyle(cellStyle);
+                cell13.setCellValue(Optional.ofNullable(data.getCopperThick()).orElse(""));
+
+                //下单日期
+                Cell cell14 = dataRow.createCell(creditNum++);
+                cell14.setCellStyle(cellStyle);
+                cell14.setCellValue(Optional.ofNullable(data.getOrderDate()).orElse(""));
 
                 //备注
-                Cell cell13 = dataRow.createCell(creditNum++);
-                cell11.setCellStyle(cellStyle);
-                cell11.setCellValue(Optional.ofNullable(data.getTemplateRemark()).orElse(""));
+                Cell cell15 = dataRow.createCell(creditNum++);
+                cell15.setCellStyle(cellStyle);
+                cell15.setCellValue(Optional.ofNullable(data.getTemplateRemark()).orElse(""));
 
                 rowCount++;
                 totalCount++;

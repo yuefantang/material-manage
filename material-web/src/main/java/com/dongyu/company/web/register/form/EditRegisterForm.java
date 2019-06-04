@@ -44,11 +44,11 @@ public class EditRegisterForm {
     private String plateType;
 
     @ApiModelProperty(value = "板厚")
-    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "板厚格式错误，只能输入数字")
+    //@Pattern(regexp = Constants.NUMBER_PATTERN, message = "板厚格式错误，只能输入数字")
     private String plateThick;
 
     @ApiModelProperty(value = "铜厚")
-    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "铜厚格式错误，只能输入数字")
+    //@Pattern(regexp = Constants.NUMBER_PATTERN, message = "铜厚格式错误，只能输入数字")
     private String copperThick;
 
     @ApiModelProperty(value = "板材商")
@@ -62,19 +62,19 @@ public class EditRegisterForm {
 
     @ApiModelProperty(value = "单片尺寸长")
     @NotNull(message = "单片尺寸长不能为空")
-    private Double singleSizeLength;
+    private String singleSizeLength;
 
     @ApiModelProperty(value = "单片尺寸宽")
     @NotNull(message = "单片尺寸宽不能为空")
-    private Double singleSizeWide;
+    private String singleSizeWide;
 
     @ApiModelProperty(value = "模片尺寸长")
     @NotNull(message = "模片尺寸长不能为空")
-    private Double dieSizeLength;
+    private String dieSizeLength;
 
     @ApiModelProperty(value = "模片尺寸宽")
     @NotNull(message = "模片尺寸宽不能为空")
-    private Double dieSizeWide;
+    private String dieSizeWide;
 
     @ApiModelProperty(value = "一模出几")
     @NotNull(message = "一模出几不能为空")

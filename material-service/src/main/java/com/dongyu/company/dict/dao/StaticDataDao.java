@@ -14,4 +14,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface StaticDataDao extends JpaRepository<StaticData, Long>, JpaSpecificationExecutor<StaticData> {
 
+    StaticData findByCodeTypeAndCodeKeyAndDeleted(String codeType,String codeKey,Integer deleted);
+
 }

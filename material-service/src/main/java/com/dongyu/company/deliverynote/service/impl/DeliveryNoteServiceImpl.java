@@ -159,7 +159,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 if (orderTemplate == null) {
                     throw new BizException("该id" + id + "不存在未收费开单的样板");
                 }
-                dto.setMiDyCode(orderTemplate.getDyCode());
+                dto.setMiDyCode(orderTemplate.getTemplateCode());
                 dto.setCustomerModel(orderTemplate.getCustomerModel());
                 dto.setCustomerName(orderTemplate.getCustomerName());
                 //dto.setCustomerOrderCode(mould.ge);
