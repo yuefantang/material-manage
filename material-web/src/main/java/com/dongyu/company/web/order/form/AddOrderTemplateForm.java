@@ -1,5 +1,6 @@
 package com.dongyu.company.web.order.form;
 
+import com.dongyu.company.common.constants.Constants;
 import com.dongyu.company.common.utils.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,6 +9,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * 新增样板Form
@@ -51,6 +53,7 @@ public class AddOrderTemplateForm {
 
     @ApiModelProperty(value = "数量")
     @NotNull(message = "数量不能为空")
+    @Pattern(regexp = Constants.NUMBER_PATTERN, message = "订单数量格式错误，只能输入数字")
     private String templateNum;
 
     @ApiModelProperty(value = "面积")
@@ -59,10 +62,12 @@ public class AddOrderTemplateForm {
 
     @ApiModelProperty(value = "长")
     @NotNull(message = "长不能为空")
+    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "订单数量格式错误，只能输入数字")
     private String templateLength;
 
     @ApiModelProperty(value = "宽")
     @NotNull(message = "宽不能为空")
+    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "订单数量格式错误，只能输入数字")
     private String templateWide;
 
     @ApiModelProperty(value = "下单日期")
@@ -73,13 +78,9 @@ public class AddOrderTemplateForm {
     @ApiModelProperty(value = "备注")
     private String templateRemark;
 
-    @ApiModelProperty(value = "领取人")
-    @NotNull(message = "领取人不能为空")
-    private String receiver;
-
-    @ApiModelProperty(value = "收费开单状态（0：未收费开单，1：已收费开单）")
-    @NotNull(message = "是否收费不能为空")
-    private Integer chargeOpening;
+//    @ApiModelProperty(value = "领取人")
+//    @NotNull(message = "领取人不能为空")
+//    private String receiver;
 
     @ApiModelProperty(value = "出货日期")
     @DateTimeFormat(pattern = DateUtil.DATE_FORMAT_YYYY_MM_DD)
@@ -88,5 +89,5 @@ public class AddOrderTemplateForm {
 
     @ApiModelProperty(value = "是否收费（0：不收费，1：收费）")
     @NotNull(message = "是否收费不能为空")
-    private Integer charge;
+    private String charge;
 }

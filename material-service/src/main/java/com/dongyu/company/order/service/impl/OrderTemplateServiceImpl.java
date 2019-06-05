@@ -52,6 +52,7 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
         BeanUtils.copyProperties(orderTemplateDTO, orderTemplate);
         orderTemplate.setTemplateDeliveryDate(DateUtil.parseStrToDate(orderTemplateDTO.getTemplateDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         orderTemplate.setOrderDate(DateUtil.parseStrToDate(orderTemplateDTO.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+        orderTemplate.setCharge(Integer.valueOf(orderTemplateDTO.getCharge()));
         orderTemplateDao.save(orderTemplate);
         log.info("OrderTemplateServiceImpl method add end;");
     }

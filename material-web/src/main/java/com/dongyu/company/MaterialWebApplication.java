@@ -22,8 +22,8 @@ public class MaterialWebApplication {
         SpringApplication.run(MaterialWebApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner commandLineRunner(ApplicationContext context){
-       return  args -> Arrays.stream(context.getBeanDefinitionNames()).forEach(System.out::println);
-    }
+//    @Bean
+//    CommandLineRunner commandLineRunner(ApplicationContext context){
+//       return  args -> Arrays.stream(context.getBeanDefinitionNames()).forEach(System.out::println);
+//    }
 }

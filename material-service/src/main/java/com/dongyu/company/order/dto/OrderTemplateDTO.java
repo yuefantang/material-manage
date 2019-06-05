@@ -59,12 +59,9 @@ public class OrderTemplateDTO {
     @ApiModelProperty(value = "领取人")
     private String receiver;
 
-    @ApiModelProperty(value = "收费开单状态（0：未收费开单，1：已收费开单）")
-    private Integer chargeOpening;
-
     @ApiModelProperty(value = "出货日期")
     private String templateDeliveryDate;
 
     @ApiModelProperty(value = "是否收费（0：不收费，1：收费）")
-    private Integer charge;
+    private String charge;
 }
