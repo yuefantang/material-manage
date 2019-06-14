@@ -175,9 +175,9 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
                 }
             }
             DeliveryNote deliveryNote = new DeliveryNote();
+            BeanUtils.copyProperties(dto, deliveryNote);
             //送货单号
             deliveryNote.setDeliveryCode(deliveryCode);
-            BeanUtils.copyProperties(dto, deliveryNote);
             //设置为其它收费开单类型
             // deliveryNote.setBillingType(BillingTypeEnum.OTHER_CHARGES_TYPE.getValue());
             //送货日期时间转换
@@ -354,6 +354,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             if (item.getDeliveryDate() != null) {
                 deliveryListDTO.setDeliveryDate(DateUtil.parseDateToStr(item.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             }
+            deliveryListDTO.setChargeType(String.valueOf(item.getChargeType()));
             return deliveryListDTO;
         });
         log.info("DeliveryNoteServiceImpl getlist method end;");
@@ -411,6 +412,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         }
         DeliveryDetailDTO deliveryDetailDTO = new DeliveryDetailDTO();
         BeanUtils.copyProperties(deliveryNote, deliveryDetailDTO);
+        deliveryDetailDTO.setChargeType(String.valueOf(deliveryNote.getChargeType()));
         //送货日期
         deliveryDetailDTO.setDeliveryDate(DateUtil.parseDateToStr(deliveryNote.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
         //开单类型转换

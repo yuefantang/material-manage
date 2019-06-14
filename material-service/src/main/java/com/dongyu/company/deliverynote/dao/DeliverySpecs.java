@@ -30,6 +30,8 @@ public class DeliverySpecs {
     private static final String BILL_MONTH = "billMonth";
     private static final String VERIFY_STATE = "verifyState";
     private static final String CUSTOMER_MODEL = "customerModel";
+    private static final String CHARGE_TYPE = "chargeType";
+
 
     public static Specification<DeliveryNote> orederQuerySpec(DeliveryQueryDTO queryDTO) {
         log.info("DeliverySpecs orederQuerySpec method start Parm:" + JSONObject.toJSONString(queryDTO));
@@ -91,6 +93,13 @@ public class DeliverySpecs {
                     list.add(builder.equal(root.get(VERIFY_STATE), queryDTO.getVerifyState()));
                 }
             }
+
+            //根据收费种类查询
+            if (StringUtils.isNotBlank(queryDTO.getChargeType())) {
+                Integer chargeType = Integer.parseInt(queryDTO.getChargeType());
+                list.add(builder.equal(root.get(CHARGE_TYPE), chargeType));
+            }
+
             log.info("DeliverySpecs orederQuerySpec method end;");
             return builder.and(list.toArray(new Predicate[list.size()]));
         };

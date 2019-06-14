@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +78,7 @@ public class OrderSqlDao {
         if (entityManager != null) {
             entityManager.close();
         }
-        List<Order> collect = null;
+        List<Order> collect = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(resultList)) {
             collect = this.transf(resultList);
         }

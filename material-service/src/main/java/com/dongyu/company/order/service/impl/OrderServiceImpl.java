@@ -265,9 +265,6 @@ public class OrderServiceImpl implements OrderService {
             order.setDeleted(DeletedEnum.DELETED.getValue());
             orderDao.save(order);
         } else {
-//            Long surplusId = order.getSurplusId();
-//            Surplus surplus = surplusDao.findOne(surplusId);
-//            surplusDao.delete(surplus.getId());
             orderDao.delete(id);
         }
         log.info("OrderServiceImpl deleted method end;");

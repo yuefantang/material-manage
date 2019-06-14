@@ -38,4 +38,8 @@ public class DeliveryQueryForm extends PageForm {
 
     @ApiModelProperty(value = "客户型号")
     private String customerModel;
+
+    @ApiModelProperty(value = "收费种类")
+    private String chargeType;
+
 }

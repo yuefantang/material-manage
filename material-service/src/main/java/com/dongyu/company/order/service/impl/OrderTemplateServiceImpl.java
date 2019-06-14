@@ -67,6 +67,7 @@ public class OrderTemplateServiceImpl implements OrderTemplateService {
             BeanUtils.copyProperties(item, templateListDTO);
             templateListDTO.setTemplateDeliveryDate(DateUtil.parseDateToStr(item.getTemplateDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
             templateListDTO.setOrderDate(DateUtil.parseDateToStr(item.getOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            templateListDTO.setCharge(String.valueOf(item.getCharge()));
             return templateListDTO;
         });
         log.info("OrderTemplateServiceImpl method getlist end;");

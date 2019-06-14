@@ -54,6 +54,12 @@ public class DeliveryListDTO {
     @ApiModelProperty(value = "单位")
     private String deliveryUnit;
 
+    @ApiModelProperty(value = "收费种类")
+    private String chargeType;
+
+    @ApiModelProperty(value = "领取人")
+    private String receiver;
+
     @ApiModelProperty(value = "送货单是否删除（0：否，1：是）")
     private Integer deleted;
 }

@@ -47,7 +47,8 @@ public class AddDeliveryNoteForm {
     private String receiver;
 
     @ApiModelProperty(value = "是否全部完成(0否，1是；默认否不勾选)")
-    private Integer isComplement;
+    @NotBlank(message = "是否全部完成不能为空")
+    private String isComplement;
 
     @ApiModelProperty(value = "全部完成说明")
     private String complementExplain;

@@ -141,7 +141,7 @@ public class OrderController {
     }
 
     @ApiOperation("恢复下单")
-    @GetMapping(value = "/recovery")
+    @GetMapping(value = "/orderRecovery")
     @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
     public ResponseVo recovery(@ApiParam(name = "id", value = "下单ID") @RequestParam("id") Long id) {
         orderService.recovery(id);

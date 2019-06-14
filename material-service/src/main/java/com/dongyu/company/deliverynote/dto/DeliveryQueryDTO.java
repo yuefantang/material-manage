@@ -40,4 +40,7 @@ public class DeliveryQueryDTO extends PageQueryDTO {
     //客户型号
     private String customerModel;
 
+    //收费种类
+    private String chargeType;
+
 }

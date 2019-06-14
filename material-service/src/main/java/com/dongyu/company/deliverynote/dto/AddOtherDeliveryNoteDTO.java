@@ -27,9 +27,6 @@ public class AddOtherDeliveryNoteDTO {
     //领取人
     private String receiver;
 
-    //送货单号
-    private String deliveryCode;
-
     //DY编号
     private String miDyCode;
 

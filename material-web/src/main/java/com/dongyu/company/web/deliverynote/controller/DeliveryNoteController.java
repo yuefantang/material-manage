@@ -66,6 +66,7 @@ public class DeliveryNoteController {
         List<AddDeliveryNoteDTO> deliveryNoteDTOS = addDeliveryNoteForm.stream().map(form -> {
             AddDeliveryNoteDTO addDeliveryNoteDTO = new AddDeliveryNoteDTO();
             BeanUtils.copyProperties(form, addDeliveryNoteDTO);
+            addDeliveryNoteDTO.setIsComplement(Integer.valueOf(form.getIsComplement()));
             return addDeliveryNoteDTO;
         }).collect(Collectors.toList());
         List<DeliveryListDTO> list = deliveryNoteService.add(deliveryNoteDTOS);
