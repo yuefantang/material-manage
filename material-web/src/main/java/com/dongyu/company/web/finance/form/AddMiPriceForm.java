@@ -26,7 +26,7 @@ public class AddMiPriceForm {
     private String miDyCode;
 
     @ApiModelProperty(value = "单价（单位分）")
-    @Pattern(regexp = Constants.NUMBER_POINT_PATTERN, message = "单价格式错误，只能输入数字")
+    @Pattern(regexp = Constants.POSITIVE_NUMBER_PATTERN, message = "单价格式错误，只能输入数字")
     @NotBlank(message = "单价（单位分）不能为空")
     private String price;
 

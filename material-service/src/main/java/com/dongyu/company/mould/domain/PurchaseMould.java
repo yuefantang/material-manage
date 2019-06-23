@@ -119,19 +119,4 @@ public class PurchaseMould extends BaseDomain {
     @Column(columnDefinition = "varchar(100) COMMENT '气缸'")
     @AttributeOpName("气缸")
     private String cylinder;
-
-//    @Column(columnDefinition = "varchar(100) COMMENT '测试架单价（单位元）'")
-//    @AttributeOpName("测试架单价")
-//    private String rackPrice;
-//
-//    @Column(columnDefinition = "varchar(100) COMMENT '测试架金额(单位元)'")
-//    @AttributeOpName("测试架金额")
-//    private String rackAmount;
-//
-//    @Column(columnDefinition = "varchar(100) COMMENT '采购数量'")
-//    @AttributeOpName("采购数量")
-//    private String purchaseQuantity;
-
-
-
 }

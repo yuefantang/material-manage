@@ -48,8 +48,12 @@ public class MouldListDTO {
     @ApiModelProperty(value = "使用状态（1：新购，2：二次采购,3:报废,4:退回客户）")
     private Integer usageState;
 
-
     @ApiModelProperty(value = "是否删除（0：未删除，1：已删除）")
     private Integer deleted;
 
+    @ApiModelProperty(value = "单价（单位元）")
+    private String mouldPrice;
+
+    @ApiModelProperty(value = "金额(单位元)")
+    private String mouldAmount;
 }
