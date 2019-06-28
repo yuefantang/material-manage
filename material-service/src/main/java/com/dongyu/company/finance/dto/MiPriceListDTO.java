@@ -50,4 +50,7 @@ public class MiPriceListDTO {
 
     @ApiModelProperty("铜厚")
     private String copperThick;
+
+    @ApiModelProperty(value = "MI登记价格是否删除（0：否，1：是）")
+    private Integer deleted;
 }

@@ -466,11 +466,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addPlusOrder(AddPlusOrderDTO dto) {
         log.info("OrderServiceImpl addPlusOrder method start:");
-        //用填入的下单DY编号去查询没有删除的MI登记
-        MiRegister byMiDyCode = registerDao.findByMiDyCodeAndDeleted(dto.getOrderDyCode(), DeletedEnum.UNDELETED.getValue());
-        if (byMiDyCode == null) {
-            throw new BizException("该DY编号没有对应的MI登记或已删除，请核实!");
-        }
+        //用填入的下单投产单号去查询下单记录
         Order order = orderDao.findByCommissioningCodeAndDeleted(dto.getCommissioningCode(), DeletedEnum.UNDELETED.getValue());
         if (order == null) {
             throw new BizException("原投产单号不存在有效下单数据，请核实!");
@@ -478,7 +474,7 @@ public class OrderServiceImpl implements OrderService {
         PlusOrder plusOrder = new PlusOrder();
         //补单单号
         plusOrder.setPlusCommissioningCode(this.createCode());
-        this.addAndEditPlusOrder(plusOrder, dto, byMiDyCode);
+       // this.addAndEditPlusOrder(plusOrder, dto, byMiDyCode);
         plusOrderDao.save(plusOrder);
         log.info("OrderServiceImpl addPlusOrder method end;");
     }
@@ -531,24 +527,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void editPlusOrder(AddPlusOrderDTO dto) {
-        log.info("OrderServiceImpl editPlusOrder method start:");
-        //用填入的下单DY编号去查询没有删除的MI登记
-        MiRegister byMiDyCode = registerDao.findByMiDyCodeAndDeleted(dto.getOrderDyCode(), DeletedEnum.UNDELETED.getValue());
-        if (byMiDyCode == null) {
-            throw new BizException("该DY编号没有对应的MI登记或已删除，请核实!");
-        }
-        Order order = orderDao.findByCommissioningCodeAndDeleted(dto.getCommissioningCode(), DeletedEnum.UNDELETED.getValue());
-        if (order == null) {
-            throw new BizException("原投产单号不存在有效下单数据，请核实!");
-        }
-        PlusOrder plusOrder = plusOrderDao.findOne(dto.getId());
-        this.addAndEditPlusOrder(plusOrder, dto, byMiDyCode);
-        plusOrderDao.save(plusOrder);
-        log.info("OrderServiceImpl editPlusOrder method end;");
-    }
-
-    @Override
     public void recoveryPlusOrder(Long id) {
         log.info("OrderServiceImpl recoveryPlusOrder method start:");
         PlusOrder plusOrder = plusOrderDao.findOne(id);
@@ -560,27 +538,45 @@ public class OrderServiceImpl implements OrderService {
         log.info("OrderServiceImpl recoveryPlusOrder method end;");
     }
 
-    private void addAndEditPlusOrder(PlusOrder plusOrder, AddPlusOrderDTO dto, MiRegister byMiDyCode) {
-        BeanUtils.copyProperties(dto, plusOrder);
-        //交货日期yyyy-MM-dd
-        plusOrder.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-        //补单日期yyyy-MM-dd
-        plusOrder.setPlusOrderDate(DateUtil.parseStrToDate(dto.getPlusOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
-        //补单率
-        plusOrder.setPlusOrderRate(Double.parseDouble(dto.getPlusOrderRate()));
-        //经济损失
-        plusOrder.setEconomicLoss(Double.parseDouble(dto.getEconomicLoss()));
-        //客户名称
-        plusOrder.setCustomerName(byMiDyCode.getCustomerName());
-        //产品型号
-        plusOrder.setCustomerModel(byMiDyCode.getCustomerModel());
-        //生成平方数(规则：模片尺寸相乘/一模出几/1000000再乘以实补单数)
-        //一模出几
-        Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber());
-        // 模片尺寸相乘
-        double v2 = Double.parseDouble(byMiDyCode.getDieSizeLength()) * Double.parseDouble(byMiDyCode.getDieSizeWide());
-        String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * dto.getFactPlusOrderNum());
-        plusOrder.setSquareNum(Double.parseDouble(squareNum));
-    }
+//    @Override
+//    public void editPlusOrder(AddPlusOrderDTO dto) {
+//        log.info("OrderServiceImpl editPlusOrder method start:");
+//        //用填入的下单DY编号去查询没有删除的MI登记
+//        MiRegister byMiDyCode = registerDao.findByMiDyCodeAndDeleted(dto.getOrderDyCode(), DeletedEnum.UNDELETED.getValue());
+//        if (byMiDyCode == null) {
+//            throw new BizException("该DY编号没有对应的MI登记或已删除，请核实!");
+//        }
+//        Order order = orderDao.findByCommissioningCodeAndDeleted(dto.getCommissioningCode(), DeletedEnum.UNDELETED.getValue());
+//        if (order == null) {
+//            throw new BizException("原投产单号不存在有效下单数据，请核实!");
+//        }
+//        PlusOrder plusOrder = plusOrderDao.findOne(dto.getId());
+//        this.addAndEditPlusOrder(plusOrder, dto, byMiDyCode);
+//        plusOrderDao.save(plusOrder);
+//        log.info("OrderServiceImpl editPlusOrder method end;");
+//    }
+
+//    private void addAndEditPlusOrder(PlusOrder plusOrder, AddPlusOrderDTO dto, MiRegister byMiDyCode) {
+//        BeanUtils.copyProperties(dto, plusOrder);
+//        //交货日期yyyy-MM-dd
+//        plusOrder.setDeliveryDate(DateUtil.parseStrToDate(dto.getDeliveryDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+//        //补单日期yyyy-MM-dd
+//        plusOrder.setPlusOrderDate(DateUtil.parseStrToDate(dto.getPlusOrderDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD));
+//        //补单率
+//        plusOrder.setPlusOrderRate(Double.parseDouble(dto.getPlusOrderRate()));
+//        //经济损失
+//        plusOrder.setEconomicLoss(Double.parseDouble(dto.getEconomicLoss()));
+//        //客户名称
+//        plusOrder.setCustomerName(byMiDyCode.getCustomerName());
+//        //产品型号
+//        plusOrder.setCustomerModel(byMiDyCode.getCustomerModel());
+//        //生成平方数(规则：模片尺寸相乘/一模出几/1000000再乘以实补单数)
+//        //一模出几
+//        Integer miNumber = Integer.valueOf(byMiDyCode.getMiNumber());
+//        // 模片尺寸相乘
+//        double v2 = Double.parseDouble(byMiDyCode.getDieSizeLength()) * Double.parseDouble(byMiDyCode.getDieSizeWide());
+//        String squareNum = new DecimalFormat("0.000").format(v2 / miNumber / 1000000 * dto.getFactPlusOrderNum());
+//        plusOrder.setSquareNum(Double.parseDouble(squareNum));
+//    }
 
 }

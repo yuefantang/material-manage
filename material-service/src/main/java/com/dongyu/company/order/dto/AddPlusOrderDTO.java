@@ -12,14 +12,8 @@ import lombok.Data;
 @Data
 public class AddPlusOrderDTO {
 
-    //补单ID
-    private Long id;
-
     //原投产单号
     private String commissioningCode;
-
-    //DY编号
-    private String orderDyCode;
 
     //补单日期yyyy-MM-dd
     private String plusOrderDate;
@@ -28,19 +22,7 @@ public class AddPlusOrderDTO {
     private String deliveryDate;
 
     //需补单数量
-    private Integer plusOrderNum;
-
-    //实补单数量
-    private Integer factPlusOrderNum;
-
-    //补单率
-    private String plusOrderRate;
-
-    //经济损失
-    private String economicLoss;
-
-    //备注
-    private String remark;
+    private String plusOrderNum;
 
     //补单原因
     private String reason;
@@ -48,6 +30,24 @@ public class AddPlusOrderDTO {
     //处罚情况
     private String punishSituation;
 
+    //补单ID
+    //private Long id;
+
+    //DY编号
+    // private String orderDyCode;
+
+    //实补单数量
+    //private Integer factPlusOrderNum;
+
+    //补单率
+    // private String plusOrderRate;
+
+    //经济损失
+    //private String economicLoss;
+
+    //备注
+    // private String remark;
+
     //余料处理
-    private String surplusTreatment;
+    //private String surplusTreatment;
 }

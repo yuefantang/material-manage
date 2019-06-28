@@ -192,13 +192,13 @@ public class OrderController {
         return ResponseVo.successResponse();
     }
 
-    @ApiOperation("编辑补单")
-    @PostMapping(value = "/edit/plus/order")
-    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
-    public ResponseVo editPlusOrder(@Valid @RequestBody EditPlusOrderForm form) {
-        AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
-        BeanUtils.copyProperties(form, addPlusOrderDTO);
-        orderService.editPlusOrder(addPlusOrderDTO);
-        return ResponseVo.successResponse();
-    }
+//    @ApiOperation("编辑补单")
+//    @PostMapping(value = "/edit/plus/order")
+//    @RequiresRoles(value = {"admin", "engineering"}, logical = Logical.OR)
+//    public ResponseVo editPlusOrder(@Valid @RequestBody EditPlusOrderForm form) {
+//        AddPlusOrderDTO addPlusOrderDTO = new AddPlusOrderDTO();
+//        BeanUtils.copyProperties(form, addPlusOrderDTO);
+//        orderService.editPlusOrder(addPlusOrderDTO);
+//        return ResponseVo.successResponse();
+//    }
 }

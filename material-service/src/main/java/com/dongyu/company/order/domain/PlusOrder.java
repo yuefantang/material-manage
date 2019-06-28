@@ -38,8 +38,8 @@ public class PlusOrder extends BaseDomain {
     @Column(unique = true, columnDefinition = "varchar(50) COMMENT '补单单号'")
     private String plusCommissioningCode;
 
-    @Column(columnDefinition = "varchar(50) COMMENT '原产单号'")
-    @AttributeOpName("原产单号")
+    @Column(columnDefinition = "varchar(50) COMMENT '原投产单号'")
+    @AttributeOpName("原投产单号")
     private String commissioningCode;
 
     @Column(columnDefinition = "varchar(50) COMMENT '产品型号'")
@@ -94,12 +94,26 @@ public class PlusOrder extends BaseDomain {
     @AttributeOpName("处罚情况")
     private String punishSituation;
 
-    @Column(columnDefinition = "varchar(255) COMMENT '余料处理'")
-    @AttributeOpName("余料处理")
-    private String surplusTreatment;
-
     @AttributeOpName("删除")
     @Column(columnDefinition = "tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单是否删除（0：未删除，1：已删除）'")
     private Integer deleted = DeletedEnum.UNDELETED.getValue();
 
+    @Column(columnDefinition = "varchar(255) COMMENT '余料处理方法'")
+    private String surplusTreatment;
+
+    @Column(columnDefinition = "varchar(255) COMMENT '余料处理备注'")
+    private String surplusRemarks;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '余料PCS'")
+    private String surplusPcs;
+
+    @Column(columnDefinition = "varchar(50) COMMENT '余料PNL'")
+    private String surplusPnl;
+
+    @Column(columnDefinition = "bigint(20) COMMENT 'MI登记ID'")
+    private Long miRegisterId;
+
+    @Column(columnDefinition = "varchar(50) NOT NULL DEFAULT '0' COMMENT '共用料张数'")
+    @AttributeOpName("共用料张数")
+    private String haredMaterialsNum;
 }

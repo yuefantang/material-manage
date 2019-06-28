@@ -63,6 +63,13 @@ public class UserServiceImpl implements UserService {
     public void login(UserDTO userDTO) {
         log.info("UserServiceImpl login method start Parm:" + JSONObject.toJSONString(userDTO));
         Subject subject = SecurityUtils.getSubject();
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        if(principal!=null){
+            User user = (User) principal;
+            if(user.getUserName().equals(userDTO.getUserName())){
+                throw new BizException(user.getUserName()+",该用户已登陆！不能重复登陆");
+            }
+        }
         UsernamePasswordToken token = new UsernamePasswordToken(userDTO.getUserName(), userDTO.getPassword());
         token.setRememberMe(true);
         subject.login(token);

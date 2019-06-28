@@ -127,7 +127,7 @@ public interface OrderService {
      *
      * @param addPlusOrderDTO
      */
-    void editPlusOrder(AddPlusOrderDTO addPlusOrderDTO);
+    //void editPlusOrder(AddPlusOrderDTO addPlusOrderDTO);
 
     /**
      * 恢复删除补单
