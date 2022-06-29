@@ -22,7 +22,7 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <poi.version>3.15</poi.version>
+        <poi.version>4.1.1</poi.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <source.version>1.8</source.version>
         <target.version>1.8</target.version>
