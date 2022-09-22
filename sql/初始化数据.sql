@@ -13,3 +13,4 @@ INSERT INTO t_role(`role_name`,`descript`) VALUES('admin','超级管理员'),
 
 --将超级管理员角色绑定到第一个初始化账户
 INSERT INTO t_user_role(`role_id`,`user_id`) VALUES(1,1);
+--修改
